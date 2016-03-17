@@ -1,8 +1,8 @@
 /**
  * Created by Luoqi on 3/14/2016.
  * 这里是主Js文件，实现toolbar的动态选择，以及Canvas中的绘图
- * 需要实现的功能单子：
- * 1、橡皮擦
+ * 需要实现的功能单子
+ * 1、橡皮擦 KO
  * 2、直线、矩形绘图
  * 3、读图出图网络接口
  * 4、坐标的网络交互
@@ -14,31 +14,32 @@
     var imgObjArr = [];
     var startDraw = true;
     var eraserTag = false;
+    var isLargeImg = false;
     var command = 1;
+    var x1, y1, a = 30;
+    var imgScale = 1;
+    var widthScale = 1;
+    var heightScale = 1;
+    var resized = false;
 
     //undo and redo
     var history = new Array();
     var cStep = -1;
 
-    var img = new Image();
-    img.src = "./js/map.jpg";
-    var curWidth = img.width;
-    var curHeihgt = img.height;
+    var bg_image = new Image();
+    bg_image.src = "./js/map.jpg";
+    var curWidth, curHeight, tempWidth, tempHeight;
 
     //canvas part
     var canvas = document.getElementById("canvas");
-    var netherCanvas = document.getElementById("netherCanvas");
+    var netherCanvas = document.getElementById("netherCanvas"); //底层Canvas
     var context = null;
     var context2 = null;
     netherCanvas.setAttribute('zIndex',-1);
 
-    canvas.width = curWidth;
-    canvas.height = curHeihgt;
+    setDefaultSize(bg_image);
 
-    netherCanvas.width = curWidth;
-    netherCanvas.height = curHeihgt;
-
-    var position = {x: curWidth / 2, y: curHeihgt / 2};
+    var position = {x: curWidth / 2, y: curHeight / 2};
     var mouse = {x: 0, y: 0, down: false};
     document.body.classList.add('pointer');
 
@@ -46,9 +47,9 @@
         context = canvas.getContext("2d");
         context2 = netherCanvas.getContext("2d");
 
-        img.onload = function () {
-            context2.drawImage(img, 0, 0, img.width, img.height);
-        }
+        resizeImage();
+
+        setCanvasSize(tempHeight, tempWidth);
 
         canvas.addEventListener("mousedown", mousedown, false);
         canvas.addEventListener("mousemove", mousemove, false);
@@ -83,6 +84,7 @@
         var thisgl = context.globalCompositeOperation;
 
         function draw() {
+            window.xscroll
             if (mouse.down) {
                 var d = distance(position, mouse);
                 if (d >= 1) {
@@ -103,7 +105,6 @@
                     context.closePath();
                     position.x = mouse.x;
                     position.y = mouse.y;
-
                 }
             }
         }
@@ -132,9 +133,98 @@
         }
     }
 
+    function getImage(url) {
+
+    }
+
+    function setDefaultSize(img) {
+        curHeight = img.height;
+        curWidth = img.width;
+        tempHeight = img.height;
+        tempWidth = img.width;
+    }
+
+    function setCanvasSize(h, w) {
+        canvas.width = w;
+        canvas.height = h;
+        netherCanvas.width = w;
+        netherCanvas.height = h;
+    }
+
+    /**
+     * 解决地图太大太小的问题，也方便在小屏幕机器上进行的绘制，由于后面求坐标的精确需要不能够改变图片的比例
+     * 方案：按照比例缩小图片
+     */
+    function resizeImage() {
+        if (curHeight > window.innerHeight && curWidth < window.innerWidth) {
+            imgScale = window.innerHeight / curHeight;
+            tempHeight = window.innerHeight;
+            tempWidth = curWidth * imgScale;
+            bg_image.onload = function () {
+                context2.drawImage(bg_image, 0, 0, bg_image.width, bg_image.height, 0, 0, tempWidth, tempHeight);
+            }
+            return true;
+        } else if (curHeight < window.innerHeight && curWidth > window.innerWidth) {
+            imgScale = window.innerWidth / curWidth;
+            tempWidth = curWidth;
+            tempHeight = curHeight * imgScale;
+            bg_image.onload = function () {
+                context2.drawImage(bg_image, 0, 0, bg_image.width, bg_image.height, 0, 0, tempWidth, tempHeight);
+            }
+        } else if (curHeight > window.innerHeight && curWidth > window.innerWidth) {
+
+            heightScale = curHeight / window.innerHeight;
+            widthScale = curWidth / window.innerWidth;
+
+            if (heightScale > widthScale) {
+                imgScale = 1 / heightScale;
+                tempWidth = curWidth * imgScale;
+                tempHeight = window.innerHeight;
+                bg_image.onload = function () {
+                    context2.drawImage(bg_image, 0, 0, bg_image.width, bg_image.height, 0, 0, tempWidth, tempHeight);
+                }
+            } else if (heightScale < widthScale) {
+                imgScale = 1 / widthScale;
+                tempWidth = window.innerWidth;
+                tempHeight = curHeight * imgScale;
+                bg_image.onload = function () {
+                    context2.drawImage(bg_image, 0, 0, bg_image.width, bg_image.height, 0, 0, tempWidth, tempHeight);
+                }
+            } else {
+                imgScale = 1 / widthScale;
+                tempWidth = curWidth * imgScale;
+                tempHeight = curHeight * imgScale;
+                bg_image.onload = function () {
+                    context2.drawImage(bg_image, 0, 0, bg_image.width, bg_image.height, 0, 0, tempWidth, tempHeight);
+                }
+            }
+        } else {
+            heightScale = window.innerHeight / curHeight;
+            widthScale = window.innerWidth / curWidth;
+
+            if (heightScale < widthScale) {
+                tempHeight = window.innerHeight;
+                tempWidth = curWidth * heightScale;
+                bg_image.onload = function () {
+                    context2.drawImage(bg_image, 0, 0, bg_image.width, bg_image.height, 0, 0, tempWidth, tempHeight);
+                }
+            } else if (heightScale > widthScale) {
+                tempWidth = window.innerWidth;
+                tempHeight = curHeight * widthScale;
+                bg_image.onload = function () {
+                    context2.drawImage(bg_image, 0, 0, bg_image.width, bg_image.height, 0, 0, tempWidth, tempHeight);
+                }
+            } else {
+                bg_image.onload = function () {
+                    context2.drawImage(bg_image, 0, 0, bg_image.width, bg_image.height, 0, 0, tempWidth, tempHeight);
+                }
+            }
+        }
+    }
+
     //put current canvas to cache
     function  historyPush() {
-        cStep += 1;
+        cStep++;
         if(cStep < history.length) {
             history.length = cStep;
         }
@@ -144,10 +234,22 @@
     function undo() {
         if(cStep >= 0 ) {
             clearCanvas();
-            cStep -= 1;
+            cStep--;
             var tempImage = new Image();
             tempImage.src = history[cStep];
             tempImage.onload = function() {context.drawImage(tempImage,0,0);};
+        }
+    }
+
+    function redo() {
+        if (cStep < history.length) {
+            clearCanvas();
+            ++cStep;
+            var tempImage = new Image();
+            tempImage.src = history[cStep];
+            tempImage.onload = function () {
+                context.drawImage(tempImage, 0, 0);
+            };
         }
     }
 
@@ -182,7 +284,6 @@
             canvas.width = img.width;
             canvas.height = img.height;
         };
-
         reader.readAsDataURL(file);
     }
 
@@ -379,20 +480,21 @@
                     break;
                 case 1:
                     //eraser
-                    eraserTag = true;
+                    //eraserTag = true;
+                    tapClip();
                     break;
                 case 2:
-                    //text
+                    //撤销 undo and redo 还有问题，速度比较慢，在使用了橡皮擦后失效
+                    undo();
                     break;
                 case 3:
+                    //恢复
+                    redo();
+                    break;
+                case 4:
                     //photo
                     console.log("click photo");
                     $fileInput.click();
-                    break;
-                case 4:
-                    //eraserTag = false;
-                    //撤销
-                    undo();
                     break;
                 case 5:
                     //删除

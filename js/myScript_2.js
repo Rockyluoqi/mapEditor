@@ -23,10 +23,10 @@
     var history = new Array();
     var cStep = -1;
 
-    var img = new Image();
-    img.src = "./js/map.jpg";
-    var curWidth = img.width;
-    var curHeihgt = img.height;
+    var background_image = new Image();
+    background_image.src = "./js/map.jpg";
+    var curWidth = background_image.width;
+    var curHeihgt = background_image.height;
 
     //canvas part
     var canvas = document.getElementById("canvas");
@@ -49,9 +49,9 @@
         context = canvas.getContext("2d");
         context2 = netherCanvas.getContext("2d");
 
-        img.onload = function () {
-            context2.drawImage(img, 0, 0, img.width, img.height);
-        }
+        background_image.onload = function () {
+            context2.drawImage(background_image, 0, 0, background_image.width, background_image.height);
+        };
 
         canvas.addEventListener("mousedown", mousedown, false);
         canvas.addEventListener("mousemove", mousemove, false);

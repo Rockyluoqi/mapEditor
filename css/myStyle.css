@@ -56,33 +56,33 @@
 }
 
 #toolbar .menu .sizes .tool-size-0{
+    -webkit-transform: scale(.05);
+    -ms-transform: scale(.05);
+    transform: scale(.05);
+}
+
+#toolbar .menu .sizes .tool-size-1{
+    -webkit-transform: scale(.1);
+    -ms-transform: scale(.1);
+    transform: scale(.1);
+}
+
+#toolbar .menu .sizes .tool-size-2{
     -webkit-transform: scale(.2);
     -ms-transform: scale(.2);
     transform: scale(.2);
 }
 
-#toolbar .menu .sizes .tool-size-1{
-    -webkit-transform: scale(.4);
-    -ms-transform: scale(.4);
-    transform: scale(.4);
-}
-
-#toolbar .menu .sizes .tool-size-2{
-    -webkit-transform: scale(.6);
-    -ms-transform: scale(.6);
-    transform: scale(.6);
-}
-
 #toolbar .menu .sizes .tool-size-3{
-    -webkit-transform: scale(.8);
-    -ms-transform: scale(.8);
-    transform: scale(.8);
+    -webkit-transform: scale(.3);
+    -ms-transform: scale(.3);
+    transform: scale(.3);
 }
 
 #toolbar .menu .sizes .tool-size-4{
-    -webkit-transform: scale(1);
-    -ms-transform: scale(1);
-    transform: scale(1);
+    -webkit-transform: scale(.4);
+    -ms-transform: scale(.4);
+    transform: scale(.4);
 }
 
 #toolbar .menu .tools{
