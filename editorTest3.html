@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
+    <title>绘画板</title>
+    <link rel="stylesheet" href="css/global.css" />
+    <link rel="stylesheet" href="css/myStyle.css" />
+</head>
+<body>
+<div class="container">
+    <script type="text/javascript">
+        function cnvs_getCoordinates(e)
+        {
+            x=e.clientX-74;
+            y=e.clientY;
+            document.getElementById("xycoordinates").innerHTML="Coordinates: (" + x + "," + y + ")";
+        }
+
+        function cnvs_clearCoordinates()
+        {
+            document.getElementById("xycoordinates").innerHTML="";
+        }
+    </script>
+    <div id="content" onmousemove="cnvs_getCoordinates(event)" onmouseout="cnvs_clearCoordinates()">
+        <div class="canvas-wrapper" style = "overflow:auto">
+            <canvas id="netherCanvas"></canvas>
+            <canvas id="canvas"><p>Your browser doesn't support canvas.</p></canvas>
+            <input type="file" accept="image/*" id="fileInput" multiple style="display: none"/>
+        </div>
+    </div>
+    <div id="toolbar">
+
+        <div class="menu">
+            <div class="colors menu-item modal-indicator" style="background-color: rgb(0, 0, 0);">
+                <div class="sub-menu col-8">
+                    <div class="menu-item"><div class="color-icon" style="background-color: rgb(0, 0, 0)"></div></div>
+                    <div class="menu-item"><div class="color-icon" style="background-color: rgb(244, 67, 54)"></div></div>
+                    <div class="menu-item"><div class="color-icon" style="background-color: rgb(76, 175, 80)"></div></div>
+                    <div class="menu-item"><div class="color-icon" style="background-color: rgb(33, 150, 243)"></div></div>
+                    <div class="menu-item"><div class="color-icon" style="background-color: rgb(255, 193, 7)"></div></div>
+                    <div class="menu-item"><div class="color-icon" style="background-color: rgb(156, 39, 176)"></div></div>
+                    <div class="menu-item"><div class="color-icon" style="background-color: rgb(233, 30, 99)"></div></div>
+                    <div class="menu-item"><div class="color-icon" style="background-color: rgb(121, 85, 72)"></div></div>
+                </div>
+            </div>
+            <div class="sizes menu-item modal-indicator">
+                <div class="tool-size-2">
+                    <svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M1664 896q0 209-103 385.5t-279.5 279.5-385.5 103-385.5-103-279.5-279.5-103-385.5 103-385.5 279.5-279.5 385.5-103 385.5 103 279.5 279.5 103 385.5z"></path>
+                    </svg>
+                </div>
+                <div class="sub-menu col-5">
+                    <div class="menu-item">
+                        <div class="tool-size-0">
+                            <svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M1664 896q0 209-103 385.5t-279.5 279.5-385.5 103-385.5-103-279.5-279.5-103-385.5 103-385.5 279.5-279.5 385.5-103 385.5 103 279.5 279.5 103 385.5z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="menu-item">
+                        <div class="tool-size-1">
+                            <svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M1664 896q0 209-103 385.5t-279.5 279.5-385.5 103-385.5-103-279.5-279.5-103-385.5 103-385.5 279.5-279.5 385.5-103 385.5 103 279.5 279.5 103 385.5z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="menu-item">
+                        <div class="tool-size-2">
+                            <svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M1664 896q0 209-103 385.5t-279.5 279.5-385.5 103-385.5-103-279.5-279.5-103-385.5 103-385.5 279.5-279.5 385.5-103 385.5 103 279.5 279.5 103 385.5z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="menu-item">
+                        <div class="tool-size-3">
+                            <svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M1664 896q0 209-103 385.5t-279.5 279.5-385.5 103-385.5-103-279.5-279.5-103-385.5 103-385.5 279.5-279.5 385.5-103 385.5 103 279.5 279.5 103 385.5z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="menu-item">
+                        <div class="tool-size-4">
+                            <svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M1664 896q0 209-103 385.5t-279.5 279.5-385.5 103-385.5-103-279.5-279.5-103-385.5 103-385.5 279.5-279.5 385.5-103 385.5 103 279.5 279.5 103 385.5z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tools menu-item modal-indicator">
+                <div>
+                    <svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M19.104 0.896c-0.562-0.562-1.309-0.871-2.104-0.871s-1.542 0.309-2.104 0.871l-12.75 12.75c-0.052 0.052-0.091 0.114-0.116 0.183l-2 5.5c-0.066 0.183-0.021 0.387 0.116 0.524 0.095 0.095 0.223 0.146 0.354 0.146 0.057 0 0.115-0.010 0.171-0.030l5.5-2c0.069-0.025 0.131-0.065 0.183-0.116l12.75-12.75c0.562-0.562 0.871-1.309 0.871-2.104s-0.309-1.542-0.871-2.104zM5.725 17.068l-4.389 1.596 1.596-4.389 11.068-11.068 2.793 2.793-11.068 11.068zM18.396 4.396l-0.896 0.896-2.793-2.793 0.896-0.896c0.373-0.373 0.869-0.578 1.396-0.578s1.023 0.205 1.396 0.578c0.373 0.373 0.578 0.869 0.578 1.396s-0.205 1.023-0.578 1.396z"></path>
+                    </svg>
+                </div>
+                <div class="sub-menu col-6">
+                    <div class="menu-item">
+                        <svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M19.104 0.896c-0.562-0.562-1.309-0.871-2.104-0.871s-1.542 0.309-2.104 0.871l-12.75 12.75c-0.052 0.052-0.091 0.114-0.116 0.183l-2 5.5c-0.066 0.183-0.021 0.387 0.116 0.524 0.095 0.095 0.223 0.146 0.354 0.146 0.057 0 0.115-0.010 0.171-0.030l5.5-2c0.069-0.025 0.131-0.065 0.183-0.116l12.75-12.75c0.562-0.562 0.871-1.309 0.871-2.104s-0.309-1.542-0.871-2.104zM5.725 17.068l-4.389 1.596 1.596-4.389 11.068-11.068 2.793 2.793-11.068 11.068zM18.396 4.396l-0.896 0.896-2.793-2.793 0.896-0.896c0.373-0.373 0.869-0.578 1.396-0.578s1.023 0.205 1.396 0.578c0.373 0.373 0.578 0.869 0.578 1.396s-0.205 1.023-0.578 1.396z"></path>
+                        </svg>
+                    </div>
+                    <div class="menu-item">
+                        <svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M19.715 6.913c-0.026-0.155-0.077-0.305-0.155-0.446-0.114-0.209-0.276-0.38-0.472-0.506-0.002-0.001-0.003-0.002-0.005-0.003-0.010-0.007-0.021-0.013-0.032-0.020-0.096-0.059-0.205-0.108-0.327-0.145-0.024-0.007-0.049-0.014-0.074-0.021l-6.060-1.515c-0.162-0.040-0.34-0.061-0.53-0.061-0.599 0-1.25 0.205-1.658 0.523l-7.421 5.772c-0.51 0.396-1.069 1.187-1.273 1.799l-1.368 4.103c-0.129 0.386-0.094 0.791 0.098 1.14s0.515 0.596 0.909 0.694l6.060 1.515c0.162 0.040 0.34 0.061 0.53 0.061 0.474 0 0.981-0.129 1.374-0.341 0.091-0.046 0.186-0.106 0.284-0.182l7.421-5.772c0.51-0.396 1.069-1.187 1.273-1.799l1.368-4.103c0.092-0.275 0.111-0.504 0.057-0.694zM12.062 5.197c0.107 0 0.206 0.011 0.287 0.031l6.033 1.508-7.4 5.755c-0.236 0.184-0.666 0.312-1.044 0.312-0.107 0-0.206-0.011-0.287-0.031l-6.033-1.508 7.4-5.755c0.236-0.184 0.666-0.312 1.044-0.312zM1.316 17.052c-0.056-0.102-0.065-0.224-0.026-0.343l1.368-4.103c0.092-0.276 0.408-0.45 0.691-0.379 0 0 0 0 0 0l6.060 1.515c0.121 0.030 0.219 0.103 0.275 0.205s0.065 0.224 0.026 0.343l-1.368 4.103c-0.092 0.276-0.409 0.45-0.691 0.379l-1.030-0.257c-0 0-0-0-0-0l-5.030-1.257c-0.121-0.030-0.219-0.103-0.275-0.206zM16.404 12.719l-6.907 5.372 1.162-3.485c0.143-0.429 0.581-1.049 0.938-1.326l6.907-5.372-1.162 3.485c-0.143 0.429-0.581 1.048-0.938 1.326z"></path>
+                        </svg>
+                    </div>
+                    <div class="menu-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1" x="0px" y="0px" width="512px" height="512px" viewBox="0 0 485.215 485.215" style="enable-background:new 0 0 485.215 485.215;" xml:space="preserve">
+	                        <path d="M90.978,212.283l121.304,121.303v-60.654c0,0,121.3-30.324,181.953,60.654c0-100.483-81.473-181.956-181.953-181.956   V90.979L90.978,212.283z M0,242.607c0,133.976,108.628,242.606,242.606,242.606c134.006,0,242.608-108.631,242.608-242.606   c0-133.978-108.603-242.606-242.608-242.606C108.628,0.001,0,108.63,0,242.607z M30.326,242.607   c0-117.038,95.241-212.279,212.28-212.279c117.068,0,212.277,95.241,212.277,212.279c0,117.039-95.209,212.28-212.277,212.28   C125.567,454.888,30.326,359.646,30.326,242.607z" fill="#FFFFFF"/>
+                        </svg>
+                    </div>
+                    <div class="menu-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1" x="0px" y="0px" width="512px" height="512px" viewBox="0 0 485.213 485.212" style="enable-background:new 0 0 485.213 485.212;" xml:space="preserve">
+	                        <path d="M394.236,212.282L272.934,333.584V272.93c0,0-121.304-30.324-181.955,60.654c0-100.483,81.469-181.956,181.955-181.956   V90.978L394.236,212.282z M485.212,242.606c0,133.976-108.627,242.606-242.604,242.606c-133.994,0-242.606-108.631-242.606-242.606   C0.001,108.628,108.613,0,242.607,0C376.585,0,485.212,108.628,485.212,242.606z M454.89,242.606   c0-117.038-95.241-212.279-212.282-212.279c-117.055,0-212.28,95.241-212.28,212.279c0,117.039,95.225,212.28,212.28,212.28   C359.648,454.886,454.89,359.645,454.89,242.606z" fill="#FFFFFF"/>
+                        </svg>
+                    </div>
+                    <div class="menu-item">
+                        <svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M13.5 9c-1.378 0-2.5-1.122-2.5-2.5s1.122-2.5 2.5-2.5 2.5 1.122 2.5 2.5-1.122 2.5-2.5 2.5zM13.5 5c-0.827 0-1.5 0.673-1.5 1.5s0.673 1.5 1.5 1.5 1.5-0.673 1.5-1.5-0.673-1.5-1.5-1.5z"></path>
+                            <path d="M18.5 0h-17c-0.827 0-1.5 0.673-1.5 1.5v17c0 0.827 0.673 1.5 1.5 1.5h17c0.827 0 1.5-0.673 1.5-1.5v-17c0-0.827-0.673-1.5-1.5-1.5zM1 18.5v-4.807l4.197-4.617c0.085-0.093 0.196-0.145 0.314-0.147s0.231 0.048 0.318 0.139l9.5 9.932h-13.83c-0.276 0-0.5-0.224-0.5-0.5zM19 18.5c0 0.276-0.224 0.5-0.5 0.5h-1.786l-10.161-10.623c-0.281-0.294-0.655-0.452-1.053-0.447s-0.768 0.173-1.042 0.474l-3.457 3.803v-10.707c0-0.276 0.224-0.5 0.5-0.5h17c0.276 0 0.5 0.224 0.5 0.5v17z"></path>
+                        </svg>
+                    </div>
+
+                    <div class="menu-item">
+                        <svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M15.5 2h-3.5v-0.5c0-0.827-0.673-1.5-1.5-1.5h-2c-0.827 0-1.5 0.673-1.5 1.5v0.5h-3.5c-0.827 0-1.5 0.673-1.5 1.5v1c0 0.652 0.418 1.208 1 1.414v12.586c0 0.827 0.673 1.5 1.5 1.5h10c0.827 0 1.5-0.673 1.5-1.5v-12.586c0.582-0.206 1-0.762 1-1.414v-1c0-0.827-0.673-1.5-1.5-1.5zM8 1.5c0-0.276 0.224-0.5 0.5-0.5h2c0.276 0 0.5 0.224 0.5 0.5v0.5h-3v-0.5zM14.5 19h-10c-0.276 0-0.5-0.224-0.5-0.5v-12.5h11v12.5c0 0.276-0.224 0.5-0.5 0.5zM16 4.5c0 0.276-0.224 0.5-0.5 0.5h-12c-0.276 0-0.5-0.224-0.5-0.5v-1c0-0.276 0.224-0.5 0.5-0.5h12c0.276 0 0.5 0.224 0.5 0.5v1z"></path>
+                            <path d="M12.5 7c-0.276 0-0.5 0.224-0.5 0.5v10c0 0.276 0.224 0.5 0.5 0.5s0.5-0.224 0.5-0.5v-10c0-0.276-0.224-0.5-0.5-0.5z"></path>
+                            <path d="M9.5 7c-0.276 0-0.5 0.224-0.5 0.5v10c0 0.276 0.224 0.5 0.5 0.5s0.5-0.224 0.5-0.5v-10c0-0.276-0.224-0.5-0.5-0.5z"></path>
+                            <path d="M6.5 7c-0.276 0-0.5 0.224-0.5 0.5v10c0 0.276 0.224 0.5 0.5 0.5s0.5-0.224 0.5-0.5v-10c0-0.276-0.224-0.5-0.5-0.5z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="shape menu-item modal-indicator">
+                <div>
+                    <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	                        width="65.875px" height="65.875px" viewBox="0 0 65.875 65.875" style="enable-background:new 0 0 65.875 65.875;" xml:space="preserve">
+                            <path d="M62.052,0h-9v9h2.695c0.073,1.716,0.09,9.353-4.937,14.856c-3.647,3.994-9.188,6.019-16.465,6.019
+                                c-24.391,0-27.188,23.486-27.469,27H3.823v9h9v-9H9.878c0.283-3.704,2.82-24,24.467-24c8.155,0,14.44-2.354,18.68-6.996
+                                C58.714,19.65,58.841,11.347,58.751,9h3.301V0z M11.826,64.875h-7v-7h7V64.875z M61.052,8h-7V1h7V8z"/>
+                    </svg>
+                </div>
+                <div class="sub-menu col-4">
+                    <div class="menu-item">
+                        <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	                        width="65.875px" height="65.875px" viewBox="0 0 65.875 65.875" style="enable-background:new 0 0 65.875 65.875;" xml:space="preserve">
+                            <path d="M62.052,0h-9v9h2.695c0.073,1.716,0.09,9.353-4.937,14.856c-3.647,3.994-9.188,6.019-16.465,6.019
+                                c-24.391,0-27.188,23.486-27.469,27H3.823v9h9v-9H9.878c0.283-3.704,2.82-24,24.467-24c8.155,0,14.44-2.354,18.68-6.996
+                                C58.714,19.65,58.841,11.347,58.751,9h3.301V0z M11.826,64.875h-7v-7h7V64.875z M61.052,8h-7V1h7V8z"/>
+                        </svg>
+                    </div>
+                    <div class="menu-item">
+                        <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	                            width="60.499px" height="60.5px" viewBox="0 0 60.499 60.5" style="enable-background:new 0 0 60.499 60.5;" xml:space="preserve">
+	                        <path d="M60.499,9.099v-9h-9v6.548L7.198,50.949L6.687,51.4H0v9h9v-6.413L53.887,9.099H60.499z M52.499,1.099h7v7h-7V1.099z M7.999,59.4h-7v-7h7V59.4z"/>
+                        </svg>
+                    </div>
+                    <div class="menu-item">
+                        <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                            width="403.853px" height="403.853px" viewBox="0 0 403.853 403.853" style="enable-background:new 0 0 403.853 403.853;"
+                            xml:space="preserve">
+                                <path d="M403.853,62.305V0.174h-62.128v16.911H62.128V0.174H0v62.131h20.717v279.239H0v62.135h62.128v-20.712h279.591v20.712
+                                    h62.128v-62.135h-17.26V62.305H403.853z M348.623,7.081h48.326v48.323h-48.326V7.081z M6.904,7.081H55.23v48.323H6.904V7.081z
+                                     M55.23,396.774H6.904v-48.326H55.23V396.774z M396.955,396.774h-48.326v-48.326h48.326V396.774z M365.888,341.544h-24.163v20.718
+                                    H62.128v-20.718H41.422V62.305h20.706V37.796h279.591v24.509h24.157v279.239H365.888z"/>
+                        </svg>
+                    </div>
+                    <div class="menu-item">
+                        <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	                         width="481.467px" height="481.467px" viewBox="0 0 481.467 481.467" style="enable-background:new 0 0 481.467 481.467;"
+                             xml:space="preserve">
+                                <path d="M481.464,213.494h-19.842c-12.33-101.122-90.99-180.441-192.136-193.483V0H215.01v19.665
+                                    C113.797,31.342,32.214,112.36,19.848,213.494H0.003v54.477h19.845c12.1,99.171,89.194,178.375,188.202,192.951l5.447,0.804v19.741
+                                    h54.477v-19.812c1.312-0.159,2.624-0.331,3.925-0.508c99.927-14.009,177.529-93.261,189.724-193.176h19.842V213.494z
+                                     M221.062,6.053h42.371v42.368h-42.371V6.053z M6.056,219.546h42.368v42.372H6.056V219.546z M261.921,475.408h-42.372V433.04
+                                    h42.372V475.408z M269.386,443.16c-0.473,0.064-0.939,0.123-1.412,0.183v-16.354h-54.477v16.378l-2.808-0.413
+                                    c-90.178-13.275-160.54-84.95-172.533-174.982h16.314v-54.477H38.166C50.342,122.341,123.771,49.449,215.01,37.962v16.512h54.477
+                                    V38.361c91.014,12.782,161.73,84.101,173.824,175.133h-16.314v54.477h16.314C431.264,358.689,360.406,430.398,269.386,443.16z
+                                     M475.412,261.918h-42.369v-42.372h42.369V261.918z"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            <div id="xycoordinates"></div>
+
+        </div>
+    </div>
+</div>
+<script src="js/lib/jquery-1.12.0.min.js"></script>
+<script src="js/lib/google.fastbutton.min.js"></script>
+<script src="js/lib/google.jquery.fastbutton.min.js"></script>
+<script src="js/lib/jcanvas.js"></script>
+<script src="js/myScript.js"></script>
+<!--<script src="js/myScript_2.js"></script>-->
+</body>
+</html>
