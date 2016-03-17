@@ -2,10 +2,9 @@
  * Created by Luoqi on 3/14/2016.
  * 这里是主Js文件，实现toolbar的动态选择，以及Canvas中的绘图
  * 需要实现的功能单子
- * 1、橡皮擦 KO
- * 2、直线、矩形绘图
- * 3、读图出图网络接口
- * 4、坐标的网络交互
+ * 1、直线、矩形绘图
+ * 2、读图出图网络接口
+ * 3、坐标的网络交互
  */
 ;(function (window) {
     var $modalIndicator = $(".modal-indicator");
@@ -14,13 +13,17 @@
     var imgObjArr = [];
     var startDraw = true;
     var eraserTag = false;
-    var isLargeImg = false;
-    var command = 1;
-    var x1, y1, a = 30;
     var imgScale = 1;
     var widthScale = 1;
     var heightScale = 1;
-    var resized = false;
+    var flag = false;
+    /**
+     * 0-free line(curve)
+     * 1-straight line
+     * 2-rectangle
+     * 3-circle
+     */
+    var shapePattern = 0;
 
     //undo and redo
     var history = new Array();
@@ -84,8 +87,7 @@
         var thisgl = context.globalCompositeOperation;
 
         function draw() {
-            window.xscroll
-            if (mouse.down) {
+            if (mouse.down && shapePattern === 0) {
                 var d = distance(position, mouse);
                 if (d >= 1) {
                     context.beginPath();
@@ -106,6 +108,32 @@
                     position.x = mouse.x;
                     position.y = mouse.y;
                 }
+            }
+            if (mouse.down && shapePattern === 1) {
+                var d = distance(position, mouse);
+                context.beginPath();
+                context.lineCap = "round";
+                if (eraserTag === true) {
+                    //实现擦除效果，
+                    context.globalCompositeOperation = "destination-out";
+                    context.strokeStyle = "rgba(0,0,0,1.0)";
+                } else {
+                    context.globalCompositeOperation = thisgl;
+                    context.strokeStyle = $colorItem.css("background-color");
+                }
+                context.lineWidth = chosenWidth;
+                context.moveTo(position.x + moveLeft, position.y + moveTop);
+                context.lineTo(mouse.x + moveLeft, mouse.y + moveTop);
+                context.stroke();
+                context.closePath();
+                position.x = mouse.x;
+                position.y = mouse.y;
+            }
+        }
+
+        function drawLine() {
+            if (mouse.down) {
+
             }
         }
 
@@ -253,7 +281,6 @@
         }
     }
 
-    //3.16 Clear the canvas
     function clearCanvas() {
         context.clearRect(0,0,canvas.width,canvas.height);
     }
@@ -287,6 +314,7 @@
         reader.readAsDataURL(file);
     }
 
+    //product new Image
     function createImgObj(file) {
         var obj = {};
         obj.image = null;
@@ -450,6 +478,12 @@
         fileUpload($fileInput.get(0).files)
     }
 
+    //画线
+    function fakeLineInput(e) {
+        var offset = canvas.offset();
+        endx =
+    }
+
     $subMenuItem.fastClick(function () {
         var that = $(this);
         var $MenuItem = that.parents(".modal-indicator");
@@ -462,7 +496,7 @@
                 .attr("class", "")
                 .addClass(that.find("div:first-child").attr("class"));
         }
-        else {
+        else if ($MenuItem.hasClass("tools")) {
             console.log("第几个元素：" + that.index());
             var toolsIndex = that.index();
             if (toolsIndex < 4) {
@@ -504,8 +538,32 @@
                 default:
                     break;
             }
+        } else if ($MenuItem.hasClass("shapes")) {
+            var toolsIndex = that.index();
+            if (toolsIndex < 4) {
+                $MenuItem.children("div:first-child").html(that.html());
+            }
+            switch (toolsIndex) {
+                case 0:
+                    //curve
+                    shapePattern = 0;
+                    break;
+                case 1:
+                    //straight line
+                    shapePattern = 1;
+                    break;
+                case 2:
+                    //rectangle
+                    shapePattern = 2;
+                    break;
+                case 3:
+                    //circle
+                    shapePattern = 3;
+                    break;
+                default:
+                    break;
+            }
         }
-
         $MenuItem.removeClass("menu-open");
     });
 })(window);
