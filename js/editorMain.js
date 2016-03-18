@@ -145,7 +145,7 @@
         function drawStraightLine(toX, toY, contextT) {
             contextT.beginPath();
             contextT.lineCap = "round";
-            contextT.lineWidth = 0;
+            contextT.lineCap = chosenWidth;
             contextT.strokeStyle = $colorItem.css("background-color");
             contextT.moveTo(startX, startY);
             contextT.lineTo(toX, toY);
@@ -188,6 +188,10 @@
                 mouseX = event.clientX - offsetX;
                 mouseY = event.clientY - offsetY;
 
+                //update to tempCanvas at the same time, the function is OK
+                chosenWidth = $chosenSvg.getBoundingClientRect().width;
+                context3.lineWidth = chosenWidth;
+                context.lineWidth = chosenWidth;
                 startX = mouseX;
                 startY = mouseY;
                 context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
@@ -211,10 +215,6 @@
             historyPush();
             mouse.down = false;
         }
-    }
-
-    function getImage(url) {
-
     }
 
     function setDefaultSize(img) {
