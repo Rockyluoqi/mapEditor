@@ -12,8 +12,8 @@
     <script type="text/javascript">
         function cnvs_getCoordinates(e)
         {
-            x=e.clientX-74;
-            y=e.clientY;
+            var x = e.clientX - 74;
+            var y = e.clientY;
             document.getElementById("xycoordinates").innerHTML="Coordinates: (" + x + "," + y + ")";
         }
 
@@ -25,6 +25,7 @@
     <div id="content" onmousemove="cnvs_getCoordinates(event)" onmouseout="cnvs_clearCoordinates()">
         <div class="canvas-wrapper" style = "overflow:auto">
             <canvas id="netherCanvas"></canvas>
+            <canvas id="tempCanvas"></canvas>
             <canvas id="canvas" style="overflow:auto"><p>Your browser doesn't support canvas.</p></canvas>
             <input type="file" accept="image/*" id="fileInput" multiple style="display: none"/>
         </div>

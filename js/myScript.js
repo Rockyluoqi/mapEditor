@@ -2,7 +2,6 @@
  * Created by Luoqi on 3/14/2016.
  * 这里是主Js文件，实现toolbar的动态选择，以及Canvas中的绘图
  * 需要实现的功能单子
- * 1、直线、矩形绘图
  * 2、读图出图网络接口
  * 3、坐标的网络交互
  */
@@ -16,7 +15,6 @@
     var imgScale = 1;
     var widthScale = 1;
     var heightScale = 1;
-    var flag = false;
     /**
      * 0-free line(curve)
      * 1-straight line
@@ -36,19 +34,22 @@
     //canvas part
     var canvas = document.getElementById("canvas");
     var netherCanvas = document.getElementById("netherCanvas"); //底层Canvas
+    var tempCanvas = document.getElementById("tempCanvas");
     var context = null;
     var context2 = null;
+    var context3 = null;
     netherCanvas.setAttribute('zIndex',-1);
 
     setDefaultSize(bg_image);
 
-    var position = {x: curWidth / 2, y: curHeight / 2};
+    var position = {x: tempWidth / 2, y: tempHeight / 2};
     var mouse = {x: 0, y: 0, down: false};
     document.body.classList.add('pointer');
 
     if (canvas.getContext) {
         context = canvas.getContext("2d");
         context2 = netherCanvas.getContext("2d");
+        context3 = tempCanvas.getContext("2d");
 
         resizeImage();
 
@@ -78,16 +79,21 @@
         // 可能不需要 scroll 的偏移，元素的位置区别！！！
         var $colorItem = $(".modal-indicator.colors");
         var $chosenSvg = $(".sizes").find("svg").get(0);              // 选中的画笔
-        var chosenWidth = 0;                                          // 选中的画笔大小
-        var $offest = $(canvas).offset();                             // canvas 偏移值
+        var chosenWidth = 0;                                          // 选中的画笔大小                                          // 选中的画笔大小
+        var $offset = $(canvas).offset();                             // canvas 偏移值
         var docScrollLeft = document.documentElement.scrollLeft;
         var docScrollTop = document.documentElement.scrollTop;
-        var moveLeft = docScrollLeft - $offest.left;                  // 最终偏移x
-        var moveTop = docScrollTop - $offest.top;                     // 最终偏移y
+        var moveLeft = docScrollLeft - $offset.left;                  // 最终偏移x
+        var moveTop = docScrollTop - $offset.top;                     // 最终偏移y
         var thisgl = context.globalCompositeOperation;
 
-        function draw() {
-            if (mouse.down && shapePattern === 0) {
+        var offsetX = $offset.left;
+        var offsetY = $offset.top;
+        var startX;
+        var startY;
+
+        function drawFreeLine() {
+            if (mouse.down) {
                 var d = distance(position, mouse);
                 if (d >= 1) {
                     context.beginPath();
@@ -109,53 +115,99 @@
                     position.y = mouse.y;
                 }
             }
-            if (mouse.down && shapePattern === 1) {
-                var d = distance(position, mouse);
-                context.beginPath();
-                context.lineCap = "round";
-                if (eraserTag === true) {
-                    //实现擦除效果，
-                    context.globalCompositeOperation = "destination-out";
-                    context.strokeStyle = "rgba(0,0,0,1.0)";
-                } else {
-                    context.globalCompositeOperation = thisgl;
-                    context.strokeStyle = $colorItem.css("background-color");
-                }
-                context.lineWidth = chosenWidth;
-                context.moveTo(position.x + moveLeft, position.y + moveTop);
-                context.lineTo(mouse.x + moveLeft, mouse.y + moveTop);
-                context.stroke();
-                context.closePath();
-                position.x = mouse.x;
-                position.y = mouse.y;
-            }
         }
 
-        function drawLine() {
-            if (mouse.down) {
+        /**
+         * The solution is use for reference from markE(http://stackoverflow.com/users/411591/marke)
+         *   You can use a second temporary canvas to let the user drag-draw your line.
 
-            }
+         An outline of how to do it:
+
+         Create a second temporary offscreen canvas which is exactly the same size as the onscreen canvas.
+
+         -On mousedown:
+         Move the temp canvas exactly on top of the regular canvas
+         Save the starting drag XY
+         Set a flag indicating that dragging has started
+
+         -On mousemove:
+         clear the temp canvas
+         on temp canvas: draw a line from the starting drag XY to the current mouse XY
+
+         -On mouseup or mouseout:
+         dragging is over so clear the dragging flag
+         move the temp canvas offscreen
+         on main canvas: draw a line from the starting dragXY to the ending mouse XY
+         *
+         */
+        $("#tempCanvas").css({left: -(window.innerWidth), top: 0});
+
+        function drawStraightLine(toX, toY, contextT) {
+            contextT.beginPath();
+            contextT.lineCap = "round";
+            contextT.lineWidth = 0;
+            contextT.strokeStyle = $colorItem.css("background-color");
+            contextT.moveTo(startX, startY);
+            contextT.lineTo(toX, toY);
+            contextT.stroke();
         }
 
         function mousemove(event) {
             mouse.x = event.clientX;
             mouse.y = event.clientY;
-            draw();
+            if (shapePattern === 0) {
+                drawFreeLine();
+            }
+            if (shapePattern === 1) {
+                event.preventDefault();
+                if (!mouse.down) {
+                    return;
+                }
+                mouseX = event.clientX - offsetX;
+                mouseY = event.clientY - offsetY;
+
+                context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
+                drawStraightLine(mouseX, mouseY, context3);
+            }
         }
 
         function mousedown(event) {
-            mouse.down = true;
-            position.x = event.clientX;
-            position.y = event.clientY;
-            chosenWidth = $chosenSvg.getBoundingClientRect().width;
-            context.beginPath();
-            context.fillStyle = $colorItem.css("background-color"); //合并
-            context.arc(position.x + moveLeft, position.y + moveTop, chosenWidth / 2, 0, 2 * Math.PI);
-            context.fill();
-            context.closePath();
+            if (shapePattern === 0) {
+                mouse.down = true;
+                position.x = event.clientX;
+                position.y = event.clientY;
+                chosenWidth = $chosenSvg.getBoundingClientRect().width;
+                context.beginPath();
+                context.fillStyle = $colorItem.css("background-color"); //合并
+                context.arc(position.x + moveLeft, position.y + moveTop, chosenWidth / 2, 0, 2 * Math.PI);
+                context.fill();
+                context.closePath();
+            }
+            if (shapePattern === 1) {
+                event.preventDefault();
+                mouseX = event.clientX - offsetX;
+                mouseY = event.clientY - offsetY;
+
+                startX = mouseX;
+                startY = mouseY;
+                context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
+                //move temp canvas over main canvas
+                $("#tempCanvas").css({left: 0, top: 0});
+                mouse.down = true;
+            }
         }
 
-        function mouseup() {
+        function mouseup(event) {
+            event.preventDefault();
+            if (!mouse.down) {
+                return;
+            }
+            if (shapePattern === 1) {
+                mouseX = event.clientX - offsetX;
+                mouseY = event.clientY - offsetY;
+                $("#tempCanvas").css({left: -window.innerWidth, top: 0});
+                drawStraightLine(mouseX, mouseY, context);
+            }
             historyPush();
             mouse.down = false;
         }
@@ -177,6 +229,8 @@
         canvas.height = h;
         netherCanvas.width = w;
         netherCanvas.height = h;
+        tempCanvas.width = w;
+        tempCanvas.height = h;
     }
 
     /**
@@ -478,12 +532,6 @@
         fileUpload($fileInput.get(0).files)
     }
 
-    //画线
-    function fakeLineInput(e) {
-        var offset = canvas.offset();
-        endx =
-    }
-
     $subMenuItem.fastClick(function () {
         var that = $(this);
         var $MenuItem = that.parents(".modal-indicator");
@@ -499,7 +547,7 @@
         else if ($MenuItem.hasClass("tools")) {
             console.log("第几个元素：" + that.index());
             var toolsIndex = that.index();
-            if (toolsIndex < 4) {
+            if (toolsIndex < 2) {
                 $MenuItem.children("div:first-child").html(that.html());
             }
             switch (toolsIndex) {
@@ -514,8 +562,9 @@
                     break;
                 case 1:
                     //eraser
-                    //eraserTag = true;
-                    tapClip();
+                    eraserTag = true;
+                    shapePattern = 0;
+                    $(".shapes").children("div:first-child").html(that.html()); //待改进，这里需要更新shape工具栏为曲线？
                     break;
                 case 2:
                     //撤销 undo and redo 还有问题，速度比较慢，在使用了橡皮擦后失效
@@ -540,6 +589,7 @@
             }
         } else if ($MenuItem.hasClass("shapes")) {
             var toolsIndex = that.index();
+            //just update valuable icon
             if (toolsIndex < 4) {
                 $MenuItem.children("div:first-child").html(that.html());
             }
