@@ -28,8 +28,10 @@
     var cStep = -1;
 
     var bg_image = new Image();
-    bg_image.src = "./js/map.jpg";
+    //bg_image.src = 'js/map.jpg';
     var curWidth, curHeight, tempWidth, tempHeight;
+
+    bg_image.src = localStorage["bgUrl"];
 
     //canvas part
     var canvas = document.getElementById("canvas");
@@ -38,13 +40,15 @@
     var context = null;
     var context2 = null;
     var context3 = null;
-    netherCanvas.setAttribute('zIndex',-1);
+    //netherCanvas.setAttribute('zIndex',-1);
 
     setDefaultSize(bg_image);
 
     var position = {x: tempWidth / 2, y: tempHeight / 2};
     var mouse = {x: 0, y: 0, down: false};
     document.body.classList.add('pointer');
+
+
 
     if (canvas.getContext) {
         context = canvas.getContext("2d");
@@ -245,7 +249,6 @@
             bg_image.onload = function () {
                 context2.drawImage(bg_image, 0, 0, bg_image.width, bg_image.height, 0, 0, tempWidth, tempHeight);
             }
-            return true;
         } else if (curHeight < window.innerHeight && curWidth > window.innerWidth) {
             imgScale = window.innerWidth / curWidth;
             tempWidth = curWidth;
@@ -265,43 +268,43 @@
                 bg_image.onload = function () {
                     context2.drawImage(bg_image, 0, 0, bg_image.width, bg_image.height, 0, 0, tempWidth, tempHeight);
                 }
-            } else if (heightScale < widthScale) {
-                imgScale = 1 / widthScale;
-                tempWidth = window.innerWidth;
-                tempHeight = curHeight * imgScale;
-                bg_image.onload = function () {
-                    context2.drawImage(bg_image, 0, 0, bg_image.width, bg_image.height, 0, 0, tempWidth, tempHeight);
-                }
+            }
+                //    } else if (heightScale < widthScale) {
+                //        imgScale = 1 / widthScale;
+                //        tempWidth = window.innerWidth;
+                //        tempHeight = curHeight * imgScale;
+                //        bg_image.onload = function () {
+                //            context2.drawImage(bg_image, 0, 0, bg_image.width, bg_image.height, 0, 0, tempWidth, tempHeight);
+                //        }
+                //    } else {
+                //        imgScale = 1 / widthScale;
+                //        tempWidth = curWidth * imgScale;
+                //        tempHeight = curHeight * imgScale;
+                //        bg_image.onload = function () {
+                //            context2.drawImage(bg_image, 0, 0, bg_image.width, bg_image.height, 0, 0, tempWidth, tempHeight);
+                //        }
+                //    }
+                //} else {
+                //    heightScale = window.innerHeight / curHeight;
+                //    widthScale = window.innerWidth / curWidth;
+                //
+                //    if (heightScale < widthScale) {
+                //        tempHeight = window.innerHeight;
+                //        tempWidth = curWidth * heightScale;
+                //        bg_image.onload = function () {
+                //            context2.drawImage(bg_image, 0, 0, bg_image.width, bg_image.height, 0, 0, tempWidth, tempHeight);
+                //        }
+                //    } else if (heightScale > widthScale) {
+                //        tempWidth = window.innerWidth;
+                //        tempHeight = curHeight * widthScale;
+                //        bg_image.onload = function () {
+                //            context2.drawImage(bg_image, 0, 0, bg_image.width, bg_image.height, 0, 0, tempWidth, tempHeight);
+                //        }
             } else {
-                imgScale = 1 / widthScale;
-                tempWidth = curWidth * imgScale;
-                tempHeight = curHeight * imgScale;
                 bg_image.onload = function () {
                     context2.drawImage(bg_image, 0, 0, bg_image.width, bg_image.height, 0, 0, tempWidth, tempHeight);
                 }
             }
-        } else {
-            heightScale = window.innerHeight / curHeight;
-            widthScale = window.innerWidth / curWidth;
-
-            if (heightScale < widthScale) {
-                tempHeight = window.innerHeight;
-                tempWidth = curWidth * heightScale;
-                bg_image.onload = function () {
-                    context2.drawImage(bg_image, 0, 0, bg_image.width, bg_image.height, 0, 0, tempWidth, tempHeight);
-                }
-            } else if (heightScale > widthScale) {
-                tempWidth = window.innerWidth;
-                tempHeight = curHeight * widthScale;
-                bg_image.onload = function () {
-                    context2.drawImage(bg_image, 0, 0, bg_image.width, bg_image.height, 0, 0, tempWidth, tempHeight);
-                }
-            } else {
-                bg_image.onload = function () {
-                    context2.drawImage(bg_image, 0, 0, bg_image.width, bg_image.height, 0, 0, tempWidth, tempHeight);
-                }
-            }
-        }
     }
 
     //put current canvas to cache
@@ -531,6 +534,7 @@
         console.log($fileInput.files);
         fileUpload($fileInput.get(0).files)
     }
+
 
     $subMenuItem.fastClick(function () {
         var that = $(this);

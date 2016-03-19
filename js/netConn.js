@@ -4,16 +4,16 @@
  */
 ;(function(window) {
 
-    var coord = {
-        x:x,
-        y:y
-    }
-
-    function getImages(){
-
-    }
-
-    function sendCoords(coordArray) {
-
-    }
+    //var coord = {
+    //    x:0,
+    //    y:0
+    //}
+    //
+    //function getImage(imageArray) {
+    //
+    //}
+    //
+    //function sendCoords(coordArray) {
+    //
+    //}
 })(window);

@@ -3876,14 +3876,16 @@ function UniteGalleryMain(){
 			SLIDER_ACTION_END: "slider_action_end",
 			ITEM_IMAGE_UPDATED: "item_image_updated",
 			GALLERY_KEYPRESS: "gallery_keypress",
-			GALLERY_BEFORE_REQUEST_ITEMS: "gallery_before_request_items"	//before ajax load items
+			GALLERY_BEFORE_REQUEST_ITEMS: "gallery_before_request_items",	//before ajax load items
+			ENTER_EDIT: "enter_edit"
+
 	};
 	
 	
 	//set the default gallery options
 	var g_options = {				
-			gallery_width:900,							//gallery width		
-			gallery_height:500,							//gallery height
+			gallery_width:window.innerWidth,							//gallery width
+			gallery_height:window.innerHeight,							//gallery height
 			
 			gallery_min_width: 150,						//gallery minimal width when resizing
 			gallery_min_height: 100,					//gallery minimal height when resizing
@@ -3895,7 +3897,7 @@ function UniteGalleryMain(){
 														//minimal - only image nabours will be loaded each time.
 														//visible - visible thumbs images will be loaded each time.
 														//all - load all the images first time.
-			
+
 			gallery_autoplay:false,						//true / false - begin slideshow autoplay on start
 			gallery_play_interval: 3000,				//play interval of the slideshow
 			gallery_pause_on_mouseover: true,			//true,false - pause on mouseover when playing slideshow true/false
@@ -4846,6 +4848,9 @@ function UniteGalleryMain(){
 		
 	}
 
+	function onEditChange(event) {
+
+	}
 	
 	/**
 	 * on strip move event
@@ -5406,10 +5411,7 @@ function UniteGalleryMain(){
 		objWrapper.removeClass("ug-under-780");
 		objWrapper.removeClass("ug-under-960");
 	}
-	
-	
-	
-	
+
 	/**
 	 * retrigger event from another objects
 	 * the second parameter will be the second object
@@ -8983,8 +8985,8 @@ function UGSlider(){
 	var g_objTouchSlider, g_objZoomSlider, g_objZoomPanel, g_objButtonPlay = null, g_objButtonFullscreen = null, g_objBullets = null;
 	var g_objVideoPlayer = new UGVideoPlayer(), g_optionsPrefix;
 	var g_functions = new UGFunctions(), g_objProgress = null, g_objTextPanel = null;
-	
-	
+
+
 	this.events = {		
 		ITEM_CHANGED: "item_changed",				//on item changed
 		BEFORE_SWITCH_SLIDES: "before_switch",		//before slides switching
@@ -11742,7 +11744,6 @@ function UGTextPanel(){
 		g_objTextWrapper = g_objPanel.children(".ug-textpanel-textwrapper");
 		
 		setCss();
-		
 	}
 	
 	
@@ -13692,7 +13693,7 @@ function UGThumbsGeneral(){
 					 objThumbWrapper.append("<div class='ug-thumb-border-overlay'></div>");
 				 
 				 if(g_temp.isEffectOverlay)
-					 objThumbWrapper.append("<div class='ug-thumb-overlay'></div>");
+					 objThumbWrapper.append("<div class='ug-thumb-overlay'><div class=''></div>");
 				 
 				 g_objParent.append(objThumbWrapper);
 

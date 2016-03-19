@@ -22,7 +22,7 @@ function UGTheme_default(){
 			theme_load_panel:true,					//this option for debugging only
 				
 			theme_enable_fullscreen_button: true,	//show, hide the theme fullscreen button. The position in the theme is constant
-			theme_enable_play_button: true,			//show, hide the theme play button. The position in the theme is constant
+			theme_enable_play_button: false,			//show, hide the theme play button. The position in the theme is constant
 			theme_enable_hidepanel_button: true,	//show, hide the hidepanel button
 			theme_enable_text_panel: true,			//enable the panel text panel. 
 			
