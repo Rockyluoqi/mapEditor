@@ -15,7 +15,7 @@
     var imgScale = 1;
     var widthScale = 1;
     var heightScale = 1;
-    var mouseX,mouseY;
+    var mouseX, mouseY;
     /**
      * 0-free line(curve)
      * 1-straight line
@@ -48,7 +48,6 @@
     var position = {x: tempWidth / 2, y: tempHeight / 2};
     var mouse = {x: 0, y: 0, down: false};
     document.body.classList.add('pointer');
-
 
 
     if (canvas.getContext) {
@@ -103,7 +102,7 @@
                 if (d >= 1) {
                     context.beginPath();
                     context.lineCap = "round";
-                    if(eraserTag === true) {
+                    if (eraserTag === true) {
                         //实现擦除效果，
                         context.globalCompositeOperation = "destination-out";
                         context.strokeStyle = "rgba(0,0,0,1.0)";
@@ -167,25 +166,48 @@
             contextT.stroke();
         }
 
-        function drawRectangle(toX,toY,contextT) {
+        function drawRectangle(toX, toY, contextT) {
             contextT.beginPath();
             context.lineCap = "round";
             contextT.strokeStyle = $colorItem.css("background-color");
             //is fill color rect
             //contextT.fillRect(startX,startY,toX-startX,toY-startY);
-            contextT.strokeRect(startX,startY,toX-startX,toY-startY);
+            contextT.strokeRect(startX, startY, toX - startX, toY - startY);
         }
+
+        //点对象包括了坐标和范围，这是用来自动汇合所用
+        var point = {
+            x: 0,
+            y: 0,
+            scope: 1,
+            closed2: false
+        };
+
+        var num_of_click = 0;
 
         //var points = [];
         var needFirstPoint = true;
-        function drawNextLine(toX,toY,contextT) {
-            if(needFirstPoint) {
+
+        function drawNextLine(toX, toY, contextT) {
+            //console.log("Start point: "+point.x +" "+point.y);
+            //console.log(needFirstPoint);
+            if (needFirstPoint) {
                 contextT.beginPath();
                 contextT.strokeStyle = $colorItem.css("background-color");
-                contextT.moveTo(startX,startY);
+                contextT.moveTo(startX, startY);
+                contextT.lineTo(toX, toY);
+                contextT.stroke();
+                point.x = startX;
+                point.y = startY;
                 needFirstPoint = false;
             } else {
-                contextT.lineTo(toX,toY);
+                contextT.lineTo(toX, toY);
+                if (point.closed2 === true) {
+                    //console.log("point ready to close");
+                    contextT.closePath();
+                    contextT.stroke();
+                    needFirstPoint = true;
+                }
                 contextT.stroke();
             }
         }
@@ -217,7 +239,7 @@
                 $("#tempCanvas").css({left: 0, top: 0});
                 mouse.down = true;
             }
-            if(shapePattern === 2) {
+            if (shapePattern === 2) {
                 event.preventDefault();
                 mouseX = event.clientX - offsetX;
                 mouseY = event.clientY - offsetY;
@@ -230,11 +252,23 @@
                 $("#tempCanvas").css({left: 0, top: 0});
                 mouse.down = true;
             }
-            if(shapePattern === 3) {
 
+            /**
+             * 算法思考：
+             * 1、如何让多变形自动闭合，是在让最后一条线碰到初始点一定范围时直接连接闭合
+             * 2、闭合后让draw停止
+             * 3.21 20:18 solved
+             * 解决思路就是判断当前鼠标坐标在初始点坐标附近时设置为可以闭合，再次点击将会闭合
+             * 判断距离以及needFirst的控制完成了最后的工作
+             * Start pot and end pot is joined.Just judge the distance closing to start pot then click you can make the
+             * start and end closed.Then you can draw a new polygon.
+             * Something better will be done later.
+             * Thinking...
+             */
+            if (shapePattern === 3) {
                 mouse.down = true;
             }
-            if(shapePattern === 4) {
+            if (shapePattern === 4) {
                 event.preventDefault();
                 mouseX = event.clientX - offsetX;
                 mouseY = event.clientY - offsetY;
@@ -265,17 +299,17 @@
                 context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
                 drawStraightLine(mouseX, mouseY, context3);
             }
-            if(shapePattern === 2) {
+            if (shapePattern === 2) {
                 event.preventDefault();
                 if (!mouse.down) {
                     return;
                 }
                 mouseX = event.clientX - offsetX;
                 mouseY = event.clientY - offsetY;
-                context3.clearRect(0,0,tempCanvas.width,tempCanvas.height);
-                drawRectangle(mouseX,mouseY,context3);
+                context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
+                drawRectangle(mouseX, mouseY, context3);
             }
-            if(shapePattern === 3) {
+            if (shapePattern === 3) {
                 event.preventDefault();
                 mouseX = event.clientX - offsetX;
                 mouseY = event.clientY - offsetY;
@@ -284,17 +318,30 @@
                 context.lineWidth = chosenWidth;
                 context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
                 $("#tempCanvas").css({left: 0, top: 0});
-                drawStraightLine(mouseX,mouseY,context3);
+                //console.log(mouseX + " "+ mouseY);
+                if (!needFirstPoint) {
+                    mouse.x = mouseX;
+                    mouse.y = mouseY;
+                    drawStraightLine(mouseX, mouseY, context3);
+                }
+
+                //console.log(num_of_click);
+                if (distance(point, mouse) < 3 && num_of_click > 3) {
+                    //console.log("closed is true");
+                    point.closed2 = true;
+                } else {
+                    point.closed2 = false;
+                }
             }
-            if(shapePattern === 4) {
+            if (shapePattern === 4) {
                 event.preventDefault();
                 if (!mouse.down) {
                     return;
                 }
                 mouseX = event.clientX - offsetX;
                 mouseY = event.clientY - offsetY;
-                context3.clearRect(0,0,tempCanvas.width,tempCanvas.height);
-                drawStraightLine(mouseX,mouseY,context3);
+                context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
+                drawStraightLine(mouseX, mouseY, context3);
             }
         }
 
@@ -309,30 +356,34 @@
                 $("#tempCanvas").css({left: -window.innerWidth, top: 0});
                 drawStraightLine(mouseX, mouseY, context);
             }
-            if(shapePattern === 2) {
-                mouseX = event.clientX -offsetX;
+            if (shapePattern === 2) {
+                mouseX = event.clientX - offsetX;
                 mouseY = event.clientY - offsetY;
                 $("#tempCanvas").css({left: -window.innerWidth, top: 0});
-                drawRectangle(mouseX,mouseY,context);
+                drawRectangle(mouseX, mouseY, context);
             }
-            if(shapePattern === 3) {
+            if (shapePattern === 3) {
+                num_of_click += 1;
                 mouseX = event.clientX - offsetX;
                 mouseY = event.clientY - offsetY;
                 $("#tempCanvas").css({left: -window.innerWidth, top: 0});
                 //set color draw on canvas
                 context.strokeStyle = $colorItem.css("background-color");
-                drawNextLine(mouseX,mouseY,context);
                 //update the end coords
                 startX = mouseX;
                 startY = mouseY;
-                //drawLinkedLine(mouseX,mouseY,context3);
+                if (needFirstPoint) {
+                    point.x = startX;
+                    point.y = startY;
+                }
+                drawNextLine(mouseX, mouseY, context);
             }
-            if(shapePattern === 4) {
+            if (shapePattern === 4) {
                 mouseX = event.clientX - offsetX;
                 mouseY = event.clientY - offsetY;
                 $("#tempCanvas").css({left: -window.innerWidth, top: 0});
                 context.strokeStyle = $colorItem.css("background-color");
-                drawNextLine(mouseX,mouseY,context);
+                drawNextLine(mouseX, mouseY, context);
                 startX = mouseX;
                 startY = mouseY;
             }
@@ -389,60 +440,62 @@
                     context2.drawImage(bg_image, 0, 0, bg_image.width, bg_image.height, 0, 0, tempWidth, tempHeight);
                 }
             }
-                //    } else if (heightScale < widthScale) {
-                //        imgScale = 1 / widthScale;
-                //        tempWidth = window.innerWidth;
-                //        tempHeight = curHeight * imgScale;
-                //        bg_image.onload = function () {
-                //            context2.drawImage(bg_image, 0, 0, bg_image.width, bg_image.height, 0, 0, tempWidth, tempHeight);
-                //        }
-                //    } else {
-                //        imgScale = 1 / widthScale;
-                //        tempWidth = curWidth * imgScale;
-                //        tempHeight = curHeight * imgScale;
-                //        bg_image.onload = function () {
-                //            context2.drawImage(bg_image, 0, 0, bg_image.width, bg_image.height, 0, 0, tempWidth, tempHeight);
-                //        }
-                //    }
-                //} else {
-                //    heightScale = window.innerHeight / curHeight;
-                //    widthScale = window.innerWidth / curWidth;
-                //
-                //    if (heightScale < widthScale) {
-                //        tempHeight = window.innerHeight;
-                //        tempWidth = curWidth * heightScale;
-                //        bg_image.onload = function () {
-                //            context2.drawImage(bg_image, 0, 0, bg_image.width, bg_image.height, 0, 0, tempWidth, tempHeight);
-                //        }
-                //    } else if (heightScale > widthScale) {
-                //        tempWidth = window.innerWidth;
-                //        tempHeight = curHeight * widthScale;
-                //        bg_image.onload = function () {
-                //            context2.drawImage(bg_image, 0, 0, bg_image.width, bg_image.height, 0, 0, tempWidth, tempHeight);
-                //        }
-            } else {
-                bg_image.onload = function () {
-                    context2.drawImage(bg_image, 0, 0, bg_image.width, bg_image.height, 0, 0, tempWidth, tempHeight);
-                }
+            //    } else if (heightScale < widthScale) {
+            //        imgScale = 1 / widthScale;
+            //        tempWidth = window.innerWidth;
+            //        tempHeight = curHeight * imgScale;
+            //        bg_image.onload = function () {
+            //            context2.drawImage(bg_image, 0, 0, bg_image.width, bg_image.height, 0, 0, tempWidth, tempHeight);
+            //        }
+            //    } else {
+            //        imgScale = 1 / widthScale;
+            //        tempWidth = curWidth * imgScale;
+            //        tempHeight = curHeight * imgScale;
+            //        bg_image.onload = function () {
+            //            context2.drawImage(bg_image, 0, 0, bg_image.width, bg_image.height, 0, 0, tempWidth, tempHeight);
+            //        }
+            //    }
+            //} else {
+            //    heightScale = window.innerHeight / curHeight;
+            //    widthScale = window.innerWidth / curWidth;
+            //
+            //    if (heightScale < widthScale) {
+            //        tempHeight = window.innerHeight;
+            //        tempWidth = curWidth * heightScale;
+            //        bg_image.onload = function () {
+            //            context2.drawImage(bg_image, 0, 0, bg_image.width, bg_image.height, 0, 0, tempWidth, tempHeight);
+            //        }
+            //    } else if (heightScale > widthScale) {
+            //        tempWidth = window.innerWidth;
+            //        tempHeight = curHeight * widthScale;
+            //        bg_image.onload = function () {
+            //            context2.drawImage(bg_image, 0, 0, bg_image.width, bg_image.height, 0, 0, tempWidth, tempHeight);
+            //        }
+        } else {
+            bg_image.onload = function () {
+                context2.drawImage(bg_image, 0, 0, bg_image.width, bg_image.height, 0, 0, tempWidth, tempHeight);
             }
+        }
     }
 
     //put current canvas to cache
-    function  historyPush() {
+    function historyPush() {
         cStep++;
-        if(cStep < history.length) {
+        if (cStep < history.length) {
             history.length = cStep;
         }
         history.push($("#canvas").get(0).toDataURL());
     }
 
     function undo() {
-        if(cStep >= 0 ) {
+        if (cStep >= 0) {
             clearCanvas();
             cStep--;
             var tempImage = new Image();
             tempImage.src = history[cStep];
-            tempImage.onload = function() {context.drawImage(tempImage,0,0);};
+            tempImage.onload = function () {
+                context.drawImage(tempImage, 0, 0);
+            };
         }
     }
 
@@ -459,8 +512,8 @@
     }
 
     function clearCanvas() {
-        context.clearRect(0,0,canvas.width,canvas.height);
-        context3.clearRect(0,0,tempCanvas.width,tempCanvas.height);
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
     }
 
     fileInput.addEventListener('change', onFileInputChange, false);
