@@ -15,6 +15,7 @@
     var imgScale = 1;
     var widthScale = 1;
     var heightScale = 1;
+    var mouseX,mouseY;
     /**
      * 0-free line(curve)
      * 1-straight line
@@ -149,29 +150,43 @@
         function drawStraightLine(toX, toY, contextT) {
             contextT.beginPath();
             contextT.lineCap = "round";
-            contextT.lineCap = chosenWidth;
+            //contextT.lineCap = chosenWidth;
             contextT.strokeStyle = $colorItem.css("background-color");
             contextT.moveTo(startX, startY);
             contextT.lineTo(toX, toY);
             contextT.stroke();
         }
 
-        function mousemove(event) {
-            mouse.x = event.clientX;
-            mouse.y = event.clientY;
-            if (shapePattern === 0) {
-                drawFreeLine();
-            }
-            if (shapePattern === 1) {
-                event.preventDefault();
-                if (!mouse.down) {
-                    return;
-                }
-                mouseX = event.clientX - offsetX;
-                mouseY = event.clientY - offsetY;
+        function drawLinkedLine(toX, toY, contextT) {
+            contextT.beginPath();
+            contextT.lineCap = "round";
+            //contextT.lineCap = chosenWidth;
+            contextT.strokeStyle = $colorItem.css("background-color");
+            contextT.moveTo(startX, startY);
+            contextT.lineTo(toX, toY);
+            contextT.stroke();
+        }
 
-                context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
-                drawStraightLine(mouseX, mouseY, context3);
+        function drawRectangle(toX,toY,contextT) {
+            contextT.beginPath();
+            context.lineCap = "round";
+            contextT.strokeStyle = $colorItem.css("background-color");
+            //is fill color rect
+            //contextT.fillRect(startX,startY,toX-startX,toY-startY);
+            contextT.strokeRect(startX,startY,toX-startX,toY-startY);
+        }
+
+        //var points = [];
+        var needFirstPoint = true;
+        function drawNextLine(toX,toY,contextT) {
+            if(needFirstPoint) {
+                contextT.beginPath();
+                contextT.strokeStyle = $colorItem.css("background-color");
+                contextT.moveTo(startX,startY);
+                needFirstPoint = false;
+            } else {
+                contextT.lineTo(toX,toY);
+                contextT.stroke();
             }
         }
 
@@ -191,7 +206,6 @@
                 event.preventDefault();
                 mouseX = event.clientX - offsetX;
                 mouseY = event.clientY - offsetY;
-
                 //update to tempCanvas at the same time, the function is OK
                 chosenWidth = $chosenSvg.getBoundingClientRect().width;
                 context3.lineWidth = chosenWidth;
@@ -202,6 +216,85 @@
                 //move temp canvas over main canvas
                 $("#tempCanvas").css({left: 0, top: 0});
                 mouse.down = true;
+            }
+            if(shapePattern === 2) {
+                event.preventDefault();
+                mouseX = event.clientX - offsetX;
+                mouseY = event.clientY - offsetY;
+                chosenWidth = $chosenSvg.getBoundingClientRect().width;
+                context3.lineWidth = chosenWidth;
+                context.lineWidth = chosenWidth;
+                startX = mouseX;
+                startY = mouseY;
+                context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
+                $("#tempCanvas").css({left: 0, top: 0});
+                mouse.down = true;
+            }
+            if(shapePattern === 3) {
+
+                mouse.down = true;
+            }
+            if(shapePattern === 4) {
+                event.preventDefault();
+                mouseX = event.clientX - offsetX;
+                mouseY = event.clientY - offsetY;
+                chosenWidth = $chosenSvg.getBoundingClientRect().width;
+                context3.lineWidth = chosenWidth;
+                context.lineWidth = chosenWidth;
+                startX = mouseX;
+                startY = mouseY;
+                context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
+                $("#tempCanvas").css({left: 0, top: 0});
+                mouse.down = true;
+            }
+        }
+
+        function mousemove(event) {
+            mouse.x = event.clientX;
+            mouse.y = event.clientY;
+            if (shapePattern === 0) {
+                drawFreeLine();
+            }
+            if (shapePattern === 1) {
+                event.preventDefault();
+                if (!mouse.down) {
+                    return;
+                }
+                mouseX = event.clientX - offsetX;
+                mouseY = event.clientY - offsetY;
+                context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
+                drawStraightLine(mouseX, mouseY, context3);
+            }
+            if(shapePattern === 2) {
+                event.preventDefault();
+                if (!mouse.down) {
+                    return;
+                }
+                mouseX = event.clientX - offsetX;
+                mouseY = event.clientY - offsetY;
+                context3.clearRect(0,0,tempCanvas.width,tempCanvas.height);
+                drawRectangle(mouseX,mouseY,context3);
+            }
+            if(shapePattern === 3) {
+                event.preventDefault();
+                mouseX = event.clientX - offsetX;
+                mouseY = event.clientY - offsetY;
+                chosenWidth = $chosenSvg.getBoundingClientRect().width;
+                context3.lineWidth = chosenWidth;
+                context.lineWidth = chosenWidth;
+                context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
+                $("#tempCanvas").css({left: 0, top: 0});
+                drawStraightLine(mouseX,mouseY,context3);
+            }
+            if(shapePattern === 4) {
+                event.preventDefault();
+                if (!mouse.down) {
+                    return;
+                }
+                mouseX = event.clientX - offsetX;
+                mouseY = event.clientY - offsetY;
+                context3.clearRect(0,0,tempCanvas.width,tempCanvas.height);
+                drawStraightLine(mouseX,mouseY,context3);
             }
         }
 
@@ -215,6 +308,33 @@
                 mouseY = event.clientY - offsetY;
                 $("#tempCanvas").css({left: -window.innerWidth, top: 0});
                 drawStraightLine(mouseX, mouseY, context);
+            }
+            if(shapePattern === 2) {
+                mouseX = event.clientX -offsetX;
+                mouseY = event.clientY - offsetY;
+                $("#tempCanvas").css({left: -window.innerWidth, top: 0});
+                drawRectangle(mouseX,mouseY,context);
+            }
+            if(shapePattern === 3) {
+                mouseX = event.clientX - offsetX;
+                mouseY = event.clientY - offsetY;
+                $("#tempCanvas").css({left: -window.innerWidth, top: 0});
+                //set color draw on canvas
+                context.strokeStyle = $colorItem.css("background-color");
+                drawNextLine(mouseX,mouseY,context);
+                //update the end coords
+                startX = mouseX;
+                startY = mouseY;
+                //drawLinkedLine(mouseX,mouseY,context3);
+            }
+            if(shapePattern === 4) {
+                mouseX = event.clientX - offsetX;
+                mouseY = event.clientY - offsetY;
+                $("#tempCanvas").css({left: -window.innerWidth, top: 0});
+                context.strokeStyle = $colorItem.css("background-color");
+                drawNextLine(mouseX,mouseY,context);
+                startX = mouseX;
+                startY = mouseY;
             }
             historyPush();
             mouse.down = false;
@@ -340,6 +460,7 @@
 
     function clearCanvas() {
         context.clearRect(0,0,canvas.width,canvas.height);
+        context3.clearRect(0,0,tempCanvas.width,tempCanvas.height);
     }
 
     fileInput.addEventListener('change', onFileInputChange, false);
@@ -551,7 +672,7 @@
         else if ($MenuItem.hasClass("tools")) {
             console.log("第几个元素：" + that.index());
             var toolsIndex = that.index();
-            if (toolsIndex < 2) {
+            if (toolsIndex < 6) {
                 $MenuItem.children("div:first-child").html(that.html());
             }
             switch (toolsIndex) {
@@ -594,7 +715,7 @@
         } else if ($MenuItem.hasClass("shapes")) {
             var toolsIndex = that.index();
             //just update valuable icon
-            if (toolsIndex < 4) {
+            if (toolsIndex < 6) {
                 $MenuItem.children("div:first-child").html(that.html());
             }
             switch (toolsIndex) {
@@ -611,8 +732,17 @@
                     shapePattern = 2;
                     break;
                 case 3:
-                    //circle
+                    //polygon
                     shapePattern = 3;
+                    break;
+                case 4:
+                    //broken line 折线
+                    console.log("broken line is selected");
+                    shapePattern = 4;
+                    break;
+                case 5:
+                    //circle
+                    shapePattern = 5;
                     break;
                 default:
                     break;
