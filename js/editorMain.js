@@ -183,8 +183,10 @@
             closed2: false
         };
 
+        /**
+         * If clicks are less than 4, you can't draw polygon
+         */
         var num_of_click = 0;
-
         //var points = [];
         var needFirstPoint = true;
 
@@ -212,6 +214,36 @@
             }
         }
 
+        var brokenFirstFlag = true;
+        function drawBrokenLine(toX, toY, contextT) {
+            if (brokenFirstFlag) {
+                contextT.beginPath();
+                contextT.strokeStyle = $colorItem.css("background-color");
+                contextT.moveTo(startX, startY);
+                contextT.lineTo(toX, toY);
+                contextT.stroke();
+                brokenFirstFlag = false;
+            } else {
+                contextT.lineTo(toX, toY);
+                contextT.stroke();
+            }
+        }
+
+        /**
+         * Let's have a fun with circle.
+         */
+        var r;
+        function drawCircle(radius,contextT) {
+            contextT.beginPath();
+            contextT.strokeStyle = $colorItem.css("background-color");
+            contextT.arc(startX,startY,radius,0,2*Math.PI);
+            contextT.stroke();
+        }
+
+        /**
+         * I know the code in if statement is redundant.What my think is reduce coupling.Is it better? Sense of trap.
+         * OK...I will optimize it later.
+         */
         function mousedown(event) {
             if (shapePattern === 0) {
                 mouse.down = true;
@@ -253,19 +285,21 @@
                 mouse.down = true;
             }
 
-            /**
-             * 算法思考：
-             * 1、如何让多变形自动闭合，是在让最后一条线碰到初始点一定范围时直接连接闭合
-             * 2、闭合后让draw停止
-             * 3.21 20:18 solved
-             * 解决思路就是判断当前鼠标坐标在初始点坐标附近时设置为可以闭合，再次点击将会闭合
-             * 判断距离以及needFirst的控制完成了最后的工作
-             * Start pot and end pot is joined.Just judge the distance closing to start pot then click you can make the
-             * start and end closed.Then you can draw a new polygon.
-             * Something better will be done later.
-             * Thinking...
-             */
             if (shapePattern === 3) {
+
+                /**
+                 * 算法思考：Alg thinking
+                 * 1、如何让多变形自动闭合，是在让最后一条线碰到初始点一定范围时直接连接闭合
+                 * 2、闭合后让draw停止
+                 * 3.21 20:18 solved
+                 * 解决思路就是判断当前鼠标坐标在初始点坐标附近时设置为可以闭合，再次点击将会闭合
+                 * 判断距离以及needFirst的控制完成了最后的工作
+                 * Start pot and end pot is joined.Just judge the distance closing to start pot then click you can make the
+                 * start and end closed.Then you can draw a new polygon.
+                 * Something better will be done later.
+                 * Thinking...
+                 */
+
                 mouse.down = true;
             }
             if (shapePattern === 4) {
@@ -277,6 +311,21 @@
                 context.lineWidth = chosenWidth;
                 startX = mouseX;
                 startY = mouseY;
+                context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
+                $("#tempCanvas").css({left: 0, top: 0});
+                mouse.down = true;
+            }
+            if(shapePattern === 5) {
+                event.preventDefault();
+                mouseX = event.clientX - offsetX;
+                mouseY = event.clientY - offsetY;
+                chosenWidth = $chosenSvg.getBoundingClientRect().width;
+                context3.lineWidth = chosenWidth;
+                context.lineWidth = chosenWidth;
+                startX = mouseX;
+                startY = mouseY;
+                point.x = startX;
+                point.y = startY;
                 context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
                 $("#tempCanvas").css({left: 0, top: 0});
                 mouse.down = true;
@@ -341,7 +390,21 @@
                 mouseX = event.clientX - offsetX;
                 mouseY = event.clientY - offsetY;
                 context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
+                //console.log(mouseX + " "+ mouseY);
                 drawStraightLine(mouseX, mouseY, context3);
+            }
+            if(shapePattern === 5) {
+                event.preventDefault();
+                if (!mouse.down) {
+                    return;
+                }
+                mouseX = event.clientX - offsetX;
+                mouseY = event.clientY - offsetY;
+                mouse.x = mouseX;
+                mouse.y = mouseY;
+                context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
+                r = distance(point,mouse);
+                drawCircle(r,context3);
             }
         }
 
@@ -382,10 +445,18 @@
                 mouseX = event.clientX - offsetX;
                 mouseY = event.clientY - offsetY;
                 $("#tempCanvas").css({left: -window.innerWidth, top: 0});
+                //set color draw on canvas
                 context.strokeStyle = $colorItem.css("background-color");
-                drawNextLine(mouseX, mouseY, context);
-                startX = mouseX;
-                startY = mouseY;
+                //update the end coords
+                drawBrokenLine(mouseX, mouseY, context);
+                brokenFirstFlag = false;
+            }
+            if(shapePattern === 5) {
+                mouseX = event.clientX - offsetX;
+                mouseY = event.clientY - offsetY;
+                $("#tempCanvas").css({left: -window.innerWidth, top: 0});
+                context.strokeStyle = $colorItem.css("background-color");
+                drawCircle(r,context);
             }
             historyPush();
             mouse.down = false;
