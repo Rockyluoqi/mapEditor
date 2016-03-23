@@ -146,7 +146,44 @@
          */
         $("#tempCanvas").css({left: -(window.innerWidth), top: 0});
 
-        function drawStraightLine(toX, toY, contextT) {
+        var lines = [];
+        var rectangles = [];
+        var polygons = [];
+        var circles = [];
+        var obstacles = {
+            "lines":lines,
+            "rectangles":rectangles,
+            "polygons":polygons,
+            "circles":circles
+        }
+
+        /**
+         *
+         * @param toX
+         * @param toY
+         * @param contextT
+         * @param index  如果是1则是真是画线，是0则是虚拟画线，不存储数据，下面的用法相同
+         */
+        function drawStraightLine(toX, toY, contextT,index) {
+
+            if(index === 1) {
+                var startPot = {"x": 0, "y": 0};
+                var endPot = {"x": 0, "y": 0};
+                var line = {
+                    "start": startPot,
+                    "end": endPot
+                };
+
+                startPot.x = startX;
+                startPot.y = startY;
+                endPot.x = toX;
+                endPot.y = toY;
+
+                line.start = startPot;
+                line.end = endPot;
+                lines.push(line);
+            }
+
             contextT.beginPath();
             contextT.lineCap = "round";
             //contextT.lineCap = chosenWidth;
@@ -166,7 +203,27 @@
             contextT.stroke();
         }
 
-        function drawRectangle(toX, toY, contextT) {
+        function drawRectangle(toX, toY, contextT,index) {
+
+            if(index === 1) {
+                var startPot = {"x": 0, "y": 0};
+                var endPot = {"x": 0, "y": 0};
+                var rectangle = {
+                    "start": startPot,
+                    "end": endPot
+                };
+
+                startPot.x = startX;
+                startPot.y = startY;
+                endPot.x = toX;
+                endPot.y = toY;
+
+                rectangle.start = startPot;
+                rectangle.end = endPot;
+                rectangles.push(rectangle);
+            }
+
+            //draw
             contextT.beginPath();
             context.lineCap = "round";
             contextT.strokeStyle = $colorItem.css("background-color");
@@ -190,7 +247,14 @@
         //var points = [];
         var needFirstPoint = true;
 
+        var polygon = [];
+
         function drawNextLine(toX, toY, contextT) {
+            var pot = {"x": 0, "y": 0};
+            pot.x = startX;
+            pot.y = startY;
+            polygon.push(pot);
+
             //console.log("Start point: "+point.x +" "+point.y);
             //console.log(needFirstPoint);
             if (needFirstPoint) {
@@ -209,6 +273,32 @@
                     contextT.closePath();
                     contextT.stroke();
                     needFirstPoint = true;
+
+                    //delete the last pot, because it's redundant...oPs
+                    polygon.pop();
+                    //new array to store polygon each pot value
+                    var temppolygon = new Array();
+                    for(var i = 0;i < polygon.length; i++) {
+                        temppolygon.push(polygon[i]);
+                    }
+
+                    //clear polygon
+                    polygon.splice(0,polygon.length);
+
+                    polygons.push(temppolygon);
+
+                    /**
+                     * Test
+                     * console.log("polygons :"+polygons.length);
+
+                       for(var i = 0;i<polygons.length;i++) {
+                            var poly = polygons[i];
+                            for (var j = 0; j < poly.length; j++) {
+                                console.log(poly[j].x + " " + poly[j].y);
+                                //console.log(polygon[i].x + " " + polygon[i].end.y);
+                            }
+                        }
+                     */
                 }
                 contextT.stroke();
             }
@@ -233,11 +323,41 @@
          * Let's have a fun with circle.
          */
         var r;
-        function drawCircle(radius,contextT) {
+        function drawCircle(radius,contextT,index) {
+            if(index === 1) {
+                var circle = {
+                    "center": {
+                        "x": 0,
+                        "y": 0
+                    },
+                    "radius": 0
+                }
+
+                circle.radius = radius;
+                circle.center.x = startX;
+                circle.center.y = startY;
+
+                circles.push(circle);
+            }
+
             contextT.beginPath();
             contextT.strokeStyle = $colorItem.css("background-color");
             contextT.arc(startX,startY,radius,0,2*Math.PI);
             contextT.stroke();
+        }
+
+        /**
+         * It's OK, parse obj to json
+         */
+        function transShapesToJson() {
+            obstacles.lines = lines;
+            obstacles.rectangles = rectangles;
+            obstacles.polygons = polygons;
+            obstacles.circles = circles;
+
+            var obstaclesJson = JSON.stringify(obstacles);
+
+            console.log(obstaclesJson);
         }
 
         /**
@@ -346,7 +466,7 @@
                 mouseX = event.clientX - offsetX;
                 mouseY = event.clientY - offsetY;
                 context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
-                drawStraightLine(mouseX, mouseY, context3);
+                drawStraightLine(mouseX, mouseY, context3,0);
             }
             if (shapePattern === 2) {
                 event.preventDefault();
@@ -356,7 +476,7 @@
                 mouseX = event.clientX - offsetX;
                 mouseY = event.clientY - offsetY;
                 context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
-                drawRectangle(mouseX, mouseY, context3);
+                drawRectangle(mouseX, mouseY, context3,0);
             }
             if (shapePattern === 3) {
                 event.preventDefault();
@@ -371,11 +491,11 @@
                 if (!needFirstPoint) {
                     mouse.x = mouseX;
                     mouse.y = mouseY;
-                    drawStraightLine(mouseX, mouseY, context3);
+                    drawStraightLine(mouseX, mouseY, context3,0);
                 }
 
                 //console.log(num_of_click);s
-                if (distance(point, mouse) < 15 && num_of_click > 3) {
+                if (distance(point, mouse) < 15 && num_of_click > 2) {
                     //console.log("closed is true");
                     point.closed2 = true;
                 } else {
@@ -391,7 +511,7 @@
                 mouseY = event.clientY - offsetY;
                 context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
                 //console.log(mouseX + " "+ mouseY);
-                drawStraightLine(mouseX, mouseY, context3);
+                drawStraightLine(mouseX, mouseY, context3,0);
             }
             if(shapePattern === 5) {
                 event.preventDefault();
@@ -404,7 +524,7 @@
                 mouse.y = mouseY;
                 context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
                 r = distance(point,mouse);
-                drawCircle(r,context3);
+                drawCircle(r,context3,0);
             }
         }
 
@@ -417,15 +537,16 @@
                 mouseX = event.clientX - offsetX;
                 mouseY = event.clientY - offsetY;
                 $("#tempCanvas").css({left: -window.innerWidth, top: 0});
-                drawStraightLine(mouseX, mouseY, context);
+                drawStraightLine(mouseX, mouseY, context,1);
             }
             if (shapePattern === 2) {
                 mouseX = event.clientX - offsetX;
                 mouseY = event.clientY - offsetY;
                 $("#tempCanvas").css({left: -window.innerWidth, top: 0});
-                drawRectangle(mouseX, mouseY, context);
+                drawRectangle(mouseX, mouseY, context,1);
             }
             if (shapePattern === 3) {
+                //polygon = new Array();
                 num_of_click += 1;
                 mouseX = event.clientX - offsetX;
                 mouseY = event.clientY - offsetY;
@@ -456,7 +577,7 @@
                 mouseY = event.clientY - offsetY;
                 $("#tempCanvas").css({left: -window.innerWidth, top: 0});
                 context.strokeStyle = $colorItem.css("background-color");
-                drawCircle(r,context);
+                drawCircle(r,context,1);
             }
             historyPush();
             mouse.down = false;
@@ -780,7 +901,6 @@
         fileUpload($fileInput.get(0).files)
     }
 
-
     $subMenuItem.fastClick(function () {
         var that = $(this);
         var $MenuItem = that.parents(".modal-indicator");
@@ -875,8 +995,10 @@
         $MenuItem.removeClass("menu-open");
     });
 
-
-    document.getElementById('successBtn').addEventListener('click',drawNewImage);
+    /**
+     * test some submit function
+     */
+    document.getElementById('successBtn').addEventListener('click',transShapesToJson);
 
     var name,url,description;
 
@@ -974,7 +1096,6 @@
         }
 
         drawPolygonObstacle(polygons,context);
-
     }
 
     function drawLineObstacle(lines,contextT) {
@@ -1023,7 +1144,5 @@
             }
         }
     }
-
-
 
 })(window);
