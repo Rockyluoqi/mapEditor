@@ -29,19 +29,26 @@
     var cStep = -1;
 
     var bg_image = new Image();
-    //bg_image.src = 'js/map.jpg';
     var curWidth, curHeight, tempWidth, tempHeight;
 
+    /**
+     * source
+     * @type {string}
+     */
     bg_image.src = localStorage["bgUrl"];
+    //bg_image.src = 'js/map.jpg';
+
+    $(".container").css({width:bg_image.width,height:bg_image.height});
+    $("#content").css({width:bg_image.width,height:bg_image.height});
 
     //canvas part
     var canvas = document.getElementById("canvas");
-    var netherCanvas = document.getElementById("netherCanvas"); //底层Canvas
+    //var netherCanvas = document.getElementById("netherCanvas"); //底层Canvas
     var tempCanvas = document.getElementById("tempCanvas");
     var context = null;
     var context2 = null;
     var context3 = null;
-    //netherCanvas.setAttribute('zIndex',-1);
+    //netherCanvas.setAttribute('zIndex',"-1");
 
     setDefaultSize(bg_image);
 
@@ -50,14 +57,38 @@
     document.body.classList.add('pointer');
 
 
+    /**
+     * 拿到滚动条的距离就可以实时更新画线的坐标，就可以做到在大屏上进行绘制了，方法很简洁，大屏问题完美解决
+     * get scroll distance to update the line(rectangle pot etc.) data, then you can draw line a very large image
+     * a little bit stuck...
+     * @type {number}
+     */
+    var topScrollDistance = 0;
+    var leftScrollDistance = 0;
+    $(window).scroll(function(){
+        topScrollDistance = window.pageYOffset;
+        leftScrollDistance = window.pageXOffset;
+    });
+
     if (canvas.getContext) {
         context = canvas.getContext("2d");
         context2 = netherCanvas.getContext("2d");
         context3 = tempCanvas.getContext("2d");
 
-        resizeImage();
+        console.log(bg_image.width+" "+bg_image.height);
 
-        setCanvasSize(tempHeight, tempWidth);
+        /**
+         * resize
+         */
+        //resizeImage();
+        setCanvasSize(curHeight, curWidth);
+
+        /**
+         *local testing
+         */
+        bg_image.onload = function () {
+            context2.drawImage(bg_image, 0, 0, bg_image.width, bg_image.height);
+        }
 
         canvas.addEventListener("mousedown", mousedown, false);
         canvas.addEventListener("mousemove", mousemove, false);
@@ -111,8 +142,8 @@
                         context.strokeStyle = $colorItem.css("background-color");
                     }
                     context.lineWidth = chosenWidth;
-                    context.moveTo(position.x + moveLeft, position.y + moveTop);
-                    context.lineTo(mouse.x + moveLeft, mouse.y + moveTop);
+                    context.moveTo(leftScrollDistance + position.x + moveLeft, topScrollDistance + position.y + moveTop);
+                    context.lineTo(leftScrollDistance + mouse.x + moveLeft, topScrollDistance + mouse.y + moveTop);
                     context.stroke();
                     context.closePath();
                     position.x = mouse.x;
@@ -378,8 +409,8 @@
             }
             if (shapePattern === 1) {
                 event.preventDefault();
-                mouseX = event.clientX - offsetX;
-                mouseY = event.clientY - offsetY;
+                mouseX = leftScrollDistance + event.clientX - offsetX;
+                mouseY = topScrollDistance + event.clientY - offsetY;
                 //update to tempCanvas at the same time, the function is OK
                 chosenWidth = $chosenSvg.getBoundingClientRect().width;
                 context3.lineWidth = chosenWidth;
@@ -393,8 +424,8 @@
             }
             if (shapePattern === 2) {
                 event.preventDefault();
-                mouseX = event.clientX - offsetX;
-                mouseY = event.clientY - offsetY;
+                mouseX = leftScrollDistance + event.clientX - offsetX;
+                mouseY = topScrollDistance + event.clientY - offsetY;
                 chosenWidth = $chosenSvg.getBoundingClientRect().width;
                 context3.lineWidth = chosenWidth;
                 context.lineWidth = chosenWidth;
@@ -419,13 +450,12 @@
                  * Something better will be done later.
                  * Thinking...
                  */
-
                 mouse.down = true;
             }
             if (shapePattern === 4) {
                 event.preventDefault();
-                mouseX = event.clientX - offsetX;
-                mouseY = event.clientY - offsetY;
+                mouseX = leftScrollDistance + event.clientX - offsetX;
+                mouseY = topScrollDistance + event.clientY - offsetY;
                 chosenWidth = $chosenSvg.getBoundingClientRect().width;
                 context3.lineWidth = chosenWidth;
                 context.lineWidth = chosenWidth;
@@ -437,8 +467,8 @@
             }
             if(shapePattern === 5) {
                 event.preventDefault();
-                mouseX = event.clientX - offsetX;
-                mouseY = event.clientY - offsetY;
+                mouseX = leftScrollDistance + event.clientX - offsetX;
+                mouseY = topScrollDistance + event.clientY - offsetY;
                 chosenWidth = $chosenSvg.getBoundingClientRect().width;
                 context3.lineWidth = chosenWidth;
                 context.lineWidth = chosenWidth;
@@ -463,8 +493,8 @@
                 if (!mouse.down) {
                     return;
                 }
-                mouseX = event.clientX - offsetX;
-                mouseY = event.clientY - offsetY;
+                mouseX = leftScrollDistance + event.clientX - offsetX;
+                mouseY = topScrollDistance + event.clientY - offsetY;
                 context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
                 drawStraightLine(mouseX, mouseY, context3,0);
             }
@@ -473,15 +503,15 @@
                 if (!mouse.down) {
                     return;
                 }
-                mouseX = event.clientX - offsetX;
-                mouseY = event.clientY - offsetY;
+                mouseX = leftScrollDistance + event.clientX - offsetX;
+                mouseY = topScrollDistance + event.clientY - offsetY;
                 context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
                 drawRectangle(mouseX, mouseY, context3,0);
             }
             if (shapePattern === 3) {
                 event.preventDefault();
-                mouseX = event.clientX - offsetX;
-                mouseY = event.clientY - offsetY;
+                mouseX = leftScrollDistance + event.clientX - offsetX;
+                mouseY = topScrollDistance + event.clientY - offsetY;
                 chosenWidth = $chosenSvg.getBoundingClientRect().width;
                 context3.lineWidth = chosenWidth;
                 context.lineWidth = chosenWidth;
@@ -507,8 +537,8 @@
                 if (!mouse.down) {
                     return;
                 }
-                mouseX = event.clientX - offsetX;
-                mouseY = event.clientY - offsetY;
+                mouseX = leftScrollDistance + event.clientX - offsetX;
+                mouseY = topScrollDistance + event.clientY - offsetY;
                 context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
                 //console.log(mouseX + " "+ mouseY);
                 drawStraightLine(mouseX, mouseY, context3,0);
@@ -518,8 +548,8 @@
                 if (!mouse.down) {
                     return;
                 }
-                mouseX = event.clientX - offsetX;
-                mouseY = event.clientY - offsetY;
+                mouseX = leftScrollDistance + event.clientX - offsetX;
+                mouseY = topScrollDistance + event.clientY - offsetY;
                 mouse.x = mouseX;
                 mouse.y = mouseY;
                 context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
@@ -534,22 +564,22 @@
                 return;
             }
             if (shapePattern === 1) {
-                mouseX = event.clientX - offsetX;
-                mouseY = event.clientY - offsetY;
+                mouseX = leftScrollDistance + event.clientX - offsetX;
+                mouseY = topScrollDistance + event.clientY - offsetY;
                 $("#tempCanvas").css({left: -window.innerWidth, top: 0});
                 drawStraightLine(mouseX, mouseY, context,1);
             }
             if (shapePattern === 2) {
-                mouseX = event.clientX - offsetX;
-                mouseY = event.clientY - offsetY;
+                mouseX = leftScrollDistance + event.clientX - offsetX;
+                mouseY = topScrollDistance + event.clientY - offsetY;
                 $("#tempCanvas").css({left: -window.innerWidth, top: 0});
                 drawRectangle(mouseX, mouseY, context,1);
             }
             if (shapePattern === 3) {
                 //polygon = new Array();
                 num_of_click += 1;
-                mouseX = event.clientX - offsetX;
-                mouseY = event.clientY - offsetY;
+                mouseX = leftScrollDistance + event.clientX - offsetX;
+                mouseY = topScrollDistance + event.clientY - offsetY;
                 $("#tempCanvas").css({left: -window.innerWidth, top: 0});
                 //set color draw on canvas
                 context.strokeStyle = $colorItem.css("background-color");
@@ -563,8 +593,8 @@
                 drawNextLine(mouseX, mouseY, context);
             }
             if (shapePattern === 4) {
-                mouseX = event.clientX - offsetX;
-                mouseY = event.clientY - offsetY;
+                mouseX = leftScrollDistance + event.clientX - offsetX;
+                mouseY = topScrollDistance + event.clientY - offsetY;
                 $("#tempCanvas").css({left: -window.innerWidth, top: 0});
                 //set color draw on canvas
                 context.strokeStyle = $colorItem.css("background-color");
@@ -573,8 +603,8 @@
                 brokenFirstFlag = false;
             }
             if(shapePattern === 5) {
-                mouseX = event.clientX - offsetX;
-                mouseY = event.clientY - offsetY;
+                mouseX = leftScrollDistance + event.clientX - offsetX;
+                mouseY = topScrollDistance + event.clientY - offsetY;
                 $("#tempCanvas").css({left: -window.innerWidth, top: 0});
                 context.strokeStyle = $colorItem.css("background-color");
                 drawCircle(r,context,1);
@@ -598,6 +628,15 @@
         netherCanvas.height = h;
         tempCanvas.width = w;
         tempCanvas.height = h;
+    }
+
+    function setContextSize(h, w) {
+        context.width = w;
+        context.height = h;
+        context2.width = w;
+        context2.height = h;
+        context3.width = w;
+        context3.height = h;
     }
 
     /**
@@ -998,7 +1037,7 @@
     /**
      * test some submit function
      */
-    document.getElementById('successBtn').addEventListener('click',transShapesToJson);
+    document.getElementById('successBtn').addEventListener('click',drawNewImage);
 
     var name,url,description;
 

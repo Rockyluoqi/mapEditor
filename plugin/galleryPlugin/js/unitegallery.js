@@ -244,7 +244,6 @@ function UG_API(gallery){
 	this.destroy = function(){
 		g_gallery.destroy();
 	}
-	
 }
 
 

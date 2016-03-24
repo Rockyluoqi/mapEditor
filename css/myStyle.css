@@ -3,7 +3,7 @@
 }
 
 .container{
-    position: absolute;
+    position: absolute ;
     left: 0;
     top: 0;
     width: 100%;
@@ -12,7 +12,8 @@
 
 #toolbar{
     background-color: #333;
-    position: absolute;
+    /*toolbar始终在屏幕中 绝对定位*/
+    position: fixed;
     left: 0;
     top: 0;
     height: 100%;
@@ -207,7 +208,7 @@
     right: 0;
     bottom: 0;
     z-index: 50;
-    overflow: hidden;
+    /*overflow: hidden;*/
     cursor: crosshair;
 }
 
@@ -216,6 +217,18 @@
     left: 0;
     top: 0;
 }
+
+/*#canvas {*/
+    /*z-index:5*/
+/*}*/
+
+/*#tempCanvas {*/
+    /*z-index:3*/
+/*}*/
+
+/*#netherCanvas {*/
+    /*z-index:1*/
+/*}*/
 
 #xycoordinates {
     font-size:30px;
