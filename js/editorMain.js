@@ -224,6 +224,33 @@
             contextT.stroke();
         }
 
+        /*if (!context.setLineDash) {
+            context.setLineDash = function () {}
+        }*/
+
+        function drawDashedLine(toX, toY, contextT,index) {
+            contextT.beginPath();
+            contextT.lineCap = "round";
+            //contextT.lineCap = chosenWidth;
+            contextT.strokeStyle = $colorItem.css("background-color");
+            contextT.moveTo(startX, startY);
+            contextT.lineTo(toX, toY);
+            contextT.stroke();
+        }
+
+        function setDashedLine(index) {
+            var array;
+            if(index === 1) {
+                array = [8];
+                context.setLineDash(array);
+                context3.setLineDash(array);
+            } else {
+                array = [0];
+                context.setLineDash(array);
+                context3.setLineDash(array);
+            }
+        }
+
         function drawLinkedLine(toX, toY, contextT) {
             contextT.beginPath();
             contextT.lineCap = "round";
@@ -480,6 +507,21 @@
                 $("#tempCanvas").css({left: 0, top: 0});
                 mouse.down = true;
             }
+            if (shapePattern === 6) {
+                event.preventDefault();
+                mouseX = leftScrollDistance + event.clientX - offsetX;
+                mouseY = topScrollDistance + event.clientY - offsetY;
+                //update to tempCanvas at the same time, the function is OK
+                chosenWidth = $chosenSvg.getBoundingClientRect().width;
+                context3.lineWidth = chosenWidth;
+                context.lineWidth = chosenWidth;
+                startX = mouseX;
+                startY = mouseY;
+                context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
+                //move temp canvas over main canvas
+                $("#tempCanvas").css({left: 0, top: 0});
+                mouse.down = true;
+            }
         }
 
         function mousemove(event) {
@@ -556,6 +598,16 @@
                 r = distance(point,mouse);
                 drawCircle(r,context3,0);
             }
+            if (shapePattern === 6) {
+                event.preventDefault();
+                if (!mouse.down) {
+                    return;
+                }
+                mouseX = leftScrollDistance + event.clientX - offsetX;
+                mouseY = topScrollDistance + event.clientY - offsetY;
+                context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
+                drawDashedLine(mouseX, mouseY, context3,0);
+            }
         }
 
         function mouseup(event) {
@@ -608,6 +660,12 @@
                 $("#tempCanvas").css({left: -window.innerWidth, top: 0});
                 context.strokeStyle = $colorItem.css("background-color");
                 drawCircle(r,context,1);
+            }
+            if (shapePattern === 6) {
+                mouseX = leftScrollDistance + event.clientX - offsetX;
+                mouseY = topScrollDistance + event.clientY - offsetY;
+                $("#tempCanvas").css({left: -window.innerWidth, top: 0});
+                drawDashedLine(mouseX, mouseY, context,1);
             }
             historyPush();
             mouse.down = false;
@@ -740,6 +798,17 @@
                 context.drawImage(tempImage, 0, 0);
             };
         }
+    }
+
+    /**
+     * merge many canvas to a image
+     * loading...
+     */
+    function createNewImage() {
+        historyPush();
+        context.drawImage(bg_image, 0, 0, bg_image.width, bg_image.height);
+
+
     }
 
     function clearCanvas() {
@@ -998,34 +1067,44 @@
         } else if ($MenuItem.hasClass("shapes")) {
             var toolsIndex = that.index();
             //just update valuable icon
-            if (toolsIndex < 6) {
+            if (toolsIndex < 7) {
                 $MenuItem.children("div:first-child").html(that.html());
             }
             switch (toolsIndex) {
                 case 0:
                     //curve
+                    setDashedLine(0);
                     shapePattern = 0;
                     break;
                 case 1:
                     //straight line
+                    setDashedLine(0);
                     shapePattern = 1;
                     break;
                 case 2:
                     //rectangle
+                    setDashedLine(0);
                     shapePattern = 2;
                     break;
                 case 3:
                     //polygon
+                    setDashedLine(0);
                     shapePattern = 3;
                     break;
                 case 4:
                     //broken line 折线
-                    console.log("broken line is selected");
+                    setDashedLine(0);
                     shapePattern = 4;
                     break;
                 case 5:
                     //circle
+                    setDashedLine(0);setDashedLine(0);setDashedLine(0);
                     shapePattern = 5;
+                    break;
+                case 6:
+                    //dashed line
+                    setDashedLine(1);
+                    shapePattern = 6;
                     break;
                 default:
                     break;
