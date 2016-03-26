@@ -16,6 +16,7 @@
     <script src="js/lib/jquery-1.11.0.min.js"></script>
     <script src="plugin/galleryPlugin/js/unitegallery.js"></script>
     <script src="plugin/galleryPlugin/themes/compact/ug-theme-compact.js"></script>
+    <script src="js/imageHandle.js"></script>
     <!--default theme-->
     <!--<script src="plugin/galleryPlugin/themes/default/ug-theme-default.js"></script>-->
     <!--<link rel="stylesheet" href="plugin/galleryPlugin/themes/default/ug-theme-default.css" type="text/css"/>-->
@@ -30,12 +31,13 @@
 </head>
 <body>
 <div class = "gallery-container">
+    <div id="gallery" style=";display:none;""
+    >
 
-    <div id="gallery" style="display:none;">
 
-        <img alt="Preview Image 1"
+        <img id = "img1"
+             alt="Preview Image 1"
              src="plugin/images/big/image1.jpg"
-             onload="javascript:drawNewImage(this,100,56)"
              data-image="plugin/images/big/image1.jpg"
              data-description="Map1 Airdrome">
 
@@ -108,7 +110,6 @@
              data-image="plugin/images/big/image7.jpg"
              data-description="Preview Image 7 Description">
 
-
         <img alt="Preview Image 8"
              src="plugin/images/thumbs/thumb8.jpg"
              data-image="plugin/images/big/image8.jpg"
@@ -148,7 +149,6 @@
 </script>
 <!--<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>-->
 <script type="text/javascript" src="js/lib/materialize.min.js"></script>
-<script src="js/imageHandle.js"></script>
 <!--using Gallery plugin -->
 
 </body>

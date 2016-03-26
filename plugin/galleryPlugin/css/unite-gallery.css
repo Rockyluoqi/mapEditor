@@ -333,7 +333,7 @@
 .ug-thumb-wrapper.ug-thumb-generated{
 	position:absolute;
 	overflow:hidden;
-	
+
 	-webkit-user-select: none;	/* make unselectable */         
 	-moz-user-select: none; 
 	-ms-user-select: none;
@@ -384,12 +384,15 @@
 .ug-thumb-wrapper.ug-thumb-generated img{
 	position:absolute;
 	z-index:1;
+	padding-top: 20px;
+
 	max-width:none !important;
 }
 
 .ug-thumb-wrapper.ug-thumb-generated img.ug-thumb-image-overlay{
 	position:absolute;
 	z-index:2;
+
 	max-width:none !important;
 }
 
@@ -578,7 +581,7 @@ img.ug-sepia-effect{
 
 .ug-gallery-wrapper .ug-strip-panel{
 	position:absolute;
-	background-color:#000000;
+	background-color: #000000;
 	z-index:2;
 }
 
@@ -604,7 +607,7 @@ img.ug-sepia-effect{
 	box-sizing:border-box;
 	-moz-box-sizing:border-box;
 	overflow:hidden;
-	padding:0px;
+	padding:30px;
 	margin:0px;
 }
 

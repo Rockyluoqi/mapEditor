@@ -1,40 +1,43 @@
 /**
  * Created by Luoqi on 3/19/2016.
  */
+//$(document).ready(drawNewImage);
 //按比例放大缩小图片
-function drawNewImage(img,w,h) {
-    var flag = false;
+function drawNewImage(obj,w,h) {
+
     var image = new Image();
-    image.src = img.src;
+    obj.src = "plugin/images/big/image1.jpg"
+    image.src = obj.src;
+    console.log(image.width);
+
     if(image.width > 0 &&　image.height > 0) {
-        flag = true;
         if(image.width/image.height >= w/h) {
             if(image.width > w) {
-                image.width = w;
-                image.height = (image.height*w)/image.width;
+                obj.width = w;
+                obj.height = (image.height * w)/image.width;
             }
             else {
-                image.width = image.width;
-                image.height = image.height;
+                obj.height = image.height;
+                obj.width = image.width;
             }
         }
         else {
             if(image.height > h) {
-                image.height = h;
-                image.width = (image.width * h)/image.height;
+                obj.height = h;
+                obj.width = (image.width * h)/image.height;
             }
             else {
-                image.width = image.width;
-                image.height = image.height;
+                obj.height = image.height;
+                obj.width = image.width;
             }
         }
     }
+    console.log(obj.width);
 }
 
 var imageData = {
     width:0,
     height:0,
-
 };
 
 //设置缩略图路径

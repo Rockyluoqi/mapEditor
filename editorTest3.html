@@ -25,7 +25,7 @@
         }
     </script>
     <!--onmousemove="cnvs_getCoordinates(event)" onmouseout="cnvs_clearCoordinates()"-->
-    <div id="content" onmousemove="cnvs_getCoordinates(event)" onmouseout="cnvs_clearCoordinates()">
+    <div id="content">
         <div class="canvas-wrapper" style="overflow: auto">
             <canvas id="netherCanvas"></canvas>
             <canvas id="tempCanvas"></canvas>
@@ -37,7 +37,7 @@
         <a class="btn-floating btn-large waves-effect waves-light green" onclick="javascript:history.go(-1);" style="width: 60px;height:60px;left:9px;"><i class="material-icons" style="top: 10px;">arrow_back</i></a>
         <div class="menu">
             <div class="colors menu-item modal-indicator" style="background-color: rgb(0, 0, 0);">
-                <div class="sub-menu col-2">
+                <div class="sub-menu col-8">
                     <div class="menu-item"><div class="color-icon" style="background-color: rgb(0, 0, 0)"></div></div>
                     <div class="menu-item"><div class="color-icon" style="background-color: rgb(244, 67, 54)"></div></div>
                     <div class="menu-item"><div class="color-icon" style="background-color: rgb(76, 175, 80)"></div></div>
@@ -54,7 +54,7 @@
                         <path d="M1664 896q0 209-103 385.5t-279.5 279.5-385.5 103-385.5-103-279.5-279.5-103-385.5 103-385.5 279.5-279.5 385.5-103 385.5 103 279.5 279.5 103 385.5z"></path>
                     </svg>
                 </div>
-                <div class="sub-menu col-2">
+                <div class="sub-menu col-5">
                     <div class="menu-item">
                         <div class="tool-size-0">
                             <svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg">
@@ -98,7 +98,7 @@
                         <path d="M19.104 0.896c-0.562-0.562-1.309-0.871-2.104-0.871s-1.542 0.309-2.104 0.871l-12.75 12.75c-0.052 0.052-0.091 0.114-0.116 0.183l-2 5.5c-0.066 0.183-0.021 0.387 0.116 0.524 0.095 0.095 0.223 0.146 0.354 0.146 0.057 0 0.115-0.010 0.171-0.030l5.5-2c0.069-0.025 0.131-0.065 0.183-0.116l12.75-12.75c0.562-0.562 0.871-1.309 0.871-2.104s-0.309-1.542-0.871-2.104zM5.725 17.068l-4.389 1.596 1.596-4.389 11.068-11.068 2.793 2.793-11.068 11.068zM18.396 4.396l-0.896 0.896-2.793-2.793 0.896-0.896c0.373-0.373 0.869-0.578 1.396-0.578s1.023 0.205 1.396 0.578c0.373 0.373 0.578 0.869 0.578 1.396s-0.205 1.023-0.578 1.396z"></path>
                     </svg>
                 </div>
-                <div class="sub-menu col-2">
+                <div class="sub-menu col-6">
                     <!--pen-->
                     <div class="menu-item">
                         <svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
@@ -151,7 +151,7 @@
                                 C58.714,19.65,58.841,11.347,58.751,9h3.301V0z M11.826,64.875h-7v-7h7V64.875z M61.052,8h-7V1h7V8z"></path>
                     </svg>
                 </div>
-                <div class="sub-menu col-2">
+                <div class="sub-menu col-5">
                     <!--free line-->
                     <div class="menu-item">
                         <svg version="1.1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
@@ -214,7 +214,9 @@
                     </div>
                 </div>
             </div>
-            <a class="waves-effect waves-light btn-large orange"  id ="successBtn" style="width:60px;height:60px;left:9px;top: 14px;"><i class="material-icons">done</i></a>
+            <a class="waves-effect waves-light btn orange"  id ="successBtn" style="width:60px;left:9px;top: 14px;"><i class="material-icons">done</i></a>
+            <a class="waves-effect waves-light btn orange"  id ="layer1"  style="left: 9px;top:30px">Layer1</a>
+            <a class="waves-effect waves-light btn orange"  id ="layer2"  style="left: 9px;top: 40px">Layer2</a>
             <div id="xycoordinates"></div>
         </div>
     </div>

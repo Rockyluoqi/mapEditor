@@ -816,6 +816,31 @@
         context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
     }
 
+    function clearAndSave() {
+        historyPush();
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
+    }
+
+    /**
+     * layer1 :including draw canvas
+     * Layer2 :excluding draw canvas
+     */
+    document.getElementById('layer1').addEventListener('click',layer1Recover);
+    document.getElementById('layer2').addEventListener('click',clearAndSave);
+
+    var times = 0;
+    function layer1Recover() {
+        times += 1;
+        console.log(times);
+        clearCanvas();
+        var tempImage = new Image();
+        tempImage.src = history[times];
+        tempImage.onload = function () {
+            context.drawImage(tempImage, 0, 0);
+        }
+    }
+
     fileInput.addEventListener('change', onFileInputChange, false);
 
     $modalIndicator.fastClick(function () {
@@ -1067,7 +1092,7 @@
         } else if ($MenuItem.hasClass("shapes")) {
             var toolsIndex = that.index();
             //just update valuable icon
-            if (toolsIndex < 7) {
+            if (toolsIndex < 4) {
                 $MenuItem.children("div:first-child").html(that.html());
             }
             switch (toolsIndex) {
