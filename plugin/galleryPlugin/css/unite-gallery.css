@@ -384,7 +384,7 @@
 .ug-thumb-wrapper.ug-thumb-generated img{
 	position:absolute;
 	z-index:1;
-	padding-top: 20px;
+	padding-top: 25px;
 
 	max-width:none !important;
 }

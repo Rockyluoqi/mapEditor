@@ -2450,7 +2450,9 @@ function UGThumbsGeneral(){
             }
 
             var objThumbWrapper = jQuery(htmlThumb);
-            objThumbWrapper.append("<span style='position: absolute; color: #a7ffeb;'>添加文字...添加文字...添加文字...</span>");
+            var objTitle = objItem.title;
+
+            objThumbWrapper.append("<span style='position: absolute; color: #FFFFFF;'>"+objTitle+"</span>");
 
 
             var objImage = objItem.objThumbImage;
@@ -2460,7 +2462,7 @@ function UGThumbsGeneral(){
                 if(g_options.thumb_show_loader == true && objImage){
 
                     var loaderClass = "ug-thumb-loader-dark";
-                    if(g_options.thumb_loader_type == "brisght")
+                    if(g_options.thumb_loader_type == "bright")
                         loaderClass = "ug-thumb-loader-bright";
 
                     objThumbWrapper.append("<div class='ug-thumb-loader " + loaderClass + "'></div>");
@@ -7015,7 +7017,7 @@ function UGThumbsGrid(){
     var g_thumbs = new UGThumbsGeneral(), g_tilesDesign = new UGTileDesign();
 
     var g_options = {
-        grid_panes_direction: "left",				//where panes will move -> left, bottom
+        grid_panes_direction: "left",				//where panels will move -> left, bottom
         grid_num_cols: 2,							//number of grid columns
         grid_num_rows: 2,							//number of grid rows (for horizontal type)
         grid_space_between_cols: 10,				//space between columns
@@ -12188,7 +12190,7 @@ function UGSlider(){
         slider_progress_indicator_offset_hor:10,	     //progress indicator horizontal offset
         slider_progress_indicator_offset_vert:10,	     //progress indicator vertical offset
 
-        slider_enable_play_button: true,				 //true,false - enable play / pause button onslider element
+        slider_enable_play_button: false,				 //true,false - enable play / pause button onslider element
         slider_play_button_skin: "",					 //skin of the slider play button, if empty inherit from gallery skin
         slider_play_button_align_hor:"left",    		 //left, center, right - play button horizontal align
         slider_play_button_align_vert:"top",     		 //top, middle, bottom - play button vertical align

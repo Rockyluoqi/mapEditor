@@ -1,7 +1,10 @@
 /**
  * Created by Luoqi on 3/19/2016.
  */
-//$(document).ready(drawNewImage);
+/**
+ * unitegallery 12193 playbutton mode setting
+ */
+/*//$(document).ready(drawNewImage);
 //按比例放大缩小图片
 function drawNewImage(obj,w,h) {
 
@@ -33,6 +36,27 @@ function drawNewImage(obj,w,h) {
         }
     }
     console.log(obj.width);
+}*/
+
+function getImageArray() {}
+
+function setImageArray() {
+    var len = 12;
+    //Image Array lenghth, how many maps
+    var title = 'Map1 XXXAirport T2 Level2';
+    var src = 'plugin/images/thumbs/thumb1.jpg';
+    var dataImage = 'plugin/images/big/image1.jpg';
+    var dataDescription = 'XXXAirport is..., area: XXX  obstacles: XXX';
+
+    for (var i = 0; i < len; i++) {
+        var imgHtml = document.createElement("img");
+        imgHtml.setAttribute("alt",title+" "+(i+1).toString());
+        imgHtml.setAttribute("src",src);
+        imgHtml.setAttribute("data-image",dataImage);
+        imgHtml.setAttribute("data-description",dataDescription);
+        $("#gallery").append(imgHtml);
+    }
+
 }
 
 var imageData = {
