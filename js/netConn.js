@@ -28,7 +28,7 @@ function loadImage(filename) {
 
 function sendDataToServer() {
 
-}
+}s
 
 
 /**
@@ -36,7 +36,7 @@ function sendDataToServer() {
  */
 var form;
 
-form.onsubmit = function (e) {
+/*form.onsubmit = function (e) {
     // stop the regular form submission
     e.preventDefault();
 
@@ -60,7 +60,7 @@ form.onsubmit = function (e) {
     xhr.onloadend = function () {
         // done
     };
-};
+};*/
 
 /**
  * <head>
