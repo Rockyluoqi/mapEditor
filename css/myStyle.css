@@ -193,7 +193,6 @@
     right: 0;
     bottom: 0;
     font-size: 14px;
-    overflow: hidden;
     color: #000;
     -webkit-transform-style: preserve-3d;
     transform-style: preserve-3d;
@@ -208,9 +207,15 @@
     right: 0;
     bottom: 0;
     z-index: 50;
-    /*overflow: hidden;*/
-    cursor: crosshair;
+    overflow:hidden;
+    cursor:crosshair;
 }
+
+#content .canvas-wrapper:hover {
+    overflow: visible;
+}
+
+
 
 #content .canvas-wrapper canvas{
     position: absolute;

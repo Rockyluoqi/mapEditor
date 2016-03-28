@@ -137,9 +137,6 @@
                         //实现擦除效果，
                         context.globalCompositeOperation = "destination-out";
                         context.strokeStyle = "rgba(0,0,0,1.0)";
-                    } else {
-                        context.globalCompositeOperation = thisgl;
-                        context.strokeStyle = $colorItem.css("background-color");
                     }
                     context.lineWidth = chosenWidth;
                     context.moveTo(leftScrollDistance + position.x + moveLeft, topScrollDistance + position.y + moveTop);
@@ -1034,6 +1031,7 @@
         fileUpload($fileInput.get(0).files)
     }
 
+    var tempPattern = 0;
     $subMenuItem.fastClick(function () {
         var that = $(this);
         var $MenuItem = that.parents(".modal-indicator");
@@ -1057,6 +1055,12 @@
                     //pen
                     eraserTag = false;
                     document.body.classList.add('pointer');
+                    //change the cursor
+                    $(".canvas-wrapper").css({cursor:"crosshair"});
+                    //recover the current pattern to last pattern
+                    shapePattern = tempPattern;
+                    context.globalCompositeOperation = thisgl;
+                    context.strokeStyle = $colorItem.css("background-color");
                     canvas.addEventListener("mousedown", mousedown, false);
                     canvas.addEventListener("mousemove", mousemove, false);
                     canvas.addEventListener("mouseup", mouseup, false);
@@ -1065,8 +1069,11 @@
                 case 1:
                     //eraser
                     eraserTag = true;
+                    console.log(shapePattern);
+                    tempPattern = shapePattern;
                     shapePattern = 0;
-                    $(".shapes").children("div:first-child").html(that.html()); //待改进，这里需要更新shape工具栏为曲线？
+                    $(".canvas-wrapper").css({cursor:"url('css/eraser.cur'),crosshair"});
+                    //$(".shapes").children("div:first-child").html(that.html()); //待改进，这里需要更新shape工具栏为曲线？
                     break;
                 case 2:
                     //撤销 undo and redo 还有问题，速度比较慢，在使用了橡皮擦后失效

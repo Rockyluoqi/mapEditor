@@ -28,7 +28,7 @@ function loadImage(filename) {
 
 function sendDataToServer() {
 
-}s
+}
 
 
 /**
