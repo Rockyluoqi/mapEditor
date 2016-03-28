@@ -16,7 +16,7 @@ function loadImage(filename) {
         }
     };
 
-    //xmlhttp.open("GET",''load.php?LoadImg='+filename');
+    //xmlhttp.open("GET",''LoadImg='+filename');
     xmlhttp.send(null);
 
     $.ajax({
@@ -27,9 +27,72 @@ function loadImage(filename) {
 }
 
 function sendDataToServer() {
+}
+
+
+var imageArray = [];
+function getImage() {
+    for(var i = 0;i<imageArray;i++) {
+        var img = new Image();
+        img.src = "http://";
+    }
+    var img = new Image();
+}
+
+/**
+ * get map name and description... infomation
+ * from json
+ */
+function getImageInfo() {
 
 }
 
+
+function preloadImages(array) {
+    if (!preloadImages.list) {
+        preloadImages.list = [];
+    }
+    var list = preloadImages.list;
+    for (var i = 0; i < array.length; i++) {
+        var img = new Image();
+        img.onload = function() {
+            var index = list.indexOf(this);
+            if (index !== -1) {
+                // remove image from the array once it's loaded
+                // for memory consumption reasons
+                list.splice(index, 1);
+            }
+        }
+        list.push(img);
+        img.src = array[i];
+    }
+}
+
+
+$(document).ready(function() {
+    var scriptUrl1 = 'your_server_side_script_path';
+    var scriptUrl2 = 'other_server_side_script_path';
+    $.getJson(scriptUrl1,function(result){
+
+    });
+
+    jQuery.ajax({
+        type:"GET",
+        url: url + "?command=GetRegsiterJsonData",
+        dataType:"json",
+        global:false,
+        success: function(data){
+            var jsonData = "1. 用统一的ajax方法<br/>";
+            var personList = data.personList;
+            for(var i=0; i<personList.length; i++){
+                var name = personList[i].name;
+                var age = personList[i].age;
+                jsonData += "name: " + name + ", age: " + age + "<br/>";
+            }
+            $("#dataArea").html(jsonData + "<br/>");
+        }
+    });
+});
 
 /**
  * example
