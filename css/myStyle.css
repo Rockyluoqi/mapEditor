@@ -207,15 +207,8 @@
     right: 0;
     bottom: 0;
     z-index: 50;
-    overflow:hidden;
-    cursor:crosshair;
+    cursor: url("../asset/cursor/handCursor.cur"),crosshair;
 }
-
-#content .canvas-wrapper:hover {
-    overflow: visible;
-}
-
-
 
 #content .canvas-wrapper canvas{
     position: absolute;

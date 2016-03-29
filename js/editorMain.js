@@ -1,9 +1,9 @@
 /**
  * Created by Luoqi on 3/14/2016.
- * 这里是主Js文件，实现toolbar的动态选择，以及Canvas中的绘图
- * 需要实现的功能单子
- * 2、读图出图网络接口
- * 3、坐标的网络交互
+ * function List
+ * 1.zoom in and zoom out
+ * 2.drag the map using mouse
+ * 3.touchable
  */
 ;(function (window) {
     var $modalIndicator = $(".modal-indicator");
@@ -16,13 +16,17 @@
     var widthScale = 1;
     var heightScale = 1;
     var mouseX, mouseY;
+    var dragging = true;
+    var barWidth = 76;
+    var curScrollX = 0;
+    var curScrollY = 0;
     /**
      * 0-free line(curve)
      * 1-straight line
      * 2-rectangle
      * 3-circle
      */
-    var shapePattern = 0;
+    var shapePattern;
 
     //undo and redo
     var history = new Array();
@@ -404,13 +408,14 @@
         /**
          * It's OK, parse obj to json
          */
+        var obstaclesJson;
         function transShapesToJson() {
             obstacles.lines = lines;
             obstacles.rectangles = rectangles;
             obstacles.polygons = polygons;
             obstacles.circles = circles;
 
-            var obstaclesJson = JSON.stringify(obstacles);
+             obstaclesJson = JSON.stringify(obstacles);
 
             console.log(obstaclesJson);
         }
@@ -420,6 +425,15 @@
          * OK...I will optimize it later.
          */
         function mousedown(event) {
+            if(dragging === true) {
+                mouse.down = true;
+                $(".canvas-wrapper").css({cursor:"url('asset/cursor/dragHand.cur'),crosshair"});
+                position.x = (event.clientX - barWidth);
+                position.y = event.clientY;
+                //console.log("start position: " +position.x+"  "+ position.y);
+                //locate at the last time drag
+                window.scrollTo(curScrollX,curScrollY);
+            }
             if (shapePattern === 0) {
                 mouse.down = true;
                 position.x = event.clientX;
@@ -524,6 +538,20 @@
         function mousemove(event) {
             mouse.x = event.clientX;
             mouse.y = event.clientY;
+            if(dragging === true) {
+                var distanceX,distanceY;
+                event.preventDefault();
+                if(!mouse.down) return;
+                mouseX  = (event.clientX - barWidth);
+                mouseY  = event.clientY;
+                distanceX = mouseX - position.x;
+                distanceY = mouseY - position.y;
+                //console.log(distanceX+" "+distanceY);
+                /**
+                 * this line if for drag as the natural hand drag, aha...
+                 */
+                window.scrollTo(curScrollX - distanceX, curScrollY - distanceY);
+            }
             if (shapePattern === 0) {
                 drawFreeLine();
             }
@@ -612,6 +640,12 @@
             if (!mouse.down) {
                 return;
             }
+            if(dragging === true) {
+                //update
+                curScrollX = leftScrollDistance;
+                curScrollY = topScrollDistance;
+                $(".canvas-wrapper").css({cursor:"url('asset/cursor/handCursor.cur'),crosshair"});
+            }
             if (shapePattern === 1) {
                 mouseX = leftScrollDistance + event.clientX - offsetX;
                 mouseY = topScrollDistance + event.clientY - offsetY;
@@ -664,7 +698,9 @@
                 $("#tempCanvas").css({left: -window.innerWidth, top: 0});
                 drawDashedLine(mouseX, mouseY, context,1);
             }
-            historyPush();
+            if(!dragging) {
+                historyPush();
+            }
             mouse.down = false;
         }
     }
@@ -1031,7 +1067,7 @@
         fileUpload($fileInput.get(0).files)
     }
 
-    var tempPattern = 0;
+    var tempPattern = 1;
     $subMenuItem.fastClick(function () {
         var that = $(this);
         var $MenuItem = that.parents(".modal-indicator");
@@ -1047,18 +1083,26 @@
         else if ($MenuItem.hasClass("tools")) {
             console.log("第几个元素：" + that.index());
             var toolsIndex = that.index();
-            if (toolsIndex < 6) {
+            if (toolsIndex < 3) {
                 $MenuItem.children("div:first-child").html(that.html());
             }
             switch (toolsIndex) {
                 case 0:
+                    //drag map
+                    shapePattern = 20;
+                    dragging = true;
+                    $(".canvas-wrapper").css({cursor:"url('asset/cursor/handCursor.cur'),crosshair"});
+                    break;
+                case 1:
                     //pen
+                    dragging = false;
                     eraserTag = false;
                     document.body.classList.add('pointer');
                     //change the cursor
-                    $(".canvas-wrapper").css({cursor:"crosshair"});
+                    $(".canvas-wrapper").css({cursor:"url('asset/cursor/pen.cur'),crosshair"});
                     //recover the current pattern to last pattern
                     shapePattern = tempPattern;
+                    console.log(shapePattern);
                     context.globalCompositeOperation = thisgl;
                     context.strokeStyle = $colorItem.css("background-color");
                     canvas.addEventListener("mousedown", mousedown, false);
@@ -1066,29 +1110,28 @@
                     canvas.addEventListener("mouseup", mouseup, false);
                     startDraw = true;
                     break;
-                case 1:
+                case 2:
                     //eraser
                     eraserTag = true;
-                    console.log(shapePattern);
                     tempPattern = shapePattern;
                     shapePattern = 0;
-                    $(".canvas-wrapper").css({cursor:"url('css/eraser.cur'),crosshair"});
+                    $(".canvas-wrapper").css({cursor:"url('asset/cursor/eraser.cur'),crosshair"});
                     //$(".shapes").children("div:first-child").html(that.html()); //待改进，这里需要更新shape工具栏为曲线？
                     break;
-                case 2:
+                case 3:
                     //撤销 undo and redo 还有问题，速度比较慢，在使用了橡皮擦后失效
                     undo();
                     break;
-                case 3:
+                case 4:
                     //恢复
                     redo();
                     break;
-                case 4:
+                case 5:
                     //photo
                     console.log("click photo");
                     $fileInput.click();
                     break;
-                case 5:
+                case 6:
                     //删除
                     console.log("Delete");
                     clearCanvas();
@@ -1103,37 +1146,37 @@
                 $MenuItem.children("div:first-child").html(that.html());
             }
             switch (toolsIndex) {
+                //case 0:
+                //    //curve
+                //    setDashedLine(0);
+                //    shapePattern = 0;
+                //    break;
                 case 0:
-                    //curve
-                    setDashedLine(0);
-                    shapePattern = 0;
-                    break;
-                case 1:
                     //straight line
                     setDashedLine(0);
                     shapePattern = 1;
                     break;
-                case 2:
+                case 1:
                     //rectangle
                     setDashedLine(0);
                     shapePattern = 2;
                     break;
-                case 3:
+                case 2:
                     //polygon
                     setDashedLine(0);
                     shapePattern = 3;
                     break;
-                case 4:
+                case 3:
                     //broken line 折线
                     setDashedLine(0);
                     shapePattern = 4;
                     break;
-                case 5:
+                case 4:
                     //circle
                     setDashedLine(0);setDashedLine(0);setDashedLine(0);
                     shapePattern = 5;
                     break;
-                case 6:
+                case 5:
                     //dashed line
                     setDashedLine(1);
                     shapePattern = 6;
@@ -1148,7 +1191,20 @@
     /**
      * test some submit function
      */
-    document.getElementById('successBtn').addEventListener('click',drawNewImage);
+    document.getElementById('successBtn').addEventListener('click',sendImageInfo);
+
+    function sendImageInfo() {
+        transShapesToJson();
+
+        $.ajax({
+            url:"",
+            type:"POST",
+            data:obstaclesJson,
+            success:function(data) {
+                alert("send success");
+            }
+        });
+    }
 
     var name,url,description;
 
@@ -1290,9 +1346,7 @@
                     //console.log(polygon[j + 1].x + " " + polygon[j + 1].y)
                     contextT.stroke();
                 }
-
             }
         }
     }
-
 })(window);

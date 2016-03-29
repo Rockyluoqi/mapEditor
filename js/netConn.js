@@ -69,12 +69,9 @@ function preloadImages(array) {
 }
 
 
-$(document).ready(function() {
+/*$(document).ready(function() {
     var scriptUrl1 = 'your_server_side_script_path';
     var scriptUrl2 = 'other_server_side_script_path';
-    $.getJson(scriptUrl1,function(result){
-
-    });
 
     jQuery.ajax({
         type:"GET",
@@ -92,7 +89,7 @@ $(document).ready(function() {
             $("#dataArea").html(jsonData + "<br/>");
         }
     });
-});
+});*/
 
 /**
  * example

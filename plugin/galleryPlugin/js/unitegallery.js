@@ -22483,7 +22483,6 @@ function UGLightbox(){
                 g_gallery.onGalleryMouseWheel(event, delta, deltaX, deltaY);
                 break;
         }
-
     }
 
 
