@@ -6,9 +6,19 @@
  * 3.touchable
  */
 ;(function (window) {
+    //selectors
     var $modalIndicator = $(".modal-indicator");
     var $subMenuItem = $(".sub-menu").find(".menu-item");
     var $fileInput = $("#fileInput");
+    var $container = $(".container");
+    var $content = $("#content");
+    var $toolsFirst = $("#toolsFirst");
+    var $canvasWrapper = $(".canvas-wrapper");
+    var $shapeFirst = $("#shapesFirst");
+    var $pen = $("#pen");
+    var $positionsFirst = $("#positionsFirst");
+
+    //flags and some
     var imgObjArr = [];
     var startDraw = true;
     var eraserTag = false;
@@ -20,11 +30,19 @@
     var barWidth = 76;
     var curScrollX = 0;
     var curScrollY = 0;
+    var pointing = false;
+    var locationPattern;
+    var drawing_location_point = false;
+    var startPointColor = "#00FF7F";
+    var locationPointColor = "#FFA500";
+    //use for limited length straight line
+    var sin,cos,a, b,c;
+    var orientationLength = 40;
     /**
-     * 0-free line(curve)
-     * 1-straight line
-     * 2-rectangle
-     * 3-circle
+     * 0-straight line
+     * 1-rectangle
+     * 2-polygon
+     *
      */
     var shapePattern;
 
@@ -42,8 +60,8 @@
     bg_image.src = localStorage["bgUrl"];
     //bg_image.src = 'js/map.jpg';
 
-    $(".container").css({width:bg_image.width,height:bg_image.height});
-    $("#content").css({width:bg_image.width,height:bg_image.height});
+    $container.css({width:bg_image.width,height:bg_image.height});
+    $content.css({width:bg_image.width,height:bg_image.height});
 
     //canvas part
     var canvas = document.getElementById("canvas");
@@ -391,17 +409,72 @@
                     },
                     "radius": 0
                 }
-
                 circle.radius = radius;
                 circle.center.x = startX;
                 circle.center.y = startY;
 
                 circles.push(circle);
             }
-
             contextT.beginPath();
             contextT.strokeStyle = $colorItem.css("background-color");
             contextT.arc(startX,startY,radius,0,2*Math.PI);
+            contextT.stroke();
+        }
+
+        function drawLocationPoint(radius,contextT,color) {
+            contextT.beginPath();
+            contextT.strokeStyle = "#000000";
+            contextT.lineWidth = 1.5;
+            contextT.arc(startX,startY,radius,0,2*Math.PI);
+            contextT.fillStyle = color;
+            contextT.fill();
+            contextT.stroke();
+        }
+
+        /**
+         * arrow have orientation information
+         * @param toX
+         * @param toY
+         * @param contextT
+         * @param color
+         */
+        var headlen = 15;// length of head in pixels
+        var angle;
+        function drawLocationLine(toX,toY,contextT,color) {
+            contextT.beginPath();
+            contextT.lineCap = "round";
+            contextT.lineWidth = 2;
+            contextT.strokeStyle = color;
+
+            //use for arrow creation
+            angle = Math.atan2(toY-startY,toX-startX);
+
+            //vertical distance
+            a = toY - startY;
+            //horizontal distance
+            b = toX - startX;
+
+            //triangle
+            c = a*a + b*b;
+            c = Math.sqrt(c);
+            sin = a/c;
+            cos = b/c;
+
+            //new distance using orientationLength as a base
+            a = orientationLength * sin;
+            b = orientationLength * cos;
+
+            //new destination
+            toX = startX + b;
+            toY = startY + a;
+
+            contextT.moveTo(startX, startY);
+            contextT.lineTo(toX, toY);
+            //right arrow
+            contextT.lineTo(toX-headlen*Math.cos(angle-Math.PI/6),toY-headlen*Math.sin(angle-Math.PI/6));
+            contextT.lineTo(toX, toY);
+            //left arrow
+            contextT.lineTo(toX-headlen*Math.cos(angle+Math.PI/6),toY-headlen*Math.sin(angle+Math.PI/6));
             contextT.stroke();
         }
 
@@ -425,17 +498,46 @@
          * OK...I will optimize it later.
          */
         function mousedown(event) {
+            mouse.down = true;
             if(dragging === true) {
-                mouse.down = true;
-                $(".canvas-wrapper").css({cursor:"url('asset/cursor/dragHand.cur'),crosshair"});
+                $canvasWrapper.css({cursor:"url('asset/cursor/dragHand.cur'),crosshair"});
                 position.x = (event.clientX - barWidth);
                 position.y = event.clientY;
                 //console.log("start position: " +position.x+"  "+ position.y);
                 //locate at the last time drag
                 window.scrollTo(curScrollX,curScrollY);
             }
+            if(pointing === true) {
+
+            }
+            if(drawing_location_point === true) {
+                if(locationPattern === 0) {
+                    console.log("start point");
+                    event.preventDefault();
+                    mouseX = leftScrollDistance + event.clientX - offsetX;
+                    mouseY = topScrollDistance + event.clientY - offsetY;
+                    chosenWidth = $chosenSvg.getBoundingClientRect().width;
+                    context3.lineWidth = chosenWidth;
+                    context.lineWidth = chosenWidth;
+                    startX = mouseX;
+                    startY = mouseY;
+                    drawLocationPoint(10,context,startPointColor);
+                    $("#tempCanvas").css({left: 0, top: 0});
+                }
+                if(locationPattern === 1) {
+                    event.preventDefault();
+                    mouseX = leftScrollDistance + event.clientX - offsetX;
+                    mouseY = topScrollDistance + event.clientY - offsetY;
+                    chosenWidth = $chosenSvg.getBoundingClientRect().width;
+                    context3.lineWidth = chosenWidth;
+                    context.lineWidth = chosenWidth;
+                    startX = mouseX;
+                    startY = mouseY;
+                    drawLocationPoint(10,context,locationPointColor);
+                    $("#tempCanvas").css({left: 0, top: 0});
+                }
+            }
             if (shapePattern === 0) {
-                mouse.down = true;
                 position.x = event.clientX;
                 position.y = event.clientY;
                 chosenWidth = $chosenSvg.getBoundingClientRect().width;
@@ -455,10 +557,9 @@
                 context.lineWidth = chosenWidth;
                 startX = mouseX;
                 startY = mouseY;
-                context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
+                //context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
                 //move temp canvas over main canvas
                 $("#tempCanvas").css({left: 0, top: 0});
-                mouse.down = true;
             }
             if (shapePattern === 2) {
                 event.preventDefault();
@@ -469,9 +570,8 @@
                 context.lineWidth = chosenWidth;
                 startX = mouseX;
                 startY = mouseY;
-                context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
+                //context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
                 $("#tempCanvas").css({left: 0, top: 0});
-                mouse.down = true;
             }
 
             if (shapePattern === 3) {
@@ -488,7 +588,6 @@
                  * Something better will be done later.
                  * Thinking...
                  */
-                mouse.down = true;
             }
             if (shapePattern === 4) {
                 event.preventDefault();
@@ -499,9 +598,8 @@
                 context.lineWidth = chosenWidth;
                 startX = mouseX;
                 startY = mouseY;
-                context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
+                //context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
                 $("#tempCanvas").css({left: 0, top: 0});
-                mouse.down = true;
             }
             if(shapePattern === 5) {
                 event.preventDefault();
@@ -514,9 +612,8 @@
                 startY = mouseY;
                 point.x = startX;
                 point.y = startY;
-                context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
+                //context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
                 $("#tempCanvas").css({left: 0, top: 0});
-                mouse.down = true;
             }
             if (shapePattern === 6) {
                 event.preventDefault();
@@ -528,10 +625,9 @@
                 context.lineWidth = chosenWidth;
                 startX = mouseX;
                 startY = mouseY;
-                context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
+                //context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
                 //move temp canvas over main canvas
                 $("#tempCanvas").css({left: 0, top: 0});
-                mouse.down = true;
             }
         }
 
@@ -551,6 +647,35 @@
                  * this line if for drag as the natural hand drag, aha...
                  */
                 window.scrollTo(curScrollX - distanceX, curScrollY - distanceY);
+            }
+
+            if(pointing === true) {
+                console.log(pointing);
+                if(context.isPointInPath(mouse.x,mouse.y)) {
+                    console.log("Point in path");
+                }
+            }
+            if(drawing_location_point) {
+                if(locationPattern === 0) {
+                    event.preventDefault();
+                    if (!mouse.down) {
+                        return;
+                    }
+                    mouseX = leftScrollDistance + event.clientX - offsetX;
+                    mouseY = topScrollDistance + event.clientY - offsetY;
+                    context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
+                    drawLocationLine(mouseX, mouseY, context3,startPointColor);
+                }
+                if(locationPattern === 1) {
+                    event.preventDefault();
+                    if (!mouse.down) {
+                        return;
+                    }
+                    mouseX = leftScrollDistance + event.clientX - offsetX;
+                    mouseY = topScrollDistance + event.clientY - offsetY;
+                    context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
+                    drawLocationLine(mouseX, mouseY, context3,locationPointColor);
+                }
             }
             if (shapePattern === 0) {
                 drawFreeLine();
@@ -644,7 +769,21 @@
                 //update
                 curScrollX = leftScrollDistance;
                 curScrollY = topScrollDistance;
-                $(".canvas-wrapper").css({cursor:"url('asset/cursor/handCursor.cur'),crosshair"});
+                $canvasWrapper.css({cursor:"url('asset/cursor/handCursor.cur'),crosshair"});
+            }
+            if(drawing_location_point) {
+                if(locationPattern === 0) {
+                    mouseX = leftScrollDistance + event.clientX - offsetX;
+                    mouseY = topScrollDistance + event.clientY - offsetY;
+                    $("#tempCanvas").css({left: -window.innerWidth, top: 0});
+                    drawLocationLine(mouseX, mouseY, context,startPointColor);
+                }
+                if(locationPattern === 1) {
+                    mouseX = leftScrollDistance + event.clientX - offsetX;
+                    mouseY = topScrollDistance + event.clientY - offsetY;
+                    $("#tempCanvas").css({left: -window.innerWidth, top: 0});
+                    drawLocationLine(mouseX, mouseY, context,locationPointColor);
+                }
             }
             if (shapePattern === 1) {
                 mouseX = leftScrollDistance + event.clientX - offsetX;
@@ -864,11 +1003,12 @@
 
     var times = 0;
     function layer1Recover() {
-        times += 1;
+        //times += 1;
         console.log(times);
         clearCanvas();
         var tempImage = new Image();
-        tempImage.src = history[times];
+        var len = history.length;
+        tempImage.src = history[len - 1];
         tempImage.onload = function () {
             context.drawImage(tempImage, 0, 0);
         }
@@ -1068,6 +1208,9 @@
     }
 
     var tempPattern = 1;
+    var tempHtml = $shapeFirst.html();
+    var penHtml = $pen.html();
+    var positionsFirst = $positionsFirst.html();
     $subMenuItem.fastClick(function () {
         var that = $(this);
         var $MenuItem = that.parents(".modal-indicator");
@@ -1081,7 +1224,6 @@
                 .addClass(that.find("div:first-child").attr("class"));
         }
         else if ($MenuItem.hasClass("tools")) {
-            console.log("第几个元素：" + that.index());
             var toolsIndex = that.index();
             if (toolsIndex < 3) {
                 $MenuItem.children("div:first-child").html(that.html());
@@ -1089,9 +1231,13 @@
             switch (toolsIndex) {
                 case 0:
                     //drag map
-                    shapePattern = 20;
+                    shapePattern = -1;
+                    //mutex with pointing
                     dragging = true;
-                    $(".canvas-wrapper").css({cursor:"url('asset/cursor/handCursor.cur'),crosshair"});
+                    pointing = false;
+                    $shapeFirst.html(tempHtml);
+                    $positionsFirst.html(positionsFirst);
+                    $canvasWrapper.css({cursor:"url('asset/cursor/handCursor.cur'),crosshair"});
                     break;
                 case 1:
                     //pen
@@ -1099,23 +1245,34 @@
                     eraserTag = false;
                     document.body.classList.add('pointer');
                     //change the cursor
-                    $(".canvas-wrapper").css({cursor:"url('asset/cursor/pen.cur'),crosshair"});
+                    $canvasWrapper.css({cursor:"url('asset/cursor/pen.cur'),crosshair"});
                     //recover the current pattern to last pattern
                     shapePattern = tempPattern;
-                    console.log(shapePattern);
+                    //console.log(shapePattern);
                     context.globalCompositeOperation = thisgl;
                     context.strokeStyle = $colorItem.css("background-color");
+                    $shapeFirst.html($("#straight").html());
                     canvas.addEventListener("mousedown", mousedown, false);
                     canvas.addEventListener("mousemove", mousemove, false);
                     canvas.addEventListener("mouseup", mouseup, false);
                     startDraw = true;
                     break;
                 case 2:
-                    //eraser
-                    eraserTag = true;
+                    /**
+                     *  3.30 change to pointer to select the obstacle to delete
+                     */
+                    pointing = true;
+                    dragging = false;
+                    shapePattern = -1;
                     tempPattern = shapePattern;
-                    shapePattern = 0;
-                    $(".canvas-wrapper").css({cursor:"url('asset/cursor/eraser.cur'),crosshair"});
+                    $canvasWrapper.css({cursor:"url('asset/cursor/mouse-pointer.cur'),crosshair"});
+                    $shapeFirst.html(tempHtml);
+                    $positionsFirst.html(positionsFirst);
+                    ////eraser
+                    //eraserTag = true;
+                    //tempPattern = shapePattern;
+                    //shapePattern = 0;
+                    //$canvasWrapper.css({cursor:"url('asset/cursor/eraser.cur'),crosshair"});
                     //$(".shapes").children("div:first-child").html(that.html()); //待改进，这里需要更新shape工具栏为曲线？
                     break;
                 case 3:
@@ -1145,6 +1302,10 @@
             if (toolsIndex < 4) {
                 $MenuItem.children("div:first-child").html(that.html());
             }
+            dragging = false;
+            $toolsFirst.html(penHtml);
+            $canvasWrapper.css({cursor:"url('asset/cursor/pen.cur'),crosshair"});
+
             switch (toolsIndex) {
                 //case 0:
                 //    //curve
@@ -1180,6 +1341,28 @@
                     //dashed line
                     setDashedLine(1);
                     shapePattern = 6;
+                    break;
+                default:
+                    break;
+            }
+        } else if($MenuItem.hasClass("positions")) {
+            var toolsIndex = that.index();
+            //just update valuable icon
+            if (toolsIndex < 2) {
+                $MenuItem.children("div:first-child").html(that.html());
+            }
+            dragging = false;
+            $toolsFirst.html(penHtml);
+            drawing_location_point = true;
+            $canvasWrapper.css({cursor:"url('asset/cursor/locate.cur'),crosshair"});
+            switch (toolsIndex) {
+                case 0:
+                    locationPattern = 0;
+                    $toolsFirst.html(penHtml);
+                    break;
+                case 1:
+                    locationPattern = 1;
+                    $toolsFirst.html(penHtml);
                     break;
                 default:
                     break;

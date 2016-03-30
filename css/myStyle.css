@@ -216,6 +216,75 @@
     top: 0;
 }
 
+.zoomInAndOut {
+    position: fixed;
+    right: 23px;
+    bottom: 23px;
+    padding-top: 15px;
+    margin-bottom: 0;
+    z-index: 998
+}
+
+/*info box 信息提示栏，自动弹出*/
+.menu-item span {
+    background: none repeat scroll 0 0 #F8F8F8;
+    border: 5px solid #46b8da;
+    color: #717171;
+    font-size: 20px;
+    font-weight: 600;
+    width: 200px;
+    height: 80px;
+    letter-spacing: 1px;
+    line-height: 20px;
+    margin-top: 20px;
+    margin-left: 95px;
+    /*margin: 0 auto;*/
+    position: relative;
+    text-align: center;
+    text-transform: uppercase;
+    top: -80px;
+    left:-30px;
+    display:none;
+    padding:16px 20px;
+}
+
+.menu-item span:after {
+    content:'';
+    position:absolute;
+    bottom:30px;
+    width:15px;
+    height:15px;
+    border-bottom:5px solid #46b8da;
+    border-right:5px solid #46b8da;
+    background:#f8f8f8;
+    left:0%;
+    margin-left:-10.9px;
+    -moz-transform:rotate(135deg);
+    -webkit-transform:rotate(135deg);
+    transform:rotate(135deg);
+}
+
+#positionsFirst:hover span {
+    display: block;
+}
+
+#startPoint:hover span {
+    display: block;
+}
+
+#locationPoint:hover span {
+    display: block;
+}
+
+#toolsFirst:hover span {
+    display: block;
+}
+
+#shapesFirst:hover span {
+    display: block;
+}
+
+
 /*#canvas {*/
     /*z-index:5*/
 /*}*/
