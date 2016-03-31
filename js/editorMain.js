@@ -258,6 +258,7 @@
         /*if (!context.setLineDash) {
             context.setLineDash = function () {}
         }*/
+        
 
         function drawDashedLine(toX, toY, contextT,index) {
             contextT.beginPath();
