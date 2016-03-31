@@ -17,6 +17,8 @@
     var $shapeFirst = $("#shapesFirst");
     var $pen = $("#pen");
     var $positionsFirst = $("#positionsFirst");
+    var $tempCanvas = $("#tempCanvas");
+    var $pointItem = $("#pointItem");
 
     //flags and some
     var imgObjArr = [];
@@ -33,8 +35,12 @@
     var pointing = false;
     var locationPattern;
     var drawing_location_point = false;
+
     var startPointColor = "#00FF7F";
     var locationPointColor = "#FFA500";
+    var selectedColor = "#00CED1"; //mouse down color
+    var selectingColor = "#FFFFFF"; //mouse hover color
+
     //use for limited length straight line
     var sin,cos,a, b,c;
     var orientationLength = 40;
@@ -194,17 +200,23 @@
          on main canvas: draw a line from the starting dragXY to the ending mouse XY
          *
          */
-        $("#tempCanvas").css({left: -(window.innerWidth), top: 0});
+        $tempCanvas.css({left: -(window.innerWidth), top: 0});
 
         var lines = [];
         var rectangles = [];
         var polygons = [];
         var circles = [];
+        var startPoints = [];
+        var locationPoints = [];
         var obstacles = {
-            "lines":lines,
-            "rectangles":rectangles,
-            "polygons":polygons,
-            "circles":circles
+            lines:lines,
+            rectangles:rectangles,
+            polygons:polygons,
+            circles:circles
+        }
+        var movePoints = {
+            startPoints : startPoints,
+            locationPoints : locationPoints
         }
 
         /**
@@ -421,7 +433,33 @@
             contextT.stroke();
         }
 
-        function drawLocationPoint(radius,contextT,color) {
+        /**
+         *  A circle represent an abstract point
+         */
+        function CirclePoint(x, y, radius, color) {
+            this.x = x;
+            this.y = y;
+            this.radius = radius;
+            this.color = color;
+            this.isSelected = false;
+            this.clickTimes = 0;
+            //this.selecting = false;
+        }
+
+        //store movePoints
+        var movePointsArray = [];
+
+        var previousSelectedCircle;
+
+        /**
+         *
+         * @param radius
+         * @param contextT
+         * @param color
+         * @param index
+         * @param i avoid click same point and add to Array many times
+         */
+        function drawLocationPoint(radius,contextT,color,index) {
             contextT.beginPath();
             contextT.strokeStyle = "#000000";
             contextT.lineWidth = 1.5;
@@ -429,25 +467,64 @@
             contextT.fillStyle = color;
             contextT.fill();
             contextT.stroke();
+            if(index === 1) {
+                var circle = new CirclePoint(startX, startY, radius);
+                movePointsArray.push(circle);
+            }
         }
 
+        function deleteLocationPoint() {
+
+        }
+
+        document.getElementById('deleteButton').addEventListener('click',deleteLocationPoint);
+
         /**
-         * arrow have orientation information
-         * @param toX
-         * @param toY
-         * @param contextT
-         * @param color
+         * draw arrows which have directional information
+         * @param toX finish X
+         * @param toY finish Y
+         * @param contextT which context you will draw
+         * @param color point color, orange:locationPoint green:startPoint
+         * @param index 0:drawing on the context2 don't save
+         *              1:drawing on the context, save it
+         * @param pointPattern 0 startPoint and 1 locationPoint
          */
         var headlen = 15;// length of head in pixels
         var angle;
-        function drawLocationLine(toX,toY,contextT,color) {
+        function drawLocationLine(toX,toY,contextT,color,index,pointPattern) {
+            //use for arrow creation
+            angle = Math.atan2(toY-startY,toX-startX);
+
+            //startPoint
+            if(index === 1 && pointPattern === 0) {
+                var startPoint = {
+                    pot:{x:0,y:0},
+                    direction:0 //PI/2 = 90 degree anticlockwise
+                }
+
+                startPoint.pot.x = startX;
+                startPoint.pot.y = startY;
+                startPoint.angle = -(angle/Math.PI * 180);
+                startPoints.push(startPoint);
+            }
+            //locationPoint
+            if(index === 1 && pointPattern === 1) {
+                var locationPoint = {
+                    pot:{x:0,y:0},
+                    direction:0 //PI/2 = 90 degree anticlockwise
+                }
+
+                locationPoint.pot.x = startX;
+                locationPoint.pot.y = startY;
+                locationPoint.angle = -(angle/Math.PI * 180);
+                locationPoints.push(locationPoint);
+            }
+
             contextT.beginPath();
             contextT.lineCap = "round";
             contextT.lineWidth = 2;
             contextT.strokeStyle = color;
 
-            //use for arrow creation
-            angle = Math.atan2(toY-startY,toX-startX);
 
             //vertical distance
             a = toY - startY;
@@ -481,14 +558,25 @@
         /**
          * It's OK, parse obj to json
          */
-        var obstaclesJson;
-        function transShapesToJson() {
+        var mapJson;
+        var map = {
+            name : "",
+            description : "",
+            ID : "",
+            createDate : "",
+            obstacles:obstacles,
+            movePoints: movePoints
+        }
+
+        function transToJson() {
             obstacles.lines = lines;
             obstacles.rectangles = rectangles;
             obstacles.polygons = polygons;
             obstacles.circles = circles;
+            movePoints.startPoints = startPoints;
+            movePoints.locationPoints = locationPoints;
 
-             obstaclesJson = JSON.stringify(obstacles);
+            mapJson = JSON.stringify(map);
 
             console.log(obstaclesJson);
         }
@@ -497,6 +585,8 @@
          * I know the code in if statement is redundant.What my think is reduce coupling.Is it better? Sense of trap.
          * OK...I will optimize it later.
          */
+        var backBtnHtml = $(".zoomInAndOut").html();
+
         function mousedown(event) {
             mouse.down = true;
             if(dragging === true) {
@@ -507,8 +597,89 @@
                 //locate at the last time drag
                 window.scrollTo(curScrollX,curScrollY);
             }
+            /**
+             * mouse down the point color change to blue
+             */
             if(pointing === true) {
-
+                mouseX = leftScrollDistance + event.clientX - offsetX;
+                mouseY = topScrollDistance + event.clientY - offsetY;
+                /**
+                 * loop to sign the selected button and change color
+                 */
+                if(locationPattern === 0) {
+                    for (var i = movePointsArray.length - 1; i >= 0; i--) {
+                        var circle = movePointsArray[i];
+                        var distanceFromCenter = Math.sqrt(Math.pow(circle.x - mouseX, 2) + Math.pow(circle.y - mouseY, 2));
+                        if (distanceFromCenter <= circle.radius) {
+                            if (previousSelectedCircle != null) previousSelectedCircle.isSelected = false;
+                            previousSelectedCircle = circle; //save the circle selected
+                            circle.isSelected = true;
+                            circle.clickTimes += 1;
+                            //console.log("select OK");
+                            startX = circle.x;
+                            startY = circle.y;
+                            if (circle.clickTimes < 1) {
+                                drawLocationPoint(circle.radius, context, selectedColor, 1);
+                            }
+                            drawLocationPoint(circle.radius, context, selectedColor, 0);
+                            $pointItem.css("width", "50px");
+                            $pointItem.css("top", (event.clientY + 15) + "px");
+                            $pointItem.css("left", (event.clientX + 15) + "px");
+                            break;
+                        }
+                        else {
+                            circle.isSelected = false;
+                            $pointItem.css("top", -(event.clientY + 15) + "px");
+                            $pointItem.css("left", -(event.clientX + 15) + "px");
+                        }
+                    }
+                    for (var i = movePointsArray.length - 1; i >= 0; i--) {
+                        var circle = movePointsArray[i];
+                        if(!circle.isSelected) {
+                            startX = circle.x;
+                            startY = circle.y;
+                            drawLocationPoint(circle.radius,context,startPointColor,0);
+                        }
+                        console.log("circle"+i+" "+circle.isSelected);
+                    }
+                }
+                if(locationPattern === 1) {
+                    for (var i = movePointsArray.length - 1; i >= 0; i--) {
+                        var circle = movePointsArray[i];
+                        var distanceFromCenter = Math.sqrt(Math.pow(circle.x - mouseX, 2) + Math.pow(circle.y - mouseY, 2));
+                        if (distanceFromCenter <= circle.radius) {
+                            if (previousSelectedCircle != null) previousSelectedCircle.isSelected = false;
+                            previousSelectedCircle = circle; //save the circle selected
+                            circle.isSelected = true;
+                            circle.clickTimes += 1;
+                            //console.log("select OK");
+                            startX = circle.x;
+                            startY = circle.y;
+                            if (circle.clickTimes < 1) {
+                                drawLocationPoint(circle.radius, context, selectedColor, 1);
+                            }
+                            drawLocationPoint(circle.radius, context, selectedColor, 0);
+                            $pointItem.css("width", "50px");
+                            $pointItem.css("top", (event.clientY + 15) + "px");
+                            $pointItem.css("left", (event.clientX + 15) + "px");
+                            break;
+                        }
+                        else {
+                            circle.isSelected = false;
+                            $pointItem.css("top", -(event.clientY + 15) + "px");
+                            $pointItem.css("left", -(event.clientX + 15) + "px");
+                        }
+                    }
+                    for (var i = movePointsArray.length - 1; i >= 0; i--) {
+                        var circle = movePointsArray[i];
+                        if(!circle.isSelected) {
+                            startX = circle.x;
+                            startY = circle.y;
+                            drawLocationPoint(circle.radius,context,locationPointColor,0);
+                        }
+                        console.log("circle"+i+" "+circle.isSelected);
+                    }
+                }
             }
             if(drawing_location_point === true) {
                 if(locationPattern === 0) {
@@ -521,8 +692,8 @@
                     context.lineWidth = chosenWidth;
                     startX = mouseX;
                     startY = mouseY;
-                    drawLocationPoint(10,context,startPointColor);
-                    $("#tempCanvas").css({left: 0, top: 0});
+                    drawLocationPoint(10,context,startPointColor,1);
+                    $tempCanvas.css({left: 0, top: 0});
                 }
                 if(locationPattern === 1) {
                     event.preventDefault();
@@ -533,8 +704,8 @@
                     context.lineWidth = chosenWidth;
                     startX = mouseX;
                     startY = mouseY;
-                    drawLocationPoint(10,context,locationPointColor);
-                    $("#tempCanvas").css({left: 0, top: 0});
+                    drawLocationPoint(10,context,locationPointColor,1);
+                    $tempCanvas.css({left: 0, top: 0});
                 }
             }
             if (shapePattern === 0) {
@@ -559,7 +730,7 @@
                 startY = mouseY;
                 //context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
                 //move temp canvas over main canvas
-                $("#tempCanvas").css({left: 0, top: 0});
+                $tempCanvas.css({left: 0, top: 0});
             }
             if (shapePattern === 2) {
                 event.preventDefault();
@@ -571,7 +742,7 @@
                 startX = mouseX;
                 startY = mouseY;
                 //context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
-                $("#tempCanvas").css({left: 0, top: 0});
+                $tempCanvas.css({left: 0, top: 0});
             }
 
             if (shapePattern === 3) {
@@ -599,7 +770,7 @@
                 startX = mouseX;
                 startY = mouseY;
                 //context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
-                $("#tempCanvas").css({left: 0, top: 0});
+                $tempCanvas.css({left: 0, top: 0});
             }
             if(shapePattern === 5) {
                 event.preventDefault();
@@ -613,7 +784,7 @@
                 point.x = startX;
                 point.y = startY;
                 //context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
-                $("#tempCanvas").css({left: 0, top: 0});
+                $tempCanvas.css({left: 0, top: 0});
             }
             if (shapePattern === 6) {
                 event.preventDefault();
@@ -627,7 +798,7 @@
                 startY = mouseY;
                 //context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
                 //move temp canvas over main canvas
-                $("#tempCanvas").css({left: 0, top: 0});
+                $tempCanvas.css({left: 0, top: 0});
             }
         }
 
@@ -649,12 +820,54 @@
                 window.scrollTo(curScrollX - distanceX, curScrollY - distanceY);
             }
 
+            /**
+             * If you move the cursor hovering on the point, the point will change color.
+             */
             if(pointing === true) {
-                console.log(pointing);
-                if(context.isPointInPath(mouse.x,mouse.y)) {
-                    console.log("Point in path");
+                if(locationPattern === 0) {
+                    mouseX = leftScrollDistance + event.clientX - offsetX;
+                    mouseY = topScrollDistance + event.clientY - offsetY;
+                    for (var i = movePointsArray.length - 1; i >= 0; i--) {
+                        var circle = movePointsArray[i];
+                        var distanceFromCenter = Math.sqrt(Math.pow(circle.x - mouseX, 2) + Math.pow(circle.y - mouseY, 2));
+                        if (distanceFromCenter <= circle.radius && !circle.isSelected) {
+                            startX = circle.x;
+                            startY = circle.y;
+                            circle.selecting = true;
+                            console.log("circle" + i);
+                            drawLocationPoint(circle.radius, context, selectingColor, 0);
+                            //return;
+                        } else {
+                            if (circle.selecting) {
+                                drawLocationPoint(circle.radius, context, startPointColor, 0);
+                                circle.selecting = false;
+                            }
+                        }
+                    }
+                }
+                if(locationPattern === 1) {
+                    mouseX = leftScrollDistance + event.clientX - offsetX;
+                    mouseY = topScrollDistance + event.clientY - offsetY;
+                    for (var i = movePointsArray.length - 1; i >= 0; i--) {
+                        var circle = movePointsArray[i];
+                        var distanceFromCenter = Math.sqrt(Math.pow(circle.x - mouseX, 2) + Math.pow(circle.y - mouseY, 2));
+                        if (distanceFromCenter <= circle.radius && !circle.isSelected) {
+                            startX = circle.x;
+                            startY = circle.y;
+                            circle.selecting = true;
+                            console.log("circle" + i);
+                            drawLocationPoint(circle.radius, context, selectingColor, 0);
+                            //return;
+                        } else {
+                            if (circle.selecting) {
+                                drawLocationPoint(circle.radius, context, locationPointColor, 0);
+                                circle.selecting = false;
+                            }
+                        }
+                    }
                 }
             }
+
             if(drawing_location_point) {
                 if(locationPattern === 0) {
                     event.preventDefault();
@@ -664,7 +877,7 @@
                     mouseX = leftScrollDistance + event.clientX - offsetX;
                     mouseY = topScrollDistance + event.clientY - offsetY;
                     context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
-                    drawLocationLine(mouseX, mouseY, context3,startPointColor);
+                    drawLocationLine(mouseX, mouseY, context3,startPointColor,0);
                 }
                 if(locationPattern === 1) {
                     event.preventDefault();
@@ -674,7 +887,7 @@
                     mouseX = leftScrollDistance + event.clientX - offsetX;
                     mouseY = topScrollDistance + event.clientY - offsetY;
                     context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
-                    drawLocationLine(mouseX, mouseY, context3,locationPointColor);
+                    drawLocationLine(mouseX, mouseY, context3,locationPointColor,0);
                 }
             }
             if (shapePattern === 0) {
@@ -708,7 +921,7 @@
                 context3.lineWidth = chosenWidth;
                 context.lineWidth = chosenWidth;
                 context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
-                $("#tempCanvas").css({left: 0, top: 0});
+                $tempCanvas.css({left: 0, top: 0});
                 //console.log(mouseX + " "+ mouseY);
                 if (!needFirstPoint) {
                     mouse.x = mouseX;
@@ -771,30 +984,33 @@
                 curScrollY = topScrollDistance;
                 $canvasWrapper.css({cursor:"url('asset/cursor/handCursor.cur'),crosshair"});
             }
+            if(pointing === true) {
+
+            }
             if(drawing_location_point) {
                 if(locationPattern === 0) {
                     mouseX = leftScrollDistance + event.clientX - offsetX;
                     mouseY = topScrollDistance + event.clientY - offsetY;
-                    $("#tempCanvas").css({left: -window.innerWidth, top: 0});
-                    drawLocationLine(mouseX, mouseY, context,startPointColor);
+                    $tempCanvas.css({left: -window.innerWidth, top: 0});
+                    drawLocationLine(mouseX, mouseY, context,startPointColor,1,0);
                 }
                 if(locationPattern === 1) {
                     mouseX = leftScrollDistance + event.clientX - offsetX;
                     mouseY = topScrollDistance + event.clientY - offsetY;
-                    $("#tempCanvas").css({left: -window.innerWidth, top: 0});
-                    drawLocationLine(mouseX, mouseY, context,locationPointColor);
+                    $tempCanvas.css({left: -window.innerWidth, top: 0});
+                    drawLocationLine(mouseX, mouseY, context,locationPointColor,1,1);
                 }
             }
             if (shapePattern === 1) {
                 mouseX = leftScrollDistance + event.clientX - offsetX;
                 mouseY = topScrollDistance + event.clientY - offsetY;
-                $("#tempCanvas").css({left: -window.innerWidth, top: 0});
+                $tempCanvas.css({left: -window.innerWidth, top: 0});
                 drawStraightLine(mouseX, mouseY, context,1);
             }
             if (shapePattern === 2) {
                 mouseX = leftScrollDistance + event.clientX - offsetX;
                 mouseY = topScrollDistance + event.clientY - offsetY;
-                $("#tempCanvas").css({left: -window.innerWidth, top: 0});
+                $tempCanvas.css({left: -window.innerWidth, top: 0});
                 drawRectangle(mouseX, mouseY, context,1);
             }
             if (shapePattern === 3) {
@@ -802,7 +1018,7 @@
                 num_of_click += 1;
                 mouseX = leftScrollDistance + event.clientX - offsetX;
                 mouseY = topScrollDistance + event.clientY - offsetY;
-                $("#tempCanvas").css({left: -window.innerWidth, top: 0});
+                $tempCanvas.css({left: -window.innerWidth, top: 0});
                 //set color draw on canvas
                 context.strokeStyle = $colorItem.css("background-color");
                 //update the end coords
@@ -817,7 +1033,7 @@
             if (shapePattern === 4) {
                 mouseX = leftScrollDistance + event.clientX - offsetX;
                 mouseY = topScrollDistance + event.clientY - offsetY;
-                $("#tempCanvas").css({left: -window.innerWidth, top: 0});
+                $tempCanvas.css({left: -window.innerWidth, top: 0});
                 //set color draw on canvas
                 context.strokeStyle = $colorItem.css("background-color");
                 //update the end coords
@@ -827,14 +1043,14 @@
             if(shapePattern === 5) {
                 mouseX = leftScrollDistance + event.clientX - offsetX;
                 mouseY = topScrollDistance + event.clientY - offsetY;
-                $("#tempCanvas").css({left: -window.innerWidth, top: 0});
+                $tempCanvas.css({left: -window.innerWidth, top: 0});
                 context.strokeStyle = $colorItem.css("background-color");
                 drawCircle(r,context,1);
             }
             if (shapePattern === 6) {
                 mouseX = leftScrollDistance + event.clientX - offsetX;
                 mouseY = topScrollDistance + event.clientY - offsetY;
-                $("#tempCanvas").css({left: -window.innerWidth, top: 0});
+                $tempCanvas.css({left: -window.innerWidth, top: 0});
                 drawDashedLine(mouseX, mouseY, context,1);
             }
             if(!dragging) {
@@ -1235,6 +1451,7 @@
                     //mutex with pointing
                     dragging = true;
                     pointing = false;
+                    drawing_location_point = false;
                     $shapeFirst.html(tempHtml);
                     $positionsFirst.html(positionsFirst);
                     $canvasWrapper.css({cursor:"url('asset/cursor/handCursor.cur'),crosshair"});
@@ -1243,6 +1460,7 @@
                     //pen
                     dragging = false;
                     eraserTag = false;
+                    drawing_location_point = false;
                     document.body.classList.add('pointer');
                     //change the cursor
                     $canvasWrapper.css({cursor:"url('asset/cursor/pen.cur'),crosshair"});
@@ -1263,6 +1481,7 @@
                      */
                     pointing = true;
                     dragging = false;
+                    drawing_location_point = false;
                     shapePattern = -1;
                     tempPattern = shapePattern;
                     $canvasWrapper.css({cursor:"url('asset/cursor/mouse-pointer.cur'),crosshair"});
@@ -1377,7 +1596,7 @@
     document.getElementById('successBtn').addEventListener('click',sendImageInfo);
 
     function sendImageInfo() {
-        transShapesToJson();
+        transToJson();
 
         $.ajax({
             url:"",
