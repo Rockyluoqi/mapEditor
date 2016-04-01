@@ -293,9 +293,9 @@
     /*z-index:3*/
 /*}*/
 
-/*#netherCanvas {*/
-    /*z-index:1*/
-/*}*/
+#pointCanvas {
+    zindex:200
+}
 
 #xycoordinates {
     font-size:30px;

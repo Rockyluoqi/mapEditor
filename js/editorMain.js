@@ -19,6 +19,7 @@
     var $positionsFirst = $("#positionsFirst");
     var $tempCanvas = $("#tempCanvas");
     var $pointItem = $("#pointItem");
+    var deleteButton = document.getElementById('deleteButton');
 
     //flags and some
     var imgObjArr = [];
@@ -46,7 +47,6 @@
     var orientationLength = 40;
 
 
-    document.getElementById('deleteButton').addEventListener('click',deleteLocationPoint);
     /**
      * layer1 :including draw canvas
      * Layer2 :excluding draw canvas
@@ -87,11 +87,14 @@
 
     //canvas part
     var canvas = document.getElementById("canvas");
-    //var netherCanvas = document.getElementById("netherCanvas"); //底层Canvas
+    var netherCanvas = document.getElementById("netherCanvas"); //底层Canvas
     var tempCanvas = document.getElementById("tempCanvas");
+    var pointCanvas = document.getElementById("pointCanvas");
+
     var context = null;
     var context2 = null;
     var context3 = null;
+    var pointContext = null;
     //netherCanvas.setAttribute('zIndex',"-1");
 
     setDefaultSize(bg_image);
@@ -118,6 +121,7 @@
         context = canvas.getContext("2d");
         context2 = netherCanvas.getContext("2d");
         context3 = tempCanvas.getContext("2d");
+        pointContext = pointCanvas.getContext("2d");
 
         console.log(bg_image.width+" "+bg_image.height);
 
@@ -271,9 +275,9 @@
             contextT.stroke();
         }
 
-        /*if (!context.setLineDash) {
+        if (!context.setLineDash) {
             context.setLineDash = function () {}
-        }*/
+        }
 
         function drawDashedLine(toX, toY, contextT,index) {
             contextT.beginPath();
@@ -490,21 +494,70 @@
             }
         }
 
-        function redrawLocationArray(contextT, pattern, pointArray) {
+        function drawPointCircle(x,y,radius,fillColor,contextT) {
+            contextT.beginPath();
+            contextT.strokeStyle = "#000000";
+            contextT.lineWidth = 1.5;
+            contextT.arc(x, y, radius, 0, 2 * Math.PI);
+            contextT.fillStyle = fillColor;
+            contextT.fill();
+            contextT.stroke();
+            contextT.closePath();
+        }
+
+        function redrawArray(contextT) {
+            for(var i=0;i<startPointArray.length;i++) {
+                if(startPointArray[i] != null) {
+
+                    if (!startPointArray[i].isSelected) {
+                        drawPointCircle(startPointArray[i].x, startPointArray[i].y, startPointArray[i].radius, startPointColor, pointContext);
+                    } else {
+                        drawPointCircle(startPointArray[i].x, startPointArray[i].y, startPointArray[i].radius, selectedColor, pointContext);
+                    }
+                }
+            }
+            for(var i=0;i<locationPointArray.length;i++) {
+                if(locationPointArray[i] != null) {
+                    if (!locationPointArray[i].isSelected) {
+                        drawPointCircle(locationPointArray[i].x,locationPointArray[i].y,locationPointArray[i].radius,locationPointColor,pointContext);
+                    } else {
+                        drawPointCircle(locationPointArray[i].x,locationPointArray[i].y,locationPointArray[i].radius,selectedColor,pointContext);
+                    }
+                }
+            }
+        }
+
+        /**
+         * @param contextT
+         * @param pattern
+         * @param pointArray
+         * @param realOrFake use real Array or a copy array
+         */
+        function redrawLocationArray(contextT, pattern, pointArray,realOrFake) {
             for(var i=0;i<pointArray.length;i++) {
-                if(!pointArray[i].isSelected) {
-                    contextT.beginPath();
-                    contextT.strokeStyle = "#000000";
-                    contextT.lineWidth = 1.5;
-                    contextT.arc(pointArray[i].x, pointArray[i].y, pointArray[i].radius, 0, 2 * Math.PI);
+                if(pointArray[i] != null) {
                     if (pattern === 0) {
-                        contextT.fillStyle = startPointColor;
+                        if(realOrFake === 1) {
+                            startX = pointArray[i].startPot.x;
+                            startY = pointArray[i].startPot.y;
+                            drawLocationLine(pointArray[i].endPot.x, pointArray[i].endPot.y, contextT, startPointColor, 0, pattern);
+                            drawLocationPoint(10,contextT, startPointColor, 0, pattern);
+                        }
+                        if(realOrFake === 0) {
+                            drawLocationPoint(pointArray[i].radius, contextT, startPointColor, 0, pattern);
+                        }
                     }
                     if (pattern === 1) {
-                        contextT.fillStyle = locationPointColor;
+                        if(realOrFake === 1) {
+                            startX = pointArray[i].startPot.x;
+                            startY = pointArray[i].startPot.y;
+                            drawLocationLine(pointArray[i].endPot.x, pointArray[i].endPot.y, contextT, locationPointColor, 0, pattern);
+                            drawLocationPoint(10,contextT, locationPointColor, 0, pattern);
+                        }
+                        if(realOrFake === 0) {
+                            drawLocationPoint(pointArray[i].radius,contextT, locationPointColor, 0, pattern);
+                        }
                     }
-                    contextT.fill();
-                    contextT.stroke();
                 }
             }
         }
@@ -514,13 +567,30 @@
         var currentPointArray;
         var currentRealPointArray;
         function deleteLocationPoint() {
+            console.log("delete");
             var index = currentLocationPoint.index;
-            for(var i = 0;i<currentRealPointArray;i++) {
-                console.log("currentRealPointArray: "+i+ " coord: "+currentRealPointArray[i].x+" "+currentRealPointArray[i].y);
-            }
-            currentPointArray.splice(index,index);
-            currentRealPointArray.splice(index,index);
+            console.log(index);
+            currentPointArray[index] = null;
+            currentRealPointArray[index] = null;
+
+            //occur some index problems, so give up tentatively
+            //currentPointArray.splice(index,index);
+            //currentRealPointArray.splice(index,index);
+
+            pointContext.clearRect(0, 0, canvas.width, canvas.height);
+            redrawLocationArray(pointContext,0,startPoints,1);
+            redrawLocationArray(pointContext,1,locationPoints,1);
+
+            console.log("currentLocationPoint length: "+ currentPointArray.length);
+            console.log("currentRealPointArray length: "+ currentRealPointArray.length);
+            //for(var i = 0;i<currentRealPointArray.length;i++) {
+            //    console.log("currentRealPointArray: "+i+ " coord: "+currentRealPointArray[i].pot.x+" "+currentRealPointArray[i].pot.y);
+            //}
+            $pointItem.css("top","-2000px");
+            $pointItem.css("left", "-2000px");
         }
+
+        deleteButton.addEventListener('click',deleteLocationPoint);
 
 
         /**
@@ -542,24 +612,30 @@
             //startPoint
             if(index === 1 && pointPattern === 0) {
                 var startPoint = {
-                    pot:{x:0,y:0},
+                    startPot:{x:0,y:0},
+                    endPot:{x:0,y:0},
                     direction:0 //PI/2 = 90 degree anticlockwise
                 }
 
-                startPoint.pot.x = startX;
-                startPoint.pot.y = startY;
+                startPoint.startPot.x = startX;
+                startPoint.startPot.y = startY;
+                startPoint.endPot.x = toX;
+                startPoint.endPot.y = toY;
                 startPoint.angle = -(angle/Math.PI * 180);
                 startPoints.push(startPoint);
             }
             //locationPoint
             if(index === 1 && pointPattern === 1) {
                 var locationPoint = {
-                    pot:{x:0,y:0},
+                    startPot:{x:0,y:0},
+                    endPot:{x:0,y:0},
                     direction:0 //PI/2 = 90 degree anticlockwise
                 }
 
-                locationPoint.pot.x = startX;
-                locationPoint.pot.y = startY;
+                locationPoint.startPot.x = startX;
+                locationPoint.startPot.y = startY;
+                locationPoint.endPot.x = toX;
+                locationPoint.endPot.y = toY;
                 locationPoint.angle = -(angle/Math.PI * 180);
                 locationPoints.push(locationPoint);
             }
@@ -568,7 +644,6 @@
             contextT.lineCap = "round";
             contextT.lineWidth = 2;
             contextT.strokeStyle = color;
-
 
             //vertical distance
             a = toY - startY;
@@ -618,16 +693,28 @@
             movePoints: movePoints
         }
 
+        var noneNullArray;
+        function deleteNullInArray(array) {
+            noneNullArray = [];
+            for(var i=0;i<array.length;i++) {
+                if(array[i] != null) {
+                    noneNullArray.push(array[i]);
+                }
+            }
+        }
+
         function transToJson() {
             obstacles.lines = lines;
             obstacles.rectangles = rectangles;
             obstacles.polygons = polygons;
             obstacles.circles = circles;
-            movePoints.startPoints = startPoints;
-            movePoints.locationPoints = locationPoints;
+
+            deleteNullInArray(startPoints);
+            movePoints.startPoints = noneNullArray;
+            deleteNullInArray(locationPoints);
+            movePoints.locationPoints = noneNullArray;
 
             mapJson = JSON.stringify(map);
-
             console.log(obstaclesJson);
         }
 
@@ -656,84 +743,105 @@
                 /**
                  * loop to sign the selected button and change color
                  */
-                console.log("LocationPattern: "+locationPattern);
+                //console.log("LocationPattern: "+locationPattern);
+
                 if(locationPattern === 0) {
                     currentPointArray = startPointArray;
                     currentRealPointArray = startPoints;
                     for (var i = startPointArray.length - 1; i >= 0; i--) {
                         var circle = startPointArray[i];
-                        var distanceFromCenter = Math.sqrt(Math.pow(circle.x - mouseX, 2) + Math.pow(circle.y - mouseY, 2));
-                        if (distanceFromCenter <= circle.radius) {
-                            //save previousCircle and set its isSelected to false
-                            if (previousSelectedCircle != null) previousSelectedCircle.isSelected = false;
-                            previousSelectedCircle = circle;
-                            currentLocationPoint = circle;
-                            circle.isSelected = true;
-                            //console.log("select OK");
-                            startX = circle.x;
-                            startY = circle.y;
-                            drawLocationPoint(circle.radius, context, selectedColor, 0,locationPattern);
-                            $pointItem.css("width", "50px");
-                            $pointItem.css("top", (event.clientY + 15) + "px");
-                            $pointItem.css("left", (event.clientX + 15) + "px");
-                            break;
-                        }
-                        else {
-                            circle.isSelected = false;
-                            $pointItem.css("top", -(event.clientY + 15) + "px");
-                            $pointItem.css("left", -(event.clientX + 15) + "px");
+                        if(circle != null) {
+                            var distanceFromCenter = Math.sqrt(Math.pow(circle.x - mouseX, 2) + Math.pow(circle.y - mouseY, 2));
+                            if (distanceFromCenter <= circle.radius) {
+                                //save previousCircle and set its isSelected to false
+                                if (previousSelectedCircle != null) previousSelectedCircle.isSelected = false;
+                                previousSelectedCircle = circle;
+                                currentLocationPoint = circle;
+                                circle.isSelected = true;
+                                //console.log("select OK");
+                                startX = circle.x;
+                                startY = circle.y;
+                                drawLocationPoint(circle.radius, pointContext, selectedColor, 0, locationPattern);
+                                $pointItem.css("width", "50px");
+                                $pointItem.css("top", (event.clientY + 15) + "px");
+                                $pointItem.css("left", (event.clientX + 15) + "px");
+                                break;
+                            }
+                            else {
+                                circle.isSelected = false;
+                                $pointItem.css("top", -(event.clientY + 15) + "px");
+                                $pointItem.css("left", -(event.clientX + 15) + "px");
+                            }
                         }
                     }
 
-                    for (var i = startPointArray.length - 1; i >= 0; i--) {
-                        var circle = startPointArray[i];
-                        if(!circle.isSelected) {
-                            startX = circle.x;
-                            startY = circle.y;
-                            drawLocationPoint(circle.radius,context,startPointColor,0,locationPattern);
-                        }
-                        //console.log("circle"+i+" "+circle.isSelected +" Index:"+circle.index);
-                    }
+                    //for (var i = startPointArray.length - 1; i >= 0; i--) {
+                    //    var circle = startPointArray[i];
+                    //    if(circle != null) {
+                    //        if (!circle.isSelected) {
+                    //            startX = circle.x;
+                    //            startY = circle.y;
+                    //            drawLocationPoint(circle.radius, pointContext, startPointColor, 0, locationPattern);
+                    //        }
+                    //    }
+                    //    //console.log("circle"+i+" "+circle.isSelected +" Index:"+circle.index);
+                    //}
                 }
+
                 if(locationPattern === 1) {
                     currentPointArray = locationPointArray;
+                    currentRealPointArray = locationPoints;
                     for (var i = locationPointArray.length - 1; i >= 0; i--) {
                         var circle = locationPointArray[i];
-                        var distanceFromCenter = Math.sqrt(Math.pow(circle.x - mouseX, 2) + Math.pow(circle.y - mouseY, 2));
-                        if (distanceFromCenter <= circle.radius) {
-                            if (previousSelectedCircle != null) previousSelectedCircle.isSelected = false;
-                            previousSelectedCircle = circle;//记录选中的圆
-                            currentLocationPoint = circle;
-                            circle.isSelected = true;
-                            //console.log("select OK");
-                            startX = circle.x;
-                            startY = circle.y;
-                            drawLocationPoint(circle.radius, context, selectedColor, 0,locationPattern);
-                            $pointItem.css("width", "50px");
-                            $pointItem.css("top", (event.clientY + 15) + "px");
-                            $pointItem.css("left", (event.clientX + 15) + "px");
-                            break;
-                        }
-                        else {
-                            circle.isSelected = false;
-                            $pointItem.css("top", -(event.clientY + 15) + "px");
-                            $pointItem.css("left", -(event.clientX + 15) + "px");
+                        if (circle != null) {
+                            var distanceFromCenter = Math.sqrt(Math.pow(circle.x - mouseX, 2) + Math.pow(circle.y - mouseY, 2));
+                            if (distanceFromCenter <= circle.radius) {
+                                //save previousCircle and set its isSelected to false
+                                if (previousSelectedCircle != null) previousSelectedCircle.isSelected = false;
+                                previousSelectedCircle = circle;
+                                currentLocationPoint = circle;
+                                circle.isSelected = true;
+                                //console.log("select OK");
+                                startX = circle.x;
+                                startY = circle.y;
+                                drawLocationPoint(circle.radius, pointContext, selectedColor, 0, locationPattern);
+                                $pointItem.css("width", "50px");
+                                $pointItem.css("top", (event.clientY + 15) + "px");
+                                $pointItem.css("left", (event.clientX + 15) + "px");
+                                break;
+                            }
+                            else {
+                                circle.isSelected = false;
+                                //console.log("deletebutton cancel");
+                                $pointItem.css("top", -(event.clientY + 15) + "px");
+                                $pointItem.css("left", -(event.clientX + 15) + "px");
+                            }
                         }
                     }
-                    for (var i = locationPointArray.length - 1; i >= 0; i--) {
-                        var circle = locationPointArray[i];
-                        if(!circle.isSelected) {
-                            startX = circle.x;
-                            startY = circle.y;
-                            drawLocationPoint(circle.radius,context,locationPointColor,0,locationPattern);
-                        }
-                        //console.log("circle"+i+" "+circle.isSelected);
-                    }
+
+                    //for (var i = startPointArray.length - 1; i >= 0; i--) {
+                    //    var circle = startPointArray[i];
+                    //    if (circle != null) {
+                    //        console.log(circle.isSelected);
+                    //        if (!circle.isSelected) {
+                    //            startX = circle.x;
+                    //            startY = circle.y;
+                    //            drawLocationPoint(circle.radius, pointContext, locationPointColor, 0, locationPattern);
+                    //        }
+                    //    }
+                    //}
                 }
 
                 //guarantee switch pattern last pattern's Array will restore, some redundancy ... I'll fix it.
-                redrawLocationArray(context,0,startPointArray);
-                redrawLocationArray(context,1,locationPointArray);
+                redrawArray(pointContext);
+
+                /*for(var i =0;i<startPointArray.length;i++) {
+                    console.log("starts "+startPointArray[i].isSelected);
+                }
+
+                for(var i =0;i<locationPointArray.length;i++) {
+                    console.log("locations "+locationPointArray[i].isSelected);
+                }*/
             }
             if(drawing_location_point === true) {
                 if(locationPattern === 0) {
@@ -744,9 +852,10 @@
                     chosenWidth = $chosenSvg.getBoundingClientRect().width;
                     context3.lineWidth = chosenWidth;
                     context.lineWidth = chosenWidth;
+                    pointContext.lineWidth = chosenWidth;
                     startX = mouseX;
                     startY = mouseY;
-                    drawLocationPoint(10,context,startPointColor,1,locationPattern);
+                    drawLocationPoint(10,pointContext,startPointColor,1,locationPattern);
                     $tempCanvas.css({left: 0, top: 0});
                 }
                 if(locationPattern === 1) {
@@ -756,9 +865,10 @@
                     chosenWidth = $chosenSvg.getBoundingClientRect().width;
                     context3.lineWidth = chosenWidth;
                     context.lineWidth = chosenWidth;
+                    pointContext.lineWidth = chosenWidth;
                     startX = mouseX;
                     startY = mouseY;
-                    drawLocationPoint(10,context,locationPointColor,1,locationPattern);
+                    drawLocationPoint(10,pointContext,locationPointColor,1,locationPattern);
                     $tempCanvas.css({left: 0, top: 0});
                 }
             }
@@ -882,37 +992,44 @@
                 mouseY = topScrollDistance + event.clientY - offsetY;
                 for (var i = startPointArray.length - 1; i >= 0; i--) {
                     var circle = startPointArray[i];
-                    var distanceFromCenter = Math.sqrt(Math.pow(circle.x - mouseX, 2) + Math.pow(circle.y - mouseY, 2));
-                    if (distanceFromCenter <= circle.radius && !circle.isSelected) {
-                        startX = circle.x;
-                        startY = circle.y;
-                        circle.selecting = true;
-                        console.log("circle" + i);
-                        locationPattern = 0;
-                        drawLocationPoint(circle.radius, context, selectingColor, 0,locationPattern);
-                        //return;
-                    } else {
-                        if (circle.selecting) {
-                            drawLocationPoint(circle.radius, context, startPointColor, 0,locationPattern);
-                            circle.selecting = false;
+                    if(circle != null) {
+                        var distanceFromCenter = Math.sqrt(Math.pow(circle.x - mouseX, 2) + Math.pow(circle.y - mouseY, 2));
+                        if (distanceFromCenter <= circle.radius && !circle.isSelected) {
+                            startX = circle.x;
+                            startY = circle.y;
+                            circle.selecting = true;
+                            console.log("circle    " + i);
+                            locationPattern = 0;
+                            drawLocationPoint(circle.radius, pointContext, selectingColor, 0, locationPattern);
+                            return;
+                        } else {
+                            if (circle.selecting) {
+                                if(!circle.isSelected) {
+                                    drawLocationPoint(circle.radius, pointContext, startPointColor, 0, locationPattern);
+                                }
+                                circle.selecting = false;
+                            }
                         }
                     }
                 }
                 for (var i = locationPointArray.length - 1; i >= 0; i--) {
                     var circle = locationPointArray[i];
-                    var distanceFromCenter = Math.sqrt(Math.pow(circle.x - mouseX, 2) + Math.pow(circle.y - mouseY, 2));
-                    if (distanceFromCenter <= circle.radius && !circle.isSelected) {
-                        startX = circle.x;
-                        startY = circle.y;
-                        circle.selecting = true;
-                        console.log("circle" + i);
-                        locationPattern = 1;
-                        drawLocationPoint(circle.radius, context, selectingColor, 0, locationPattern);
-                        //return;
-                    } else {
-                        if (circle.selecting) {
-                            drawLocationPoint(circle.radius, context, locationPointColor, 0, locationPattern);
-                            circle.selecting = false;
+                    if(circle != null) {
+                        var distanceFromCenter = Math.sqrt(Math.pow(circle.x - mouseX, 2) + Math.pow(circle.y - mouseY, 2));
+                        if (distanceFromCenter <= circle.radius && !circle.isSelected) {
+                            startX = circle.x;
+                            startY = circle.y;
+                            circle.selecting = true;
+                            console.log("circle" + i);
+                            locationPattern = 1;
+                            drawLocationPoint(circle.radius, pointContext, selectingColor, 0, locationPattern);
+                        } else {
+                            if (circle.selecting) {
+                                if(!circle.isSelected) {
+                                    drawLocationPoint(circle.radius, pointContext, locationPointColor, 0, locationPattern);
+                                }
+                                circle.selecting = false;
+                            }
                         }
                     }
                 }
@@ -927,6 +1044,7 @@
                     mouseX = leftScrollDistance + event.clientX - offsetX;
                     mouseY = topScrollDistance + event.clientY - offsetY;
                     context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
+                    //last context3
                     drawLocationLine(mouseX, mouseY, context3,startPointColor,0,locationPattern);
                 }
                 if(locationPattern === 1) {
@@ -1037,15 +1155,15 @@
             if(pointing === true) {
 
             }
-            if(drawing_location_point) {
+            if(drawing_location_point === true) {
                 mouseX = leftScrollDistance + event.clientX - offsetX;
                 mouseY = topScrollDistance + event.clientY - offsetY;
                 $tempCanvas.css({left: -window.innerWidth, top: 0});
                 if(locationPattern === 0) {
-                    drawLocationLine(mouseX, mouseY, context, startPointColor, 1, locationPattern);
+                    drawLocationLine(mouseX, mouseY, pointContext, startPointColor, 1, locationPattern);
                 }
                 if(locationPattern === 1) {
-                    drawLocationLine(mouseX, mouseY, context, locationPointColor, 1, locationPattern);
+                    drawLocationLine(mouseX, mouseY, pointContext, locationPointColor, 1, locationPattern);
                 }
                 //console.log(startPoints.length);
             }
@@ -1122,6 +1240,8 @@
         netherCanvas.height = h;
         tempCanvas.width = w;
         tempCanvas.height = h;
+        pointCanvas.width = w;
+        pointCanvas.height = h;
     }
 
     function setContextSize(h, w) {
@@ -1614,6 +1734,7 @@
             dragging = false;
             $toolsFirst.html(penHtml);
             drawing_location_point = true;
+            pointing = false;
             $canvasWrapper.css({cursor:"url('asset/cursor/locate.cur'),crosshair"});
             switch (toolsIndex) {
                 case 0:
