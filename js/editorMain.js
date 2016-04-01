@@ -69,7 +69,8 @@
     var shapePattern;
 
     //undo and redo
-    var history = new Array();
+    var history = [];
+    var pointHistory = [];
     var cStep = -1;
 
     var bg_image = new Image();
@@ -1329,8 +1330,10 @@
         cStep++;
         if (cStep < history.length) {
             history.length = cStep;
+            pointHistory.length = cStep;
         }
         history.push($("#canvas").get(0).toDataURL());
+        pointHistory.push($("#pointCanvas").get(0).toDataURL());
     }
 
     function undo() {
@@ -1341,6 +1344,10 @@
             tempImage.src = history[cStep];
             tempImage.onload = function () {
                 context.drawImage(tempImage, 0, 0);
+            };
+            tempImage.src = pointHistory[cStep];
+            tempImage.onload = function () {
+                pointContext.drawImage(tempImage, 0, 0);
             };
         }
     }
@@ -1353,6 +1360,10 @@
             tempImage.src = history[cStep];
             tempImage.onload = function () {
                 context.drawImage(tempImage, 0, 0);
+            };
+            tempImage.src = pointHistory[cStep];
+            tempImage.onload = function () {
+                pointContext.drawImage(tempImage, 0, 0);
             };
         }
     }
@@ -1371,12 +1382,14 @@
     function clearCanvas() {
         context.clearRect(0, 0, canvas.width, canvas.height);
         context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
+        pointContext.clearRect(0, 0, pointCanvas.width, pointCanvas.height);
     }
 
     function clearAndSave() {
         historyPush();
         context.clearRect(0, 0, canvas.width, canvas.height);
         context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
+        pointContext.clearRect(0, 0, pointCanvas.width, pointCanvas.height);
     }
 
     var times = 0;
@@ -1389,6 +1402,12 @@
         tempImage.src = history[len - 1];
         tempImage.onload = function () {
             context.drawImage(tempImage, 0, 0);
+        }
+
+        len = pointHistory.length;
+        tempImage.src = pointHistory[len - 1];
+        tempImage.onload = function () {
+            pointContext.drawImage(tempImage, 0, 0);
         }
     }
 
