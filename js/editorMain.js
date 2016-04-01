@@ -39,7 +39,7 @@
 
     var startPointColor = "#00FF7F";
     var locationPointColor = "#FFA500";
-    var selectedColor = "#00CED1"; //mouse down color
+    var selectedColor = "#0000FF"; //mouse down color
     var selectingColor = "#FFFFFF"; //mouse hover color
 
     //use for limited length straight line
@@ -463,7 +463,8 @@
         var locationPointArray = [];
 
         //record the point's index in the startPointArray for reducing a loop
-        var tempIndex = 0;
+        var startIndex = 0;
+        var locationIndex = 0;
         /**
          *
          * @param radius
@@ -482,13 +483,13 @@
             contextT.stroke();
             if(index === 1) {
                 if(locationPattern === 0) {
-                    var circle = new CirclePoint(startX, startY, radius, tempIndex);
-                    tempIndex += 1;
+                    var circle = new CirclePoint(startX, startY, radius, startIndex);
+                    startIndex += 1;
                     startPointArray.push(circle);
                 }
                 if(locationPattern === 1) {
-                    var circle = new CirclePoint(startX, startY, radius, tempIndex);
-                    tempIndex += 1;
+                    var circle = new CirclePoint(startX, startY, radius, locationIndex);
+                    locationIndex += 1;
                     locationPointArray.push(circle);
                 }
             }
@@ -510,18 +511,18 @@
                 if(startPointArray[i] != null) {
 
                     if (!startPointArray[i].isSelected) {
-                        drawPointCircle(startPointArray[i].x, startPointArray[i].y, startPointArray[i].radius, startPointColor, pointContext);
+                        drawPointCircle(startPointArray[i].x, startPointArray[i].y, startPointArray[i].radius, startPointColor, contextT);
                     } else {
-                        drawPointCircle(startPointArray[i].x, startPointArray[i].y, startPointArray[i].radius, selectedColor, pointContext);
+                        drawPointCircle(startPointArray[i].x, startPointArray[i].y, startPointArray[i].radius, selectedColor, contextT);
                     }
                 }
             }
             for(var i=0;i<locationPointArray.length;i++) {
                 if(locationPointArray[i] != null) {
                     if (!locationPointArray[i].isSelected) {
-                        drawPointCircle(locationPointArray[i].x,locationPointArray[i].y,locationPointArray[i].radius,locationPointColor,pointContext);
+                        drawPointCircle(locationPointArray[i].x,locationPointArray[i].y,locationPointArray[i].radius,locationPointColor,contextT);
                     } else {
-                        drawPointCircle(locationPointArray[i].x,locationPointArray[i].y,locationPointArray[i].radius,selectedColor,pointContext);
+                        drawPointCircle(locationPointArray[i].x,locationPointArray[i].y,locationPointArray[i].radius,selectedColor,contextT);
                     }
                 }
             }
