@@ -94,7 +94,7 @@ function setImage() {
         //console.log(text);
     });
 
-    window.open('editorTest3.html','_self',false);
+    window.open('editorTest4.html','_self',false);
     //console.log("setImage  "+imgUrl+ wordArray[7] + "  "+num);
 }
 

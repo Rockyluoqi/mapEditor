@@ -1,0 +1,10 @@
+require(['js/lib/jquery-1.11.0.min.js',
+    'js/hammerjs.js',
+    'js/lib/google.jquery.fastbutton.min.js',
+    'js/lib/google.fastbutton.min.js',
+    'js/lib/materialize.min.js',
+    'js/imageFileHandler.js',
+    'js/locationPosition.js',
+    'js/shape.js',
+    'js/dataHandler.js',
+    'js/editorMain.js'],function(){});

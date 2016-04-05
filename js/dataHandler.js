@@ -156,49 +156,86 @@ function drawNewImage(){
     }
 
     drawPolygonObstacle(polygons,context);
+
+    /**
+     * parse circle
+     */
+    var circles = [];
+    tempArray = obj.obstacles.circles;
+    var array;
+    for(var i=0;i<tempArray.length;i++) {
+        var circle = {
+            "center": {
+                "x": 0,
+                "y": 0
+            },
+            "radius": 0
+        }
+
+        circle.center.x = tempArray[i].center.x;
+        circle.center.y = tempArray[i].center.y;
+        circle.radius = tempArray[i].radius;
+        circles.push(circle);
+    }
+}
+
+/**
+ * you can use drawNewImage, but it adds many loops, so please use this
+ */
+function drawLayer() {
+    drawLineObstacle(lines,context);
+    drawRectangleObstacle(rectangles,context);
+    drawPolygonObstacle(polygons, context);
+    drawCircleObstacle(circles, context);
 }
 
 function drawLineObstacle(lines,contextT) {
     for(var i = 0;i<lines.length;i++) {
-        contextT.beginPath();
-        contextT.lineCap = "round";
-        //contextT.lineCap = chosenWidth;
-        contextT.strokeStyle = $colorItem.css("background-color");
-        contextT.moveTo(lines[i].start.x, lines[i].start.y);
-        contextT.lineTo(lines[i].end.x, lines[i].end.y);
-        contextT.stroke();
+        if(lines[i]) {
+            contextT.beginPath();
+            contextT.lineCap = "round";
+            //contextT.lineCap = chosenWidth;
+            contextT.strokeStyle = $colorItem.css("background-color");
+            contextT.moveTo(lines[i].start.x, lines[i].start.y);
+            contextT.lineTo(lines[i].end.x, lines[i].end.y);
+            contextT.stroke();
+        }
     }
 }
 
 function drawRectangleObstacle(rectangles,contextT) {
     for(var i = 0;i<rectangles.length;i++) {
-        contextT.beginPath();
-        context.lineCap = "round";
-        contextT.strokeStyle = $colorItem.css("background-color");
-        //is fill color rect
-        //contextT.fillRect(startX,startY,toX-startX,toY-startY);
-        contextT.strokeRect(rectangles[i].start.x,rectangles[i].start.y ,
-            rectangles[i].end.x- rectangles[i].start.x,
-            rectangles[i].end.y- rectangles[i].start.y);
+        if(rectangles[i]) {
+            contextT.beginPath();
+            context.lineCap = "round";
+            contextT.strokeStyle = $colorItem.css("background-color");
+            //is fill color rect
+            //contextT.fillRect(startX,startY,toX-startX,toY-startY);
+            contextT.strokeRect(rectangles[i].start.x, rectangles[i].start.y,
+                rectangles[i].end.x - rectangles[i].start.x,
+                rectangles[i].end.y - rectangles[i].start.y);
+        }
     }
 }
 
 function drawPolygonObstacle(polygons,contextT) {
     for(var i = 0;i < polygons.length;i++) {
-        var polygon = polygons[i];
-        contextT.beginPath();
-        contextT.strokeStyle = $colorItem.css("background-color");
-        for (var j = 0; j < polygon.length; j++) {
-            if (j + 1 === polygon.length) {
-                contextT.moveTo(polygon[j].x, polygon[j].y);
-                contextT.lineTo(polygon[0].x, polygon[0].y);
-                contextT.stroke();
-            } else {
-                contextT.moveTo(polygon[j].x, polygon[j].y);
-                //console.log(polygon[j].x + " " + polygon[j].y)
-                contextT.lineTo(polygon[j + 1].x, polygon[j + 1].y);
-                //console.log(polygon[j + 1].x + " " + polygon[j + 1].y)
-                contextT.stroke();
+        if (polygons[i]) {
+            var polygon = polygons[i];
+            contextT.beginPath();
+            contextT.strokeStyle = $colorItem.css("background-color");
+            for (var j = 0; j < polygon.length; j++) {
+                if (j + 1 === polygon.length) {
+                    contextT.moveTo(polygon[j].x, polygon[j].y);
+                    contextT.lineTo(polygon[0].x, polygon[0].y);
+                    contextT.stroke();
+                } else {
+                    contextT.moveTo(polygon[j].x, polygon[j].y);
+                    //console.log(polygon[j].x + " " + polygon[j].y)
+                    contextT.lineTo(polygon[j + 1].x, polygon[j + 1].y);
+                    //console.log(polygon[j + 1].x + " " + polygon[j + 1].y)
+                    contextT.stroke();
+                }
             }
         }
     }
@@ -206,9 +243,11 @@ function drawPolygonObstacle(polygons,contextT) {
 
 function drawCircleObstacle(circles,contextT) {
     for(var i = 0;i<circles.length;i++) {
-        contextT.beginPath();
-        contextT.strokeStyle = $colorItem.css("background-color");
-        contextT.arc(startX,startY,radius,0,2*Math.PI);
-        contextT.stroke();
+        if(circles[i]) {
+            contextT.beginPath();
+            contextT.strokeStyle = $colorItem.css("background-color");
+            contextT.arc(circles[i].center.x, circles[i].center.y, circles[i].radius, 0, 2 * Math.PI);
+            contextT.stroke();
+        }
     }
 }

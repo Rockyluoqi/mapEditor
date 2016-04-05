@@ -1,7 +1,6 @@
 /**
  * Created by Luoqi on 4/5/2016.
  */
-
 var lines = [];
 var rectangles = [];
 var polygons = [];
