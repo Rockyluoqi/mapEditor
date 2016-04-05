@@ -228,8 +228,8 @@
 /*info box 信息提示栏，自动弹出*/
 .menu-item span {
     background: none repeat scroll 0 0 #F8F8F8;
-    border: 5px solid #46b8da;
-    color: #717171;
+    border: 5px solid #000000;
+    color: 	#000000;
     font-size: 20px;
     font-weight: 600;
     width: 200px;
@@ -254,8 +254,8 @@
     bottom:30px;
     width:15px;
     height:15px;
-    border-bottom:5px solid #46b8da;
-    border-right:5px solid #46b8da;
+    border-bottom:5px solid #000000;
+    border-right:5px solid #000000;
     background:#f8f8f8;
     left:0%;
     margin-left:-10.9px;

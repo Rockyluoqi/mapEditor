@@ -44,8 +44,8 @@ function setImageArray() {
     var len = 12;
     //Image Array lenghth, how many maps
     var title = 'Map1 XXXAirport T2 Level2';
-    var src = 'plugin/images/thumbs/thumb1.jpg';
-    var dataImage = 'plugin/images/big/image1.jpg';
+    var src = 'res/images/thumbs/thumb1.jpg';
+    var dataImage = 'res/images/big/image1.jpg';
     var dataDescription = 'XXXAirport is..., area: XXX  obstacles: XXX';
 
     for (var i = 0; i < len; i++) {
@@ -85,7 +85,7 @@ function setImage() {
 
     //跨文件传参常用方法
     if(num < 99) {
-        localStorage["bgUrl"] = "/mapEditor/plugin/images/big/image" + num + ".jpg";
+        localStorage["bgUrl"] = "/mapEditor/res/images/big/image" + num + ".jpg";
     }
 
     //usage:
@@ -93,8 +93,6 @@ function setImage() {
         localStorage["obstacle"] = text;
         //console.log(text);
     });
-
-
 
     window.open('editorTest3.html','_self',false);
     //console.log("setImage  "+imgUrl+ wordArray[7] + "  "+num);
@@ -111,7 +109,3 @@ function readTextFile(file, callback) {
     }
     rawFile.send(null);
 }
-
-
-
-
