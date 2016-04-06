@@ -171,6 +171,7 @@ function drawLocationLine(toX,toY,contextT,color,index,pointPattern) {
     //startPoint
     if(index === 1 && pointPattern === 0) {
         var startPoint = {
+
             startPot:{x:0,y:0},
             endPot:{x:0,y:0},
             direction:0 //PI/2 = 90 degree anticlockwise

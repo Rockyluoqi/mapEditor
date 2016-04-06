@@ -18,6 +18,9 @@ var movePoints = {
     locationPoints : locationPoints
 }
 
+var startPointName = '';
+var endPointName = '';
+
 /**
  *
  * @param toX

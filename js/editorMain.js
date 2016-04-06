@@ -19,6 +19,17 @@ var $pen = $("#pen");
 var $positionsFirst = $("#positionsFirst");
 var $tempCanvas = $("#tempCanvas");
 var $pointItem = $("#pointItem");
+
+var $startPointInput = $("#startPointInput");
+var $startOkBtn = $("#startOkBtn");
+var $startCancelBtn = $("#startCancelBtn");
+var $startPointName = $("#startPointName");
+
+var $endPointInput = $("#endPointInput");
+var $endOkBtn = $("#endOkBtn");
+var $endCancelBtn = $("#endCancelBtn");
+var $endPointName = $("#endPointName");
+
 var deleteButton = document.getElementById('deleteButton');
 
 //flags and some
@@ -59,6 +70,70 @@ document.getElementById('layer2').addEventListener('click', clearCanvas);
 //deleteButton.addEventListener('click', deleteLocationPoint);
 //deleteButton.addEventListener('click', drawLayer);
 deleteButton.addEventListener('click', deleteBtnHandler);
+
+$startOkBtn.click(setStartPointName);
+$startCancelBtn.click(startInputCancel);
+
+$endOkBtn.click(setEndPointName);
+$endCancelBtn.click(endInputCancel);
+
+/**
+ * cancel and delete the point
+ */
+function startInputCancel() {
+    $startPointInput.css("top", -3000 + "px");
+    $startPointInput.css("left", -3000 + "px");
+    var length = startPointArray.length;
+    startPointArray[length - 1] = null;
+    startPoints[length - 1] = null;
+
+    deleteNullInArray(startPointArray);
+    startPointArray = noneNullArray;
+
+    deleteNullInArray(startPoints);
+    startPoints = noneNullArray;
+
+    pointContext.clearRect(0, 0, canvas.width, canvas.height);
+    redrawLocationArray(pointContext, 0, startPoints, 1);
+    redrawLocationArray(pointContext, 1, locationPoints, 1);
+}
+
+function setStartPointName() {
+    alert($startPointName.val());
+    startPointName = $startPointName.val();
+
+    $startPointInput.css("top", -3000 + "px");
+    $startPointInput.css("left", -3000 + "px");
+}
+
+/**
+ * cancel and delete the point
+ */
+function endInputCancel() {
+    $endPointInput.css("top", -3000 + "px");
+    $endPointInput.css("left", -3000 + "px");
+    var length = locationPointArray.length;
+    locationPointArray[length - 1] = null;
+    locationPoints[length - 1] = null;
+
+    deleteNullInArray(locationPointArray);
+    locationPointArray = noneNullArray;
+
+    deleteNullInArray(locationPoints);
+    locationPoints = noneNullArray;
+
+    pointContext.clearRect(0, 0, canvas.width, canvas.height);
+    redrawLocationArray(pointContext, 0, startPoints, 1);
+    redrawLocationArray(pointContext, 1, locationPoints, 1);
+}
+
+function setEndPointName() {
+    alert($endPointName.val());
+    endPointName = $endPointName.val();
+
+    $endPointInput.css("top", -3000 + "px");
+    $endPointInput.css("left", -3000 + "px");
+}
 
 
 /**
@@ -907,9 +982,23 @@ if (canvas.getContext) {
             $tempCanvas.css({left: -window.innerWidth, top: 0});
             if (locationPattern === 0) {
                 drawLocationLine(mouseX, mouseY, pointContext, startPointColor, 1, locationPattern);
+
+                //$startPointInput.css("width", 200 + "px");
+                $startPointInput.css("top", (event.clientY + 200) + "px");
+                $startPointInput.css("left", (event.clientX) + "px");
+                $startPointInput.css("width", (400) + "px");
+                $(".row").css("width", 400 + "px");
+                $(".col").css("width", 300 + "px");
+                $(".input-field").css("width", 250 + "px");
             }
             if (locationPattern === 1) {
                 drawLocationLine(mouseX, mouseY, pointContext, locationPointColor, 1, locationPattern);
+                $endPointInput.css("top", (event.clientY + 200) + "px");
+                $endPointInput.css("left", (event.clientX) + "px");
+                $endPointInput.css("width", (400) + "px");
+                $(".row").css("width", 400 + "px");
+                $(".col").css("width", 300 + "px");
+                $(".input-field").css("width", 250 + "px");
             }
             //console.log(startPoints.length);
         }

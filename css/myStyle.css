@@ -316,3 +316,16 @@
     top:0;
     left:0;
 }
+
+#startPointInput {
+    position: relative;
+    top: -1000px;
+    left: -1000px;
+}
+
+#endPointInput {
+    position: relative;
+    top: -1000px;
+    left: -1000px;
+}
+
