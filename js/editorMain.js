@@ -36,15 +36,12 @@ var curScrollY = 0;
 var pointing = false;
 var locationPattern;
 var drawing_location_point = false;
+var drawing = false;
 
 var startPointColor = "#00FF7F";
 var locationPointColor = "#FFA500";
 var selectedColor = "#0000FF"; //mouse down color
 var selectingColor = "#FFFFFF"; //mouse hover color
-
-//use for limited length straight line
-var sin, cos, a, b, c;
-var orientationLength = 40;
 
 
 /**
@@ -57,9 +54,12 @@ document.getElementById('layer2').addEventListener('click', clearCanvas);
 /**
  * test some submit function
  */
-document.getElementById('successBtn').addEventListener('click', sendImageInfo);
+//document.getElementById('successBtn').addEventListener('click', sendImageInfo);
 
-deleteButton.addEventListener('click', deleteLocationPoint);
+//deleteButton.addEventListener('click', deleteLocationPoint);
+//deleteButton.addEventListener('click', drawLayer);
+deleteButton.addEventListener('click', deleteBtnHandler);
+
 
 /**
  * 0-straight line
@@ -229,17 +229,6 @@ if (canvas.getContext) {
      */
     $tempCanvas.css({left: -(window.innerWidth), top: 0});
 
-    /**
-     *
-     * ===================================================================================
-     *
-     * A position  ( shape and jsonHandler )
-     *
-     * ===================================================================================
-     *
-     *
-     */
-
 
     /**
      * I know the code in if statement is redundant.What my think is reduce coupling.Is it better? Sense of trap.
@@ -263,12 +252,12 @@ if (canvas.getContext) {
         if (pointing === true) {
             mouseX = leftScrollDistance + event.clientX - offsetX;
             mouseY = topScrollDistance + event.clientY - offsetY;
-            /**
-             * loop to sign the selected button and change color
-             */
-            //console.log("LocationPattern: "+locationPattern);
 
+            /**
+             * the locaitonPoint logic is different with the shapePattern, it has historical reason, I'll fix it.(timeless...
+             */
             if (locationPattern === 0) {
+                console.log("location 0");
                 currentPointArray = startPointArray;
                 currentRealPointArray = startPoints;
                 for (var i = startPointArray.length - 1; i >= 0; i--) {
@@ -285,6 +274,9 @@ if (canvas.getContext) {
                             startX = circle.x;
                             startY = circle.y;
                             drawLocationPoint(circle.radius, pointContext, selectedColor, 0, locationPattern);
+
+                            deleteFlag = 5;
+
                             $pointItem.css("width", "50px");
                             $pointItem.css("top", (event.clientY + 15) + "px");
                             $pointItem.css("left", (event.clientX + 15) + "px");
@@ -328,6 +320,9 @@ if (canvas.getContext) {
                             startX = circle.x;
                             startY = circle.y;
                             drawLocationPoint(circle.radius, pointContext, selectedColor, 0, locationPattern);
+
+                            deleteFlag = 5;
+
                             $pointItem.css("width", "50px");
                             $pointItem.css("top", (event.clientY + 15) + "px");
                             $pointItem.css("left", (event.clientX + 15) + "px");
@@ -335,7 +330,6 @@ if (canvas.getContext) {
                         }
                         else {
                             circle.isSelected = false;
-                            //console.log("deletebutton cancel");
                             $pointItem.css("top", -(event.clientY + 15) + "px");
                             $pointItem.css("left", -(event.clientX + 15) + "px");
                         }
@@ -354,7 +348,6 @@ if (canvas.getContext) {
                 //    }
                 //}
             }
-
             //guarantee switch pattern last pattern's Array will restore, some redundancy ... I'll fix it.
             redrawArray(pointContext);
 
@@ -365,6 +358,132 @@ if (canvas.getContext) {
              for(var i =0;i<locationPointArray.length;i++) {
              console.log("locations "+locationPointArray[i].isSelected);
              }*/
+
+            if (shapePattern === 1) {
+                //delete line
+                for (var i = 0; i < lines.length; i++) {
+                    if (lines[i] != null) {
+                        context.beginPath();
+                        context.lineCap = "round";
+                        context.moveTo(lines[i].start.x, lines[i].start.y);
+                        context.lineTo(lines[i].end.x, lines[i].end.y);
+                        if (context.isPointInStroke(mouseX, mouseY)) {
+                            canvas.style.cursor = 'pointer';
+                            context.strokeStyle = "red";
+                            context.stroke();
+                            $pointItem.css("width", "50px");
+                            $pointItem.css("top", (event.clientY + 15) + "px");
+                            $pointItem.css("left", (event.clientX + 15) + "px");
+                            lineIndex = i;
+                            deleteFlag = 1;
+                            break;
+                        } else {
+                            canvas.style.cursor = 'default';
+                            context.strokeStyle = "black";
+                            context.stroke();
+                            $pointItem.css("top", -(event.clientY + 15) + "px");
+                            $pointItem.css("left", -(event.clientX + 15) + "px");
+                        }
+                    }
+                }
+            }
+
+            if (shapePattern === 2) {
+                //delete rectangle
+                for (var i = 0; i < rectangles.length; i++) {
+                    if (rectangles[i] != null) {
+                        context.beginPath();
+                        context.lineCap = "round";
+                        context.rect(rectangles[i].start.x, rectangles[i].start.y, rectangles[i].end.x - rectangles[i].start.x, rectangles[i].end.y - rectangles[i].start.y);
+                        if (context.isPointInPath(mouseX, mouseY)) {
+                            canvas.style.cursor = 'pointer';
+                            context.strokeStyle = "red";
+                            context.stroke();
+                            $pointItem.css("width", "50px");
+                            $pointItem.css("top", (event.clientY + 15) + "px");
+                            $pointItem.css("left", (event.clientX + 15) + "px");
+
+                            rectangleIndex = i;
+                            deleteFlag = 2;
+
+                            break;
+                        } else {
+                            canvas.style.cursor = 'default';
+                            context.strokeStyle = "black";
+                            context.stroke();
+                            $pointItem.css("top", -(event.clientY + 15) + "px");
+                            $pointItem.css("left", -(event.clientX + 15) + "px");
+                        }
+                    }
+                }
+            }
+
+            if (shapePattern === 3) {
+                //delete polygon
+                for (var i = 0; i < polygons.length; i++) {
+                    if (polygons[i]) {
+                        var polygon = polygons[i];
+                        context.beginPath();
+                        context.strokeStyle = "red";
+                        context.moveTo(polygon[0].x, polygon[0].y);
+                        console.log(polygon.length);
+                        for (var j = 1; j < polygon.length; j++) {
+                            context.lineTo(polygon[j].x, polygon[j].y);
+                            //console.log(polygon[j].x + " "+polygon[j].y);
+                        }
+                        if (context.isPointInPath(mouseX, mouseY)) {
+                            canvas.style.cursor = 'pointer';
+                            context.strokeStyle = "red";
+                            context.closePath();
+                            context.stroke();
+                            $pointItem.css("width", "50px");
+                            $pointItem.css("top", (event.clientY + 15) + "px");
+                            $pointItem.css("left", (event.clientX + 15) + "px");
+
+                            polygonIndex = i;
+                            deleteFlag = 3;
+                            break;
+                        } else {
+                            canvas.style.cursor = 'default';
+                            context.strokeStyle = "black";
+                            context.closePath();
+                            context.stroke();
+                            $pointItem.css("top", -(event.clientY + 15) + "px");
+                            $pointItem.css("left", -(event.clientX + 15) + "px");
+                        }
+                    }
+                }
+            }
+
+            if (shapePattern === 4) {
+                //delete circle
+                for (var i = 0; i < circles.length; i++) {
+                    if (circles[i] != null) {
+                        context.beginPath();
+                        context.lineCap = "round";
+                        context.arc(circles[i].center.x, circles[i].center.y, circles[i].radius, 0, 2 * Math.PI);
+                        if (context.isPointInPath(mouseX, mouseY)) {
+                            canvas.style.cursor = 'pointer';
+                            context.strokeStyle = "red";
+                            context.stroke();
+                            $pointItem.css("width", "50px");
+                            $pointItem.css("top", (event.clientY + 15) + "px");
+                            $pointItem.css("left", (event.clientX + 15) + "px");
+
+                            circleIndex = i;
+                            deleteFlag = 4;
+
+                            break;
+                        } else {
+                            canvas.style.cursor = 'default';
+                            context.strokeStyle = "black";
+                            context.stroke();
+                            $pointItem.css("top", -(event.clientY + 15) + "px");
+                            $pointItem.css("left", -(event.clientX + 15) + "px");
+                        }
+                    }
+                }
+            }
         }
         if (drawing_location_point === true) {
             if (locationPattern === 0) {
@@ -395,97 +514,99 @@ if (canvas.getContext) {
                 $tempCanvas.css({left: 0, top: 0});
             }
         }
-        if (shapePattern === 0) {
-            position.x = event.clientX;
-            position.y = event.clientY;
-            chosenWidth = $chosenSvg.getBoundingClientRect().width;
-            context.beginPath();
-            context.fillStyle = $colorItem.css("background-color"); //合并
-            context.arc(position.x + moveLeft, position.y + moveTop, chosenWidth / 2, 0, 2 * Math.PI);
-            context.fill();
-            context.closePath();
-        }
-        if (shapePattern === 1) {
-            event.preventDefault();
-            mouseX = leftScrollDistance + event.clientX - offsetX;
-            mouseY = topScrollDistance + event.clientY - offsetY;
-            //update to tempCanvas at the same time, the function is OK
-            chosenWidth = $chosenSvg.getBoundingClientRect().width;
-            context3.lineWidth = chosenWidth;
-            context.lineWidth = chosenWidth;
-            startX = mouseX;
-            startY = mouseY;
-            //context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
-            //move temp canvas over main canvas
-            $tempCanvas.css({left: 0, top: 0});
-        }
-        if (shapePattern === 2) {
-            event.preventDefault();
-            mouseX = leftScrollDistance + event.clientX - offsetX;
-            mouseY = topScrollDistance + event.clientY - offsetY;
-            chosenWidth = $chosenSvg.getBoundingClientRect().width;
-            context3.lineWidth = chosenWidth;
-            context.lineWidth = chosenWidth;
-            startX = mouseX;
-            startY = mouseY;
-            //context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
-            $tempCanvas.css({left: 0, top: 0});
-        }
+        if (drawing) {
+            if (shapePattern === 0) {
+                position.x = event.clientX;
+                position.y = event.clientY;
+                chosenWidth = $chosenSvg.getBoundingClientRect().width;
+                context.beginPath();
+                context.fillStyle = $colorItem.css("background-color"); //合并
+                context.arc(position.x + moveLeft, position.y + moveTop, chosenWidth / 2, 0, 2 * Math.PI);
+                context.fill();
+                context.closePath();
+            }
+            if (shapePattern === 1) {
+                event.preventDefault();
+                mouseX = leftScrollDistance + event.clientX - offsetX;
+                mouseY = topScrollDistance + event.clientY - offsetY;
+                //update to tempCanvas at the same time, the function is OK
+                chosenWidth = $chosenSvg.getBoundingClientRect().width;
+                context3.lineWidth = chosenWidth;
+                context.lineWidth = chosenWidth;
+                startX = mouseX;
+                startY = mouseY;
+                //context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
+                //move temp canvas over main canvas
+                $tempCanvas.css({left: 0, top: 0});
+            }
+            if (shapePattern === 2) {
+                event.preventDefault();
+                mouseX = leftScrollDistance + event.clientX - offsetX;
+                mouseY = topScrollDistance + event.clientY - offsetY;
+                chosenWidth = $chosenSvg.getBoundingClientRect().width;
+                context3.lineWidth = chosenWidth;
+                context.lineWidth = chosenWidth;
+                startX = mouseX;
+                startY = mouseY;
+                //context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
+                $tempCanvas.css({left: 0, top: 0});
+            }
 
-        if (shapePattern === 3) {
+            if (shapePattern === 3) {
 
-            /**
-             * 算法思考：Alg thinking
-             * 1、如何让多变形自动闭合，是在让最后一条线碰到初始点一定范围时直接连接闭合
-             * 2、闭合后让draw停止
-             * 3.21 20:18 solved
-             * 解决思路就是判断当前鼠标坐标在初始点坐标附近时设置为可以闭合，再次点击将会闭合
-             * 判断距离以及needFirst的控制完成了最后的工作
-             * Start pot and end pot is joined.Just judge the distance closing to start pot then click you can make the
-             * start and end closed.Then you can draw a new polygon.
-             * Something better will be done later.
-             * Thinking...
-             */
-        }
-        if (shapePattern === 4) {
-            event.preventDefault();
-            mouseX = leftScrollDistance + event.clientX - offsetX;
-            mouseY = topScrollDistance + event.clientY - offsetY;
-            chosenWidth = $chosenSvg.getBoundingClientRect().width;
-            context3.lineWidth = chosenWidth;
-            context.lineWidth = chosenWidth;
-            startX = mouseX;
-            startY = mouseY;
-            //context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
-            $tempCanvas.css({left: 0, top: 0});
-        }
-        if (shapePattern === 5) {
-            event.preventDefault();
-            mouseX = leftScrollDistance + event.clientX - offsetX;
-            mouseY = topScrollDistance + event.clientY - offsetY;
-            chosenWidth = $chosenSvg.getBoundingClientRect().width;
-            context3.lineWidth = chosenWidth;
-            context.lineWidth = chosenWidth;
-            startX = mouseX;
-            startY = mouseY;
-            point.x = startX;
-            point.y = startY;
-            //context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
-            $tempCanvas.css({left: 0, top: 0});
-        }
-        if (shapePattern === 6) {
-            event.preventDefault();
-            mouseX = leftScrollDistance + event.clientX - offsetX;
-            mouseY = topScrollDistance + event.clientY - offsetY;
-            //update to tempCanvas at the same time, the function is OK
-            chosenWidth = $chosenSvg.getBoundingClientRect().width;
-            context3.lineWidth = chosenWidth;
-            context.lineWidth = chosenWidth;
-            startX = mouseX;
-            startY = mouseY;
-            //context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
-            //move temp canvas over main canvas
-            $tempCanvas.css({left: 0, top: 0});
+                /**
+                 * 算法思考：Alg thinking
+                 * 1、如何让多变形自动闭合，是在让最后一条线碰到初始点一定范围时直接连接闭合
+                 * 2、闭合后让draw停止
+                 * 3.21 20:18 solved
+                 * 解决思路就是判断当前鼠标坐标在初始点坐标附近时设置为可以闭合，再次点击将会闭合
+                 * 判断距离以及needFirst的控制完成了最后的工作
+                 * Start pot and end pot is joined.Just judge the distance closing to start pot then click you can make the
+                 * start and end closed.Then you can draw a new polygon.
+                 * Something better will be done later.
+                 * Thinking...
+                 */
+            }
+            if (shapePattern === 4) {
+                event.preventDefault();
+                mouseX = leftScrollDistance + event.clientX - offsetX;
+                mouseY = topScrollDistance + event.clientY - offsetY;
+                chosenWidth = $chosenSvg.getBoundingClientRect().width;
+                context3.lineWidth = chosenWidth;
+                context.lineWidth = chosenWidth;
+                startX = mouseX;
+                startY = mouseY;
+                //context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
+                $tempCanvas.css({left: 0, top: 0});
+            }
+            if (shapePattern === 5) {
+                event.preventDefault();
+                mouseX = leftScrollDistance + event.clientX - offsetX;
+                mouseY = topScrollDistance + event.clientY - offsetY;
+                chosenWidth = $chosenSvg.getBoundingClientRect().width;
+                context3.lineWidth = chosenWidth;
+                context.lineWidth = chosenWidth;
+                startX = mouseX;
+                startY = mouseY;
+                point.x = startX;
+                point.y = startY;
+                //context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
+                $tempCanvas.css({left: 0, top: 0});
+            }
+            if (shapePattern === 6) {
+                event.preventDefault();
+                mouseX = leftScrollDistance + event.clientX - offsetX;
+                mouseY = topScrollDistance + event.clientY - offsetY;
+                //update to tempCanvas at the same time, the function is OK
+                chosenWidth = $chosenSvg.getBoundingClientRect().width;
+                context3.lineWidth = chosenWidth;
+                context.lineWidth = chosenWidth;
+                startX = mouseX;
+                startY = mouseY;
+                //context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
+                //move temp canvas over main canvas
+                $tempCanvas.css({left: 0, top: 0});
+            }
         }
     }
 
@@ -523,6 +644,7 @@ if (canvas.getContext) {
                         circle.selecting = true;
                         console.log("circle    " + i);
                         locationPattern = 0;
+                        shapePattern = -1;
                         drawLocationPoint(circle.radius, pointContext, selectingColor, 0, locationPattern);
                         return;
                     } else {
@@ -535,6 +657,7 @@ if (canvas.getContext) {
                     }
                 }
             }
+
             for (var i = locationPointArray.length - 1; i >= 0; i--) {
                 var circle = locationPointArray[i];
                 if (circle != null) {
@@ -545,6 +668,7 @@ if (canvas.getContext) {
                         circle.selecting = true;
                         console.log("circle" + i);
                         locationPattern = 1;
+                        shapePattern = -1;
                         drawLocationPoint(circle.radius, pointContext, selectingColor, 0, locationPattern);
                     } else {
                         if (circle.selecting) {
@@ -553,6 +677,101 @@ if (canvas.getContext) {
                             }
                             circle.selecting = false;
                         }
+                    }
+                }
+            }
+
+            /**
+             * isPointInStroke chrome Firefox Opera is supported, IE and Safari is not supported.
+             * Detect the mouse whether on the straight line. It's convenient.
+             */
+            for (var i = 0; i < lines.length; i++) {
+                if (lines[i] != null) {
+                    context.beginPath();
+                    context.lineCap = "round";
+                    context.moveTo(lines[i].start.x, lines[i].start.y);
+                    context.lineTo(lines[i].end.x, lines[i].end.y);
+                    if (context.isPointInStroke(mouseX, mouseY)) {
+                        canvas.style.cursor = 'pointer';
+                        context.strokeStyle = "red";
+                        context.stroke();
+                        shapePattern = 1;
+                        break;
+                    } else {
+                        canvas.style.cursor = 'default';
+                        context.strokeStyle = "black";
+                        context.stroke();
+                    }
+                }
+            }
+
+            /**
+             * detect rectangle and update the shapePattern, keep mutex.
+             */
+            for (var i = 0; i < rectangles.length; i++) {
+                if (rectangles[i] != null) {
+                    context.beginPath();
+                    context.lineCap = "round";
+                    context.rect(rectangles[i].start.x, rectangles[i].start.y, rectangles[i].end.x - rectangles[i].start.x, rectangles[i].end.y - rectangles[i].start.y);
+                    if (context.isPointInPath(mouseX, mouseY)) {
+                        console.log("In path");
+                        canvas.style.cursor = 'pointer';
+                        context.strokeStyle = "red";
+                        context.stroke();
+                        shapePattern = 2;
+                        break;
+                    } else {
+                        canvas.style.cursor = 'default';
+                        context.strokeStyle = "black";
+                        context.stroke();
+                    }
+                }
+            }
+
+            for (var i = 0; i < polygons.length; i++) {
+                if (polygons[i]) {
+                    var polygon = polygons[i];
+                    context.beginPath();
+                    context.strokeStyle = "red";
+                    context.moveTo(polygon[0].x, polygon[0].y);
+                    console.log(polygon.length);
+                    for (var j = 1; j < polygon.length; j++) {
+                        context.lineTo(polygon[j].x, polygon[j].y);
+                        //console.log(polygon[j].x + " "+polygon[j].y);
+                    }
+                    if (context.isPointInPath(mouseX, mouseY)) {
+                        console.log("in path");
+                        canvas.style.cursor = 'pointer';
+                        context.strokeStyle = "red";
+                        context.closePath();
+                        context.stroke();
+                        shapePattern = 3;
+                        break;
+                    } else {
+                        console.log("not in path");
+                        canvas.style.cursor = 'default';
+                        context.strokeStyle = "black";
+                        context.closePath();
+                        context.stroke();
+                    }
+                }
+            }
+
+            for (var i = 0; i < circles.length; i++) {
+                if (circles[i]) {
+                    context.beginPath();
+                    context.strokeStyle = $colorItem.css("background-color");
+                    context.arc(circles[i].center.x, circles[i].center.y, circles[i].radius, 0, 2 * Math.PI);
+                    if (context.isPointInPath(mouseX, mouseY)) {
+                        canvas.style.cursor = 'pointer';
+                        context.strokeStyle = "red";
+                        context.stroke();
+                        shapePattern = 4;
+                        break;
+                    } else {
+                        canvas.style.cursor = 'default';
+                        context.strokeStyle = "black";
+                        context.stroke();
                     }
                 }
             }
@@ -581,86 +800,90 @@ if (canvas.getContext) {
                 drawLocationLine(mouseX, mouseY, context3, locationPointColor, 0, locationPattern);
             }
         }
-        if (shapePattern === 0) {
-            drawFreeLine();
-        }
-        if (shapePattern === 1) {
-            event.preventDefault();
-            if (!mouse.down) {
-                return;
+
+        //keep mutual with pointing and drawing locationPoint
+        if (drawing) {
+            if (shapePattern === 0) {
+                drawFreeLine();
             }
-            mouseX = leftScrollDistance + event.clientX - offsetX;
-            mouseY = topScrollDistance + event.clientY - offsetY;
-            context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
-            drawStraightLine(mouseX, mouseY, context3, 0);
-        }
-        if (shapePattern === 2) {
-            event.preventDefault();
-            if (!mouse.down) {
-                return;
-            }
-            mouseX = leftScrollDistance + event.clientX - offsetX;
-            mouseY = topScrollDistance + event.clientY - offsetY;
-            context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
-            drawRectangle(mouseX, mouseY, context3, 0);
-        }
-        if (shapePattern === 3) {
-            event.preventDefault();
-            mouseX = leftScrollDistance + event.clientX - offsetX;
-            mouseY = topScrollDistance + event.clientY - offsetY;
-            chosenWidth = $chosenSvg.getBoundingClientRect().width;
-            context3.lineWidth = chosenWidth;
-            context.lineWidth = chosenWidth;
-            context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
-            $tempCanvas.css({left: 0, top: 0});
-            //console.log(mouseX + " "+ mouseY);
-            if (!needFirstPoint) {
-                mouse.x = mouseX;
-                mouse.y = mouseY;
+            if (shapePattern === 1) {
+                event.preventDefault();
+                if (!mouse.down) {
+                    return;
+                }
+                mouseX = leftScrollDistance + event.clientX - offsetX;
+                mouseY = topScrollDistance + event.clientY - offsetY;
+                context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
                 drawStraightLine(mouseX, mouseY, context3, 0);
             }
+            if (shapePattern === 2) {
+                event.preventDefault();
+                if (!mouse.down) {
+                    return;
+                }
+                mouseX = leftScrollDistance + event.clientX - offsetX;
+                mouseY = topScrollDistance + event.clientY - offsetY;
+                context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
+                drawRectangle(mouseX, mouseY, context3, 0);
+            }
+            if (shapePattern === 3) {
+                event.preventDefault();
+                mouseX = leftScrollDistance + event.clientX - offsetX;
+                mouseY = topScrollDistance + event.clientY - offsetY;
+                chosenWidth = $chosenSvg.getBoundingClientRect().width;
+                context3.lineWidth = chosenWidth;
+                context.lineWidth = chosenWidth;
+                context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
+                $tempCanvas.css({left: 0, top: 0});
+                //console.log(mouseX + " "+ mouseY);
+                if (!needFirstPoint) {
+                    mouse.x = mouseX;
+                    mouse.y = mouseY;
+                    drawStraightLine(mouseX, mouseY, context3, 0);
+                }
 
-            //console.log(num_of_click);s
-            if (distance(point, mouse) < 15 && num_of_click > 2) {
-                //console.log("closed is true");
-                point.closed2 = true;
-            } else {
-                point.closed2 = false;
+                //console.log(num_of_click);s
+                if (distance(point, mouse) < 15 && num_of_click > 2) {
+                    //console.log("closed is true");
+                    point.closed2 = true;
+                } else {
+                    point.closed2 = false;
+                }
             }
-        }
-        if (shapePattern === 4) {
-            event.preventDefault();
-            if (!mouse.down) {
-                return;
+            if (shapePattern === 4) {
+                event.preventDefault();
+                if (!mouse.down) {
+                    return;
+                }
+                mouseX = leftScrollDistance + event.clientX - offsetX;
+                mouseY = topScrollDistance + event.clientY - offsetY;
+                context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
+                //console.log(mouseX + " "+ mouseY);
+                drawStraightLine(mouseX, mouseY, context3, 0);
             }
-            mouseX = leftScrollDistance + event.clientX - offsetX;
-            mouseY = topScrollDistance + event.clientY - offsetY;
-            context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
-            //console.log(mouseX + " "+ mouseY);
-            drawStraightLine(mouseX, mouseY, context3, 0);
-        }
-        if (shapePattern === 5) {
-            event.preventDefault();
-            if (!mouse.down) {
-                return;
+            if (shapePattern === 5) {
+                event.preventDefault();
+                if (!mouse.down) {
+                    return;
+                }
+                mouseX = leftScrollDistance + event.clientX - offsetX;
+                mouseY = topScrollDistance + event.clientY - offsetY;
+                mouse.x = mouseX;
+                mouse.y = mouseY;
+                context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
+                r = distance(point, mouse);
+                drawCircle(r, context3, 0);
             }
-            mouseX = leftScrollDistance + event.clientX - offsetX;
-            mouseY = topScrollDistance + event.clientY - offsetY;
-            mouse.x = mouseX;
-            mouse.y = mouseY;
-            context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
-            r = distance(point, mouse);
-            drawCircle(r, context3, 0);
-        }
-        if (shapePattern === 6) {
-            event.preventDefault();
-            if (!mouse.down) {
-                return;
+            if (shapePattern === 6) {
+                event.preventDefault();
+                if (!mouse.down) {
+                    return;
+                }
+                mouseX = leftScrollDistance + event.clientX - offsetX;
+                mouseY = topScrollDistance + event.clientY - offsetY;
+                context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
+                drawDashedLine(mouseX, mouseY, context3, 0);
             }
-            mouseX = leftScrollDistance + event.clientX - offsetX;
-            mouseY = topScrollDistance + event.clientY - offsetY;
-            context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
-            drawDashedLine(mouseX, mouseY, context3, 0);
         }
     }
 
@@ -690,57 +913,59 @@ if (canvas.getContext) {
             }
             //console.log(startPoints.length);
         }
-        if (shapePattern === 1) {
-            mouseX = leftScrollDistance + event.clientX - offsetX;
-            mouseY = topScrollDistance + event.clientY - offsetY;
-            $tempCanvas.css({left: -window.innerWidth, top: 0});
-            drawStraightLine(mouseX, mouseY, context, 1);
-        }
-        if (shapePattern === 2) {
-            mouseX = leftScrollDistance + event.clientX - offsetX;
-            mouseY = topScrollDistance + event.clientY - offsetY;
-            $tempCanvas.css({left: -window.innerWidth, top: 0});
-            drawRectangle(mouseX, mouseY, context, 1);
-        }
-        if (shapePattern === 3) {
-            //polygon = new Array();
-            num_of_click += 1;
-            mouseX = leftScrollDistance + event.clientX - offsetX;
-            mouseY = topScrollDistance + event.clientY - offsetY;
-            $tempCanvas.css({left: -window.innerWidth, top: 0});
-            //set color draw on canvas
-            context.strokeStyle = $colorItem.css("background-color");
-            //update the end coords
-            startX = mouseX;
-            startY = mouseY;
-            if (needFirstPoint) {
-                point.x = startX;
-                point.y = startY;
+        if (drawing) {
+            if (shapePattern === 1) {
+                mouseX = leftScrollDistance + event.clientX - offsetX;
+                mouseY = topScrollDistance + event.clientY - offsetY;
+                $tempCanvas.css({left: -window.innerWidth, top: 0});
+                drawStraightLine(mouseX, mouseY, context, 1);
             }
-            drawNextLine(mouseX, mouseY, context);
-        }
-        if (shapePattern === 4) {
-            mouseX = leftScrollDistance + event.clientX - offsetX;
-            mouseY = topScrollDistance + event.clientY - offsetY;
-            $tempCanvas.css({left: -window.innerWidth, top: 0});
-            //set color draw on canvas
-            context.strokeStyle = $colorItem.css("background-color");
-            //update the end coords
-            drawBrokenLine(mouseX, mouseY, context);
-            brokenFirstFlag = false;
-        }
-        if (shapePattern === 5) {
-            mouseX = leftScrollDistance + event.clientX - offsetX;
-            mouseY = topScrollDistance + event.clientY - offsetY;
-            $tempCanvas.css({left: -window.innerWidth, top: 0});
-            context.strokeStyle = $colorItem.css("background-color");
-            drawCircle(r, context, 1);
-        }
-        if (shapePattern === 6) {
-            mouseX = leftScrollDistance + event.clientX - offsetX;
-            mouseY = topScrollDistance + event.clientY - offsetY;
-            $tempCanvas.css({left: -window.innerWidth, top: 0});
-            drawDashedLine(mouseX, mouseY, context, 1);
+            if (shapePattern === 2) {
+                mouseX = leftScrollDistance + event.clientX - offsetX;
+                mouseY = topScrollDistance + event.clientY - offsetY;
+                $tempCanvas.css({left: -window.innerWidth, top: 0});
+                drawRectangle(mouseX, mouseY, context, 1);
+            }
+            if (shapePattern === 3) {
+                //polygon = new Array();
+                num_of_click += 1;
+                mouseX = leftScrollDistance + event.clientX - offsetX;
+                mouseY = topScrollDistance + event.clientY - offsetY;
+                $tempCanvas.css({left: -window.innerWidth, top: 0});
+                //set color draw on canvas
+                context.strokeStyle = $colorItem.css("background-color");
+                //update the end coords
+                startX = mouseX;
+                startY = mouseY;
+                if (needFirstPoint) {
+                    point.x = startX;
+                    point.y = startY;
+                }
+                drawNextLine(mouseX, mouseY, context);
+            }
+            if (shapePattern === 4) {
+                mouseX = leftScrollDistance + event.clientX - offsetX;
+                mouseY = topScrollDistance + event.clientY - offsetY;
+                $tempCanvas.css({left: -window.innerWidth, top: 0});
+                //set color draw on canvas
+                context.strokeStyle = $colorItem.css("background-color");
+                //update the end coords
+                drawBrokenLine(mouseX, mouseY, context);
+                brokenFirstFlag = false;
+            }
+            if (shapePattern === 5) {
+                mouseX = leftScrollDistance + event.clientX - offsetX;
+                mouseY = topScrollDistance + event.clientY - offsetY;
+                $tempCanvas.css({left: -window.innerWidth, top: 0});
+                context.strokeStyle = $colorItem.css("background-color");
+                drawCircle(r, context, 1);
+            }
+            if (shapePattern === 6) {
+                mouseX = leftScrollDistance + event.clientX - offsetX;
+                mouseY = topScrollDistance + event.clientY - offsetY;
+                $tempCanvas.css({left: -window.innerWidth, top: 0});
+                drawDashedLine(mouseX, mouseY, context, 1);
+            }
         }
         //if (!dragging) {
         //    historyPush();
@@ -947,15 +1172,6 @@ function clearCanvas() {
     context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
     pointContext.clearRect(0, 0, pointCanvas.width, pointCanvas.height);
 }
-/**
- *
- * ===================================================================================
- *
- * B position  ( imageFileHandler.js )
- *
- * ===================================================================================
- *
- */
 
 fileInput.addEventListener('change', onFileInputChange, false);
 
@@ -990,6 +1206,7 @@ function getImage(file, callback) {
 var tempPattern = 1;
 var tempHtml = $shapeFirst.html();
 var penHtml = $pen.html();
+var toolHtml = $toolsFirst.html();
 var positionsFirst = $positionsFirst.html();
 $subMenuItem.fastClick(function () {
     var that = $(this);
@@ -1016,6 +1233,7 @@ $subMenuItem.fastClick(function () {
                 dragging = true;
                 pointing = false;
                 drawing_location_point = false;
+                drawing = false;
                 $shapeFirst.html(tempHtml);
                 $positionsFirst.html(positionsFirst);
                 $canvasWrapper.css({cursor: "url('asset/cursor/handCursor.cur'),crosshair"});
@@ -1052,6 +1270,7 @@ $subMenuItem.fastClick(function () {
                 pointing = true;
                 dragging = false;
                 drawing_location_point = false;
+                drawing = false;
                 shapePattern = -1;
                 tempPattern = shapePattern;
                 $canvasWrapper.css({cursor: "url('asset/cursor/mouse-pointer.cur'),crosshair"});
@@ -1094,11 +1313,12 @@ $subMenuItem.fastClick(function () {
         dragging = false;
         eraserTag = false;
         drawing_location_point = false;
+        drawing = true;
         //shapePattern = tempPattern;
         context.strokeStyle = $colorItem.css("background-color");
         context.globalCompositeOperation = thisgl;
         $canvasWrapper.css({cursor: "url('asset/cursor/pen.cur'),crosshair"});
-
+        $toolsFirst.html(toolHtml);
         switch (toolsIndex) {
             case 0:
                 //straight line
@@ -1142,6 +1362,7 @@ $subMenuItem.fastClick(function () {
         dragging = false;
         drawing_location_point = true;
         pointing = false;
+        drawing = false;
         shapePattern = -2;
         $canvasWrapper.css({cursor: "url('asset/cursor/locate.cur'),crosshair"});
 

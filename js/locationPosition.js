@@ -1,7 +1,6 @@
 /**
  * Created by Luoqi on 4/5/2016.
  */
-
 /**
  *  A circle represent an abstract point
  */
@@ -127,9 +126,9 @@ var currentLocationPoint;
 var currentPointArray;
 var currentRealPointArray;
 function deleteLocationPoint() {
-    console.log("delete");
+    //console.log("delete");
     var index = currentLocationPoint.index;
-    console.log(index);
+    //console.log(index);
     currentPointArray[index] = null;
     currentRealPointArray[index] = null;
 
@@ -162,6 +161,9 @@ function deleteLocationPoint() {
  */
 var headlen = 15;// length of head in pixels
 var angle;
+//use for limited length straight line
+var sin, cos, a, b, c;
+var orientationLength = 40;
 function drawLocationLine(toX,toY,contextT,color,index,pointPattern) {
     //use for arrow creation
     angle = Math.atan2(toY-startY,toX-startX);
@@ -229,10 +231,4 @@ function drawLocationLine(toX,toY,contextT,color,index,pointPattern) {
     //left arrow
     contextT.lineTo(toX-headlen*Math.cos(angle+Math.PI/6),toY-headlen*Math.sin(angle+Math.PI/6));
     contextT.stroke();
-}
-
-function pointEqual(point1,point2) {
-    if(point1.x === point2.x && point1.y === point2.y) {
-
-    }
 }

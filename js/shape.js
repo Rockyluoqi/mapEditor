@@ -151,15 +151,15 @@ function drawNextLine(toX, toY, contextT) {
             //delete the last pot, because it's redundant...oPs
             polygon.pop();
             //new array to store polygon each pot value
-            var temppolygon = new Array();
+            var tempPolygon = new Array();
             for(var i = 0;i < polygon.length; i++) {
-                temppolygon.push(polygon[i]);
+                tempPolygon.push(polygon[i]);
             }
 
             //clear polygon
             polygon.splice(0,polygon.length);
 
-            polygons.push(temppolygon);
+            polygons.push(tempPolygon);
 
             /**
              * Test
@@ -175,6 +175,13 @@ function drawNextLine(toX, toY, contextT) {
              */
         }
         contextT.stroke();
+        for (var i = 0; i < polygons.length; i++) {
+            var poly = polygons[i];
+            for (var j = 0; j < poly.length; j++) {
+                console.log(poly[j].x + " " + poly[j].y);
+                //console.log(polygon[i].x + " " + polygon[i].end.y);
+            }
+        }
     }
 }
 

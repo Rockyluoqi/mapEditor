@@ -1,11 +1,21 @@
 /**
  * Created by Luoqi on 4/5/2016.
  */
-
+/**
+ * =========================================================================
+ *                            wrap data to json
+ * =========================================================================
+ */
 /**
  * It's OK, parse obj to json
  */
 var mapJson;
+var deleteFlag = 0;
+var lineIndex = 0;
+var rectangleIndex = 0;
+var circleIndex = 0;
+var polygonIndex = 0;
+
 var map = {
     name : "",
     description : "",
@@ -15,6 +25,63 @@ var map = {
     movePoints: movePoints
 }
 
+/**
+ * deleteBtn onClick function, use the deleteFlag to judge which pattern to delete
+ */
+function deleteBtnHandler() {
+    //delete straight line
+    if (deleteFlag === 1) {
+        lines[lineIndex] = null;
+        deleteNullInArray(lines);
+        lines = noneNullArray;
+        clearCanvas();
+        drawLayer();
+        $pointItem.css("top", "-2000px");
+        $pointItem.css("left", "-2000px");
+    }
+
+    //delete rectangle
+    if (deleteFlag === 2) {
+        rectangles[rectangleIndex] = null;
+        deleteNullInArray(rectangles);
+        rectangles = noneNullArray;
+        clearCanvas();
+        drawLayer();
+        $pointItem.css("top", "-2000px");
+        $pointItem.css("left", "-2000px");
+    }
+
+    //delete polygon
+    if (deleteFlag === 3) {
+        polygons[polygonIndex] = null;
+        deleteNullInArray(polygons);
+        polygons = noneNullArray;
+        clearCanvas();
+        drawLayer();
+        $pointItem.css("top", "-2000px");
+        $pointItem.css("left", "-2000px");
+    }
+
+    //delete circle
+    if (deleteFlag === 4) {
+        circles[circleIndex] = null;
+        deleteNullInArray(circles);
+        circles = noneNullArray;
+        clearCanvas();
+        drawLayer();
+        $pointItem.css("top", "-2000px");
+        $pointItem.css("left", "-2000px");
+    }
+
+    //delete startPoint
+    if (deleteFlag === 5) {
+        deleteLocationPoint();
+    }
+}
+
+/**
+ * delete null in the array
+ */
 var noneNullArray;
 function deleteNullInArray(array) {
     noneNullArray = [];
@@ -41,24 +108,26 @@ function transToJson() {
 }
 
 
-/**
- * =========================================================================
- *
- * =========================================================================
- */
-
 function sendImageInfo() {
     transToJson();
 
     $.ajax({
-        url:"",
-        type:"POST",
-        data:obstaclesJson,
-        success:function(data) {
+        url: "",
+        type: "POST",
+        data: obstaclesJson,
+        success: function (data) {
             alert("send success");
         }
     });
 }
+
+/**
+ * =========================================================================
+ *   get json and parse to obstacle and draw
+ * =========================================================================
+ */
+
+
 
 var name,url,description;
 
@@ -187,6 +256,8 @@ function drawLayer() {
     drawRectangleObstacle(rectangles,context);
     drawPolygonObstacle(polygons, context);
     drawCircleObstacle(circles, context);
+    redrawLocationArray(pointContext, 0, startPoints, 1);
+    redrawLocationArray(pointContext, 1, locationPoints, 1);
 }
 
 function drawLineObstacle(lines,contextT) {
