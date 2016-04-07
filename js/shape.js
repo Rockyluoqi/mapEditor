@@ -6,6 +6,8 @@ var rectangles = [];
 var polygons = [];
 var circles = [];
 var startPoints = [];
+var startPointDatas = [];
+var endPointDatas = [];
 var locationPoints = [];
 var obstacles = {
     lines:lines,

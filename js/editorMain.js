@@ -102,8 +102,21 @@ function setStartPointName() {
     alert($startPointName.val());
     startPointName = $startPointName.val();
 
+    //this is the request formation data
+    var startPointData = {
+        "angle": startPoints[startPoints.length - 1].angle,
+        "gridX": startPoints[startPoints.length - 1].startPot.x,
+        "gridY": startPoints[startPoints.length - 1].startPot.y,
+        "mapName": "",
+        "name": startPointName,
+        "type": 0
+    };
+
+    startPointDatas.push(startPointData);
     $startPointInput.css("top", -3000 + "px");
     $startPointInput.css("left", -3000 + "px");
+
+    sendInitPosition();
 }
 
 /**
@@ -131,8 +144,21 @@ function setEndPointName() {
     alert($endPointName.val());
     endPointName = $endPointName.val();
 
+    //this is the request formation data
+    var endPointData = {
+        "angle": locationPoints[locationPoints.length - 1].angle,
+        "gridX": locationPoints[locationPoints.length - 1].startPot.x,
+        "gridY": locationPoints[locationPoints.length - 1].startPot.y,
+        "mapName": "",
+        "name": endPointName,
+        "type": 0
+    };
+
+    endPointDatas.push(endPointData);
     $endPointInput.css("top", -3000 + "px");
     $endPointInput.css("left", -3000 + "px");
+
+    sendPosition();
 }
 
 
@@ -152,12 +178,7 @@ var cStep = -1;
 var bg_image = new Image();
 var curWidth, curHeight, tempWidth, tempHeight;
 
-/**
- * source
- * @type {string}
- */
-bg_image.src = localStorage["bgUrl"];
-//bg_image.src = 'js/map.jpg';
+
 
 $container.css({width: bg_image.width, height: bg_image.height});
 $content.css({width: bg_image.width, height: bg_image.height});
@@ -169,12 +190,35 @@ var tempCanvas = document.getElementById("tempCanvas");
 var pointCanvas = document.getElementById("pointCanvas");
 
 var context = null;
-var context2 = null;
+var context2 = netherCanvas.getContext('2d');
 var context3 = null;
 var pointContext = null;
+
+context = canvas.getContext("2d");
+context3 = tempCanvas.getContext("2d");
+pointContext = pointCanvas.getContext("2d");
 //netherCanvas.setAttribute('zIndex',"-1");
 
-setDefaultSize(bg_image);
+
+/**
+ * source
+ * @type {string}
+ */
+//bg_image.src = "./image1.jpg";
+//console.log(bg_image.src);
+//console.log(bg_image.length);
+bg_image.src = localStorage["ssc8"];
+bg_image.onload = function () {
+    console.log(bg_image.width + " " + bg_image.height);
+    setDefaultSize(bg_image);
+    setCanvasSize(curHeight, curWidth);
+    context2.drawImage(bg_image, 0, 0, bg_image.width, bg_image.height);
+
+}
+//console.log(bg_image.src);
+//console.log(bg_image.src);
+//bg_image.src = 'js/map.jpg';
+
 
 var position = {x: tempWidth / 2, y: tempHeight / 2};
 var mouse = {x: 0, y: 0, down: false};
@@ -195,26 +239,9 @@ $(window).scroll(function () {
 });
 
 if (canvas.getContext) {
-    context = canvas.getContext("2d");
-    context2 = netherCanvas.getContext("2d");
-    context3 = tempCanvas.getContext("2d");
-    pointContext = pointCanvas.getContext("2d");
-
-    console.log(bg_image.width + " " + bg_image.height);
-
-    /**
-     * resize
-     */
-        //resizeImage();
-    setCanvasSize(curHeight, curWidth);
-
     /**
      *local testing
      */
-    bg_image.onload = function () {
-        context2.drawImage(bg_image, 0, 0, bg_image.width, bg_image.height);
-    }
-
     canvas.addEventListener("mousedown", mousedown, false);
     canvas.addEventListener("mousemove", mousemove, false);
     canvas.addEventListener("mouseup", mouseup, false);

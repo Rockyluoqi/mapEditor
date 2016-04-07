@@ -333,6 +333,7 @@
 .ug-thumb-wrapper.ug-thumb-generated{
 	position:absolute;
 	overflow:hidden;
+	height: 100px;
 
 	-webkit-user-select: none;	/* make unselectable */         
 	-moz-user-select: none; 
@@ -382,7 +383,7 @@
 }
 
 .ug-thumb-wrapper.ug-thumb-generated img{
-	position:absolute;
+	position: relative;
 	z-index:1;
 	padding-top: 25px;
 
@@ -640,8 +641,7 @@ img.ug-sepia-effect{
 
 
 .ug-tiletype-justified .ug-thumb-wrapper.ug-tile img.ug-thumb-image{
-	height:100%;
-	max-width:none !important;	
+	max-width: none !important;
 }
 
 .ug-thumb-wrapper.ug-tile .ug-tile-image-overlay{

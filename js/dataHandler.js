@@ -10,6 +10,8 @@
  * It's OK, parse obj to json
  */
 var mapJson;
+var init_position_data;
+var position_data;
 var deleteFlag = 0;
 var lineIndex = 0;
 var rectangleIndex = 0;
@@ -21,8 +23,7 @@ var map = {
     description : "",
     ID : "",
     createDate : "",
-    obstacles:obstacles,
-    movePoints: movePoints
+    obstacles: obstacles
 }
 
 /**
@@ -98,27 +99,94 @@ function transToJson() {
     obstacles.polygons = polygons;
     obstacles.circles = circles;
 
-    deleteNullInArray(startPoints);
-    movePoints.startPoints = noneNullArray;
-    deleteNullInArray(locationPoints);
-    movePoints.locationPoints = noneNullArray;
+    deleteNullInArray(startPointDatas);
+    startPointDatas = noneNullArray;
+    deleteNullInArray(endPointDatas);
+    endPointDatas = noneNullArray;
 
     mapJson = JSON.stringify(map);
+    init_position_data = JSON.stringify(startPointDatas);
+    position_data = JSON.stringify(endPointDatas);
     //console.log(map);
 }
 
+function sendInitPosition() {
+    deleteNullInArray(startPointDatas);
+    startPointDatas = noneNullArray;
+
+    var pointData = startPointDatas[startPointDatas.length - 1];
+    pointData = JSON.stringify(pointData);
+
+    $.ajax({
+        url: "http://192.168.1.103:8080/gs-robot/cmd/init_point/add_init_point",
+        type: "POST",
+        dataType: "json",
+        data: pointData,
+        success: function (data) {
+            if (data.status === "success") {
+                alert("init_position post successfully!");
+            }
+        }
+    });
+}
+
+function sendPosition() {
+    deleteNullInArray(endPointDatas);
+    endPointDatas = noneNullArray;
+
+    var pointData = endPointDatas[endPointDatas.length - 1];
+    pointData = JSON.stringify(pointData);
+    console.log(pointData);
+    $.ajax({
+        url: "http://192.168.1.103:8080/gs-robot/cmd/position/add_position",
+        type: "POST",
+        dataType: "json",
+        data: pointData,
+        success: function (data) {
+            if (data.status === "success") {
+                alert("position post successfully!");
+            }
+        }
+    });
+}
+
+function deleteInitPosition() {
+    deleteNullInArray(startPointDatas);
+    startPointDatas = noneNullArray;
+}
+
+function deletePosition() {
+
+}
 
 function sendImageInfo() {
     transToJson();
 
     $.ajax({
-        url: "",
+        url: "/gs-robot/cmd/init_point/add_init_point",
         type: "POST",
-        data: obstaclesJson,
+        dataType: "json",
+        data: init_position_data,
         success: function (data) {
-            alert("send success");
+            if (data.status === "success") {
+                alert("init_position post successfully!");
+            }
         }
     });
+
+    $.ajax({
+        url: "/gs-robot/cmd/position/add_position",
+        type: "POST",
+        dataType: "json",
+        data: position_data,
+        success: function (data) {
+            if (data.status === "success") {
+                alert("init_position post successfully!");
+            }
+        }
+    });
+
+
 }
 
 /**

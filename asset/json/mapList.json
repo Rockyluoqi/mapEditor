@@ -1,0 +1,31 @@
+{
+  "successed": true,
+  "errorCode": "",
+  "msg": "",
+  "data": [
+    {
+      "createdAt": "2016-03-28 14:21:49",
+      "id": 0,
+      "mapInfo": {
+        "gridHeight": 992,
+        "gridWidth": 992,
+        "originX": -24.8,
+        "originY": -24.8,
+        "resolution": 0.05000000074505806
+      },
+      "name": "office"
+    },
+    {
+      "createdAt": "2016-03-25 14:49:46",
+      "id": 0,
+      "mapInfo": {
+        "gridHeight": 992,
+        "gridWidth": 992,
+        "originX": -24.8,
+        "originY": -24.8,
+        "resolution": 0.05000000074505806
+      },
+      "name": "office1"
+    }
+  ]
+}

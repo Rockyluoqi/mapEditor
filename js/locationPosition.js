@@ -160,10 +160,23 @@ function deleteLocationPoint() {
  * @param pointPattern 0 startPoint and 1 locationPoint
  */
 var headlen = 15;// length of head in pixels
+//
 var angle;
 //use for limited length straight line
 var sin, cos, a, b, c;
 var orientationLength = 40;
+/**
+ *
+ request:
+ {
+   "angle":-55,
+   "gridX":468,
+   "gridY":512,
+   "mapName":"office",
+   "name":"origin",
+   "type":1
+ }
+ */
 function drawLocationLine(toX,toY,contextT,color,index,pointPattern) {
     //use for arrow creation
     angle = Math.atan2(toY-startY,toX-startX);
@@ -171,11 +184,10 @@ function drawLocationLine(toX,toY,contextT,color,index,pointPattern) {
     //startPoint
     if(index === 1 && pointPattern === 0) {
         var startPoint = {
-
+            angle: 0, //PI/2 = 90 degree anticlockwise
             startPot:{x:0,y:0},
-            endPot:{x:0,y:0},
-            direction:0 //PI/2 = 90 degree anticlockwise
-        }
+            endPot: {x: 0, y: 0}
+        };
 
         startPoint.startPot.x = startX;
         startPoint.startPot.y = startY;
@@ -190,7 +202,7 @@ function drawLocationLine(toX,toY,contextT,color,index,pointPattern) {
             startPot:{x:0,y:0},
             endPot:{x:0,y:0},
             direction:0 //PI/2 = 90 degree anticlockwise
-        }
+        };
 
         locationPoint.startPot.x = startX;
         locationPoint.startPot.y = startY;
@@ -198,6 +210,18 @@ function drawLocationLine(toX,toY,contextT,color,index,pointPattern) {
         locationPoint.endPot.y = toY;
         locationPoint.angle = -(angle/Math.PI * 180);
         locationPoints.push(locationPoint);
+
+        //this is the request formation data
+        var endPointData = {
+            "angle": locationPoint.angle,
+            "gridX": startX,
+            "gridY": startY,
+            "mapName": "",
+            "name": startPointName,
+            "type": 0
+        };
+
+        endPointDatas.push(endPointData);
     }
 
     contextT.beginPath();

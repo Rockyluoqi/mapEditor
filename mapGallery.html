@@ -16,7 +16,7 @@
     <script src="js/lib/jquery-1.11.0.min.js"></script>
     <script src="plugin/galleryPlugin/js/unitegallery.js"></script>
     <script src="plugin/galleryPlugin/themes/compact/ug-theme-compact.js"></script>
-    <script src="js/mapHandle.js"></script>
+    <script src="js/mapHandle.js" charset="utf-8"></script>
     <script type="text/javascript" src="js/lib/materialize.min.js"></script>
     <script type="text/javascript" src="js/netConn.js"></script>
     <!--default theme-->
@@ -31,14 +31,11 @@
     <!--<script src="http://libs.useso.com/js/html5shiv/3.7/html5shiv.min.js"></script>-->
     <!--[endif]-->
 </head>
-<body>
+<body style="overflow: hidden">
 <div class = "gallery-container">
     <div id="gallery" style="display:none" >
 
-        <!--<img alt="Map1 XXXAirport T2 Level2"-->
-             <!--src="plugin/images/thumbs/thumb1.jpg"-->
-             <!--data-image="plugin/images/big/image1.jpg"-->
-             <!--data-description="XXXAirport is..., area: XXX  obstacles: XXX  ">-->
+
 
         <!--<img alt="Railway Station"-->
              <!--src="plugin/images/thumbs/thumb1.jpg"-->
@@ -143,8 +140,14 @@
         </svg>
     </a>
 </div>
+
+<canvas id="transCanvas" style="top:9000px"></canvas>
 <script type="text/javascript">
+    getImageList();
+    parseMapList();
+    getImageFromServer();
     setImageArray();
+    saveImgLocal();
     jQuery(document).ready(function(){
         jQuery("#gallery").unitegallery({
             theme_panel_position:"left"
