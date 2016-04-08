@@ -19,7 +19,7 @@ var circleIndex = 0;
 var polygonIndex = 0;
 
 var map = {
-    name : "",
+    mapName: "ssc6",
     description : "",
     ID : "",
     createDate : "",
@@ -99,20 +99,19 @@ function transToJson() {
     obstacles.polygons = polygons;
     obstacles.circles = circles;
 
-    deleteNullInArray(startPointDatas);
-    startPointDatas = noneNullArray;
-    deleteNullInArray(endPointDatas);
-    endPointDatas = noneNullArray;
-
+    //deleteNullInArray(startPointDatas);
+    //startPointDatas = noneNullArray;
+    //deleteNullInArray(endPointDatas);
+    //endPointDatas = noneNullArray;
     mapJson = JSON.stringify(map);
-    init_position_data = JSON.stringify(startPointDatas);
-    position_data = JSON.stringify(endPointDatas);
+    //init_position_data = JSON.stringify(startPointDatas);
+    //position_data = JSON.stringify(endPointDatas);
     //console.log(map);
 }
 
 function sendInitPosition() {
-    deleteNullInArray(startPointDatas);
-    startPointDatas = noneNullArray;
+    //deleteNullInArray(startPointDatas);
+    //startPointDatas = noneNullArray;
 
     var pointData = startPointDatas[startPointDatas.length - 1];
     pointData = JSON.stringify(pointData);
@@ -123,7 +122,7 @@ function sendInitPosition() {
         dataType: "json",
         data: pointData,
         success: function (data) {
-            if (data.status === "success") {
+            if (data.successed) {
                 alert("init_position post successfully!");
             }
         }
@@ -131,8 +130,8 @@ function sendInitPosition() {
 }
 
 function sendPosition() {
-    deleteNullInArray(endPointDatas);
-    endPointDatas = noneNullArray;
+    //deleteNullInArray(endPointDatas);
+    //endPointDatas = noneNullArray;
 
     var pointData = endPointDatas[endPointDatas.length - 1];
     pointData = JSON.stringify(pointData);
@@ -143,50 +142,60 @@ function sendPosition() {
         dataType: "json",
         data: pointData,
         success: function (data) {
-            if (data.status === "success") {
+            if (data.successed) {
                 alert("position post successfully!");
             }
         }
     });
 }
 
-function deleteInitPosition() {
-    deleteNullInArray(startPointDatas);
-    startPointDatas = noneNullArray;
+function deleteInitPosition(index) {
+    var pointData = startPointDatas[index];
+    //pointData = JSON.stringify(pointData);
+
+    console.log("delete init point:" + pointData);
+    $.ajax({
+        url: "http://192.168.1.103:8080/gs-robot/cmd/delete_init_point?map_name=" + pointData.mapName + "&init_point_name=" + pointData.name,
+        type: "GET",
+        success: function (data) {
+            if (data.successed) {
+                alert("delete init position successfully!");
+            }
+        }
+    });
 }
 
-function deletePosition() {
+function deletePosition(index) {
+    var pointData = endPointDatas[index];
+    //pointData = JSON.stringify(pointData);
 
+    console.log("delete position point:" + pointData);
+    $.ajax({
+        url: "http://192.168.1.103:8080/gs-robot/cmd/delete_position?map_name=" + pointData.mapName + "&init_point_name=" + pointData.name,
+        type: "GET",
+        success: function (data) {
+            if (data.successed) {
+                alert("delete position successfully!");
+            }
+        }
+    });
 }
 
 function sendImageInfo() {
     transToJson();
+    console.log(mapJson);
 
     $.ajax({
-        url: "/gs-robot/cmd/init_point/add_init_point",
+        url: "http://192.168.1.103:8080/gs-robot/cmd/update_virtual_obstacles",
         type: "POST",
         dataType: "json",
-        data: init_position_data,
+        data: mapJson,
         success: function (data) {
-            if (data.status === "success") {
-                alert("init_position post successfully!");
+            if (data.successed) {
+                alert("obstacle post successfully!");
             }
         }
     });
-
-    $.ajax({
-        url: "/gs-robot/cmd/position/add_position",
-        type: "POST",
-        dataType: "json",
-        data: position_data,
-        success: function (data) {
-            if (data.status === "success") {
-                alert("init_position post successfully!");
-            }
-        }
-    });
-
-
 }
 
 /**

@@ -16,9 +16,10 @@
     <script src="js/lib/jquery-1.11.0.min.js"></script>
     <script src="plugin/galleryPlugin/js/unitegallery.js"></script>
     <script src="plugin/galleryPlugin/themes/compact/ug-theme-compact.js"></script>
-    <script src="js/mapHandle.js" charset="utf-8"></script>
     <script type="text/javascript" src="js/lib/materialize.min.js"></script>
     <script type="text/javascript" src="js/netConn.js"></script>
+    <script type="text/javascript" src="js/locationPosition.js"></script>
+    <script src="js/mapHandle.js" charset="utf-8"></script>
     <!--default theme-->
     <!--<script src="plugin/galleryPlugin/themes/default/ug-theme-default.js"></script>-->
     <!--<link rel="stylesheet" href="plugin/galleryPlugin/themes/default/ug-theme-default.css" type="text/css"/>-->
@@ -145,9 +146,13 @@
 <script type="text/javascript">
     getImageList();
     parseMapList();
+    getInitPoints();
+    getPositionPoints();
+    getObstacle();
     getImageFromServer();
-    setImageArray();
     saveImgLocal();
+    transPointArray();
+    setImageArray();
     jQuery(document).ready(function(){
         jQuery("#gallery").unitegallery({
             theme_panel_position:"left"

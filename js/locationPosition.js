@@ -98,23 +98,24 @@ function redrawLocationArray(contextT, pattern, pointArray,realOrFake) {
             if (pattern === 0) {
                 if(realOrFake === 1) {
                     startX = pointArray[i].startPot.x;
+                    //console.log(startX);
                     startY = pointArray[i].startPot.y;
-                    drawLocationLine(pointArray[i].endPot.x, pointArray[i].endPot.y, contextT, startPointColor, 0, pattern);
-                    drawLocationPoint(10,contextT, startPointColor, 0, pattern);
+                    drawLocationLine(pointArray[i].endPot.x, pointArray[i].endPot.y, contextT, "#00FF7F", 0, pattern);
+                    drawLocationPoint(10, contextT, "#00FF7F", 0, pattern);
                 }
                 if(realOrFake === 0) {
-                    drawLocationPoint(pointArray[i].radius, contextT, startPointColor, 0, pattern);
+                    drawLocationPoint(pointArray[i].radius, contextT, "#00FF7F", 0, pattern);
                 }
             }
             if (pattern === 1) {
                 if(realOrFake === 1) {
                     startX = pointArray[i].startPot.x;
                     startY = pointArray[i].startPot.y;
-                    drawLocationLine(pointArray[i].endPot.x, pointArray[i].endPot.y, contextT, locationPointColor, 0, pattern);
-                    drawLocationPoint(10,contextT, locationPointColor, 0, pattern);
+                    drawLocationLine(pointArray[i].endPot.x, pointArray[i].endPot.y, contextT, "#FFA500", 0, pattern);
+                    drawLocationPoint(10, contextT, "#FFA500", 0, pattern);
                 }
                 if(realOrFake === 0) {
-                    drawLocationPoint(pointArray[i].radius,contextT, locationPointColor, 0, pattern);
+                    drawLocationPoint(pointArray[i].radius, contextT, "#FFA500", 0, pattern);
                 }
             }
         }
@@ -129,6 +130,16 @@ function deleteLocationPoint() {
     //console.log("delete");
     var index = currentLocationPoint.index;
     //console.log(index);
+
+    //prepare delete json data send to server
+    if (currentPointArray === startPointArray) {
+        deleteInitPosition(index);
+    }
+
+    if (currentPointArray === locationPointArray) {
+        deletePosition(index);
+    }
+
     currentPointArray[index] = null;
     currentRealPointArray[index] = null;
 
@@ -147,6 +158,8 @@ function deleteLocationPoint() {
     //}
     $pointItem.css("top","-2000px");
     $pointItem.css("left", "-2000px");
+
+
 }
 
 /**
@@ -195,6 +208,18 @@ function drawLocationLine(toX,toY,contextT,color,index,pointPattern) {
         startPoint.endPot.y = toY;
         startPoint.angle = -(angle/Math.PI * 180);
         startPoints.push(startPoint);
+
+        //this is the request formation data
+        var endPointData = {
+            "angle": startPoint.angle,
+            "gridX": startX,
+            "gridY": startY,
+            "mapName": "",
+            "name": startPointName,
+            "type": 0
+        };
+
+        startPointDatas.push(endPointData);
     }
     //locationPoint
     if(index === 1 && pointPattern === 1) {
@@ -256,4 +281,11 @@ function drawLocationLine(toX,toY,contextT,color,index,pointPattern) {
     //left arrow
     contextT.lineTo(toX-headlen*Math.cos(angle+Math.PI/6),toY-headlen*Math.sin(angle+Math.PI/6));
     contextT.stroke();
+}
+
+function drawInitPoint(angle, startX, startY, contextT, index) {
+    var endX, endY;
+
+
+    angle = -angle * Math.PI * 180;
 }

@@ -65,7 +65,7 @@ document.getElementById('layer2').addEventListener('click', clearCanvas);
 /**
  * test some submit function
  */
-//document.getElementById('successBtn').addEventListener('click', sendImageInfo);
+document.getElementById('successBtn').addEventListener('click', sendImageInfo);
 
 //deleteButton.addEventListener('click', deleteLocationPoint);
 //deleteButton.addEventListener('click', drawLayer);
@@ -207,7 +207,7 @@ pointContext = pointCanvas.getContext("2d");
 //bg_image.src = "./image1.jpg";
 //console.log(bg_image.src);
 //console.log(bg_image.length);
-bg_image.src = localStorage["ssc8"];
+bg_image.src = localStorage["bgUrl"];
 bg_image.onload = function () {
     console.log(bg_image.width + " " + bg_image.height);
     setDefaultSize(bg_image);
