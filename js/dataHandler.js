@@ -153,6 +153,7 @@ function sendPosition() {
 function deleteInitPosition(index) {
     var pointData = startPointDatas[index];
     //pointData = JSON.stringify(pointData);
+    console.log(startPointDatas);
 
     console.log("delete init point:" + pointData);
     $.ajax({
@@ -328,12 +329,9 @@ function drawNewImage(obstacle) {
 
 function getDataFromGallery() {
     var obstacle = JSON.parse(localStorage["obstacle"]);
-    console.log(obstacle);
     for (var i = 0; i < obstacle.length; i++) {
         if (obstacle[i] != "") {
             if (obstacle[i].mapName === sessionStorage["mapName"]) {
-                console.log(obstacle[i].obstacles.rectangles.length);
-                console.log(obstacle[i].obstacles.circles.length);
                 for (var j = 0; j < obstacle[i].obstacles.lines.length; j++) {
                     lines.push(obstacle[i].obstacles.lines[j]);
                 }
@@ -354,7 +352,7 @@ function getDataFromGallery() {
     }
 
     var initPoints = JSON.parse(sessionStorage.getItem("initPoints"));
-    console.log("initPoints length" + sessionStorage.getItem("initPoints"));
+    ////console.log("initPoints length" + sessionStorage.getItem("initPoints"));
     var positionPoints = JSON.parse(sessionStorage.getItem("positionPoints"));
 
     for (var i = 0; i < initPoints.length; i++) {
@@ -387,6 +385,15 @@ function drawLayer() {
     drawCircleObstacle(circles, context);
     redrawLocationArray(pointContext, 0, startPoints, 1);
     redrawLocationArray(pointContext, 1, locationPoints, 1);
+}
+
+function drawLayerFirst() {
+    drawLineObstacle(lines, context);
+    drawRectangleObstacle(rectangles, context);
+    drawPolygonObstacle(polygons, context);
+    drawCircleObstacle(circles, context);
+    redrawLocationArrayFirst(pointContext, 0, startPoints, 1);
+    //redrawLocationArrayFirst(pointContext, 1, locationPoints,1);
 }
 
 function drawLineObstacle(lines,contextT) {

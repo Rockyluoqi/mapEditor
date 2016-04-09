@@ -41,13 +41,14 @@ function drawLocationPoint(radius,contextT,color,index,locationPattern) {
     contextT.stroke();
     if(index === 1) {
         if(locationPattern === 0) {
-            var circle = new CirclePoint(startX, startY, radius, startIndex);
-            startIndex += 1;
+            var circle = new CirclePoint(startX, startY, radius, startPoints.length);
+            startIndex = startPoints.length + 1;
             startPointArray.push(circle);
+            console.log(startIndex);
         }
         if(locationPattern === 1) {
-            var circle = new CirclePoint(startX, startY, radius, locationIndex);
-            locationIndex += 1;
+            var circle = new CirclePoint(startX, startY, radius, locationPoints.length);
+            locationIndex = locationPoints.length + 1;
             locationPointArray.push(circle);
         }
     }
@@ -121,6 +122,38 @@ function redrawLocationArray(contextT, pattern, pointArray,realOrFake) {
         }
     }
 }
+
+function redrawLocationArrayFirst(contextT, pattern, pointArray, realOrFake) {
+    for (var i = 0; i < pointArray.length; i++) {
+        // != null is false !!!!!!!!
+        if (pointArray[i].angle != "") {
+            if (pattern === 0) {
+                if (realOrFake === 1) {
+                    startX = pointArray[i].startPot.x;
+                    //console.log(startX);
+                    startY = pointArray[i].startPot.y;
+                    drawLocationLine(pointArray[i].endPot.x, pointArray[i].endPot.y, contextT, "#00FF7F", 1, pattern);
+                    drawLocationPoint(10, contextT, "#00FF7F", 0, pattern);
+                }
+                if (realOrFake === 0) {
+                    drawLocationPoint(pointArray[i].radius, contextT, "#00FF7F", 0, pattern);
+                }
+            }
+            if (pattern === 1) {
+                if (realOrFake === 1) {
+                    startX = pointArray[i].startPot.x;
+                    startY = pointArray[i].startPot.y;
+                    drawLocationLine(pointArray[i].endPot.x, pointArray[i].endPot.y, contextT, "#FFA500", 1, pattern);
+                    drawLocationPoint(10, contextT, "#FFA500", 0, pattern);
+                }
+                if (realOrFake === 0) {
+                    drawLocationPoint(pointArray[i].radius, contextT, "#FFA500", 0, pattern);
+                }
+            }
+        }
+    }
+}
+
 
 var previousSelectedCircle;
 var currentLocationPoint;
@@ -210,7 +243,7 @@ function drawLocationLine(toX,toY,contextT,color,index,pointPattern) {
         startPoints.push(startPoint);
 
         //this is the request formation data
-        var endPointData = {
+        var startPointData = {
             "angle": startPoint.angle,
             "gridX": startX,
             "gridY": startY,
@@ -219,7 +252,8 @@ function drawLocationLine(toX,toY,contextT,color,index,pointPattern) {
             "type": 0
         };
 
-        startPointDatas.push(endPointData);
+        startPointDatas.push(startPointData);
+        console.log(startPointDatas.length);
     }
     //locationPoint
     if(index === 1 && pointPattern === 1) {

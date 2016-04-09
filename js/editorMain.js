@@ -209,13 +209,26 @@ pointContext = pointCanvas.getContext("2d");
 //console.log(bg_image.length);
 bg_image.src = localStorage["bgUrl"];
 bg_image.onload = function () {
-    console.log(bg_image.width + " " + bg_image.height);
+    //console.log(bg_image.width + " " + bg_image.height);
     setDefaultSize(bg_image);
     setCanvasSize(curHeight, curWidth);
     context2.drawImage(bg_image, 0, 0, bg_image.width, bg_image.height);
+    //startPointDatas = [];
+    //startPointArray = [];
+    //startPoints = [];
+    //locationPointArray = [];
+    //endPointDatas = [];
+    //locationPoints = [];
     getDataFromGallery();
-    drawLayer();
-}
+    //console.log(startPointDatas.length);
+    console.log(startPoints);
+    drawLayerFirst();
+    //drawLayer();
+    //console.log(startPointDatas.length);
+    //console.log(startPoints.length);
+    console.log(startPointDatas);
+};
+
 
 
 //console.log(bg_image.src);

@@ -18,7 +18,7 @@ function getImageFromServer() {
         urls.push(url);
     }
 
-
+    //I can't fix the bugs of the response data which is disordered. So, I use the URL finally.
     //$.ajax({
     //    url: "http://192.168.1.103:8080/gs-robot/data/map_png?map_name="+"ssc6",
     //    type: "GET",
@@ -229,12 +229,13 @@ function saveImgLocal() {
         imgs.push(image);
     }
 
+
     var t = JSON.parse(localStorage.getItem("obstacle"));
     var te = [];
+    //Handle a problem of some data in the array has no obstacle.
     for (var i = 0; i < t.length; i++) {
         var temp = t[i];
         if (temp === "") {
-            console.log("null");
             te.push("");
         } else {
             temp = JSON.parse(temp);
@@ -243,13 +244,10 @@ function saveImgLocal() {
     }
 
     localStorage["obstacle"] = JSON.stringify(te);
-    console.log(te);
 
     for (var i = 0; i < urls.length; i++) {
         var img = new Image();
         img.setAttribute('crossOrigin', 'anonymous');
-        //localStorage[mapName] = "";
-        console.log(urls[i]);
         img.src = urls[i];
 
         img.onload = (function (value) {
@@ -447,7 +445,6 @@ function transPointArray() {
     var tempArray = localStorage.getItem("initPoints");
     tempArray = JSON.parse(tempArray);
 
-    var t;
     var i, j, t;
     for (i = 0; i < tempArray.length; i++) {
         var tt = tempArray[i];
@@ -455,6 +452,9 @@ function transPointArray() {
         for (j = 0; j < tt.length; j++) {
             var temp = tt[j];
             var len = 15;
+            /**
+             * may be some bugs
+             */
             var toX = temp.gridX + len * Math.cos(temp.angle);
             var toY = temp.gridY + len * Math.sin(temp.angle);
             var startPoint = {
