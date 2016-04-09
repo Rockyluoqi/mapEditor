@@ -213,8 +213,11 @@ bg_image.onload = function () {
     setDefaultSize(bg_image);
     setCanvasSize(curHeight, curWidth);
     context2.drawImage(bg_image, 0, 0, bg_image.width, bg_image.height);
-
+    getDataFromGallery();
+    drawLayer();
 }
+
+
 //console.log(bg_image.src);
 //console.log(bg_image.src);
 //bg_image.src = 'js/map.jpg';

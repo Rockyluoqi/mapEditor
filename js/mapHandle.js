@@ -83,6 +83,7 @@ function getObstacle() {
             }
         });
     }
+    localStorage.setItem("obstacle", JSON.stringify(obstacle));
 }
 
 function getImageList() {
@@ -165,6 +166,8 @@ function setThumbImg(img){
 
 function setImage() {
     var imgUrl = $(".ug-thumb-selected img").get(0).src;
+    var mapName = $(".ug-thumb-selected img").get(0).alt;
+    sessionStorage.setItem("mapName", mapName);
 
     console.log(imgUrl);
 
@@ -179,7 +182,12 @@ function setImage() {
         //console.log(num);
     }
 
-    localStorage["bgUrl"] = imgUrl;
+    for (var i = 0; i < mapDataArray.length; i++) {
+        if (mapName === mapDataArray[i].title) {
+            localStorage["bgUrl"] = urls[i];
+            console.log(localStorage["bgUrl"]);
+        }
+    }
 
     //console.log(num);
     //跨文件传参常用方法
@@ -188,7 +196,6 @@ function setImage() {
     //}
 
 
-    console.log(localStorage["bgUrl"]);
 
     ////usage:
     //readTextFile("./asset/json/map.json", function (text) {
@@ -216,6 +223,22 @@ function saveImgLocal() {
         imgs.push(image);
     }
 
+    var t = JSON.parse(localStorage.getItem("obstacle"));
+    var te = [];
+    for (var i = 0; i < t.length; i++) {
+        var temp = t[i];
+        if (temp === "") {
+            console.log("null");
+            te.push("");
+        } else {
+            temp = JSON.parse(temp);
+            te.push(temp);
+        }
+    }
+
+    localStorage["obstacle"] = JSON.stringify(te);
+    console.log(te);
+
     for (var i = 0; i < urls.length; i++) {
         var img = new Image();
         img.setAttribute('crossOrigin', 'anonymous');
@@ -231,12 +254,9 @@ function saveImgLocal() {
                 ctx.drawImage(imgs[value], 0, 0);
                 redrawLocationArray(ctx, 0, tempInitPointArray[value], 1);
                 redrawLocationArray(ctx, 1, tempPositionPointArray[value], 1);
-                if (obstacle[value].obstacles != null) {
-                    var obs = JSON.parse(obstacle[value]);
-                    if (obs.obstacles) {
-                        drawCircleObstacle(obstacle[value].data.obstacles.circles, ctx);
-                        console.log("ob");
-                    }
+                if (te[value] != "") {
+                    drawRectangleObstacle(te[value].obstacles.rectangles, ctx);
+                    drawCircleObstacle(te[value].obstacles.circles, ctx);
                 }
                 //console.log(value);
                 localStorage[mapDataArray[value].title] = canvas.toDataURL('image/png');
@@ -304,13 +324,17 @@ function transPointArray() {
                 endPot: {
                     x: toX,
                     y: toY
-                }
+                },
+                mapName: temp.mapName
             };
             t.push(startPoint);
         }
         tempInitPointArray.push(t);
     }
 
+    sessionStorage.setItem("initPoints", JSON.stringify(tempInitPointArray));
+
+    console.log("session " + sessionStorage["initPoints"]);
 
     tempArray = localStorage.getItem("positionPoints");
     tempArray = JSON.parse(tempArray);
@@ -334,12 +358,16 @@ function transPointArray() {
                 endPot: {
                     x: toX,
                     y: toY
-                }
+                },
+                mapName: temp.mapName
             };
             t.push(endPoint);
         }
         tempPositionPointArray.push(t);
     }
+
+    sessionStorage.setItem("positionPoints", JSON.stringify(tempPositionPointArray));
+
 
     console.log(tempPositionPointArray);
 }
@@ -513,8 +541,9 @@ function drawLineObstacle(lines, contextT) {
         if (lines[i]) {
             contextT.beginPath();
             contextT.lineCap = "round";
+            contextT.lineWidth = 4;
             //contextT.lineCap = chosenWidth;
-            contextT.strokeStyle = $colorItem.css("background-color");
+            contextT.strokeStyle = "#000000";
             contextT.moveTo(lines[i].start.x, lines[i].start.y);
             contextT.lineTo(lines[i].end.x, lines[i].end.y);
             contextT.stroke();
@@ -526,8 +555,9 @@ function drawRectangleObstacle(rectangles, contextT) {
     for (var i = 0; i < rectangles.length; i++) {
         if (rectangles[i]) {
             contextT.beginPath();
-            context.lineCap = "round";
-            contextT.strokeStyle = $colorItem.css("background-color");
+            contextT.lineCap = "round";
+            contextT.strokeStyle = "#000000";
+            contextT.lineWidth = 4;
             //is fill color rect
             //contextT.fillRect(startX,startY,toX-startX,toY-startY);
             contextT.strokeRect(rectangles[i].start.x, rectangles[i].start.y,
@@ -542,7 +572,8 @@ function drawPolygonObstacle(polygons, contextT) {
         if (polygons[i]) {
             var polygon = polygons[i];
             contextT.beginPath();
-            contextT.strokeStyle = $colorItem.css("background-color");
+            contextT.lineWidth = 4;
+            contextT.strokeStyle = "#000000";
             for (var j = 0; j < polygon.length; j++) {
                 if (j + 1 === polygon.length) {
                     contextT.moveTo(polygon[j].x, polygon[j].y);
@@ -564,9 +595,11 @@ function drawCircleObstacle(circles, contextT) {
     for (var i = 0; i < circles.length; i++) {
         if (circles[i]) {
             contextT.beginPath();
-            contextT.strokeStyle = $colorItem.css("background-color");
+            contextT.strokeStyle = "#000000";
+            contextT.lineWidth = 4;
             contextT.arc(circles[i].center.x, circles[i].center.y, circles[i].radius, 0, 2 * Math.PI);
             contextT.stroke();
+            console.log(circles[i].center.x + " " + circles[i].center.y);
         }
     }
 }

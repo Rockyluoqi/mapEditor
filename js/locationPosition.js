@@ -214,7 +214,7 @@ function drawLocationLine(toX,toY,contextT,color,index,pointPattern) {
             "angle": startPoint.angle,
             "gridX": startX,
             "gridY": startY,
-            "mapName": "",
+            "mapName": sessionStorage.getItem("mapName"),
             "name": startPointName,
             "type": 0
         };
@@ -241,7 +241,7 @@ function drawLocationLine(toX,toY,contextT,color,index,pointPattern) {
             "angle": locationPoint.angle,
             "gridX": startX,
             "gridY": startY,
-            "mapName": "",
+            "mapName": sessionStorage.getItem("mapName"),
             "name": startPointName,
             "type": 0
         };

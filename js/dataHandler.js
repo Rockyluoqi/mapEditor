@@ -19,7 +19,7 @@ var circleIndex = 0;
 var polygonIndex = 0;
 
 var map = {
-    mapName: "ssc6",
+    mapName: "",
     description : "",
     ID : "",
     createDate : "",
@@ -98,6 +98,7 @@ function transToJson() {
     obstacles.rectangles = rectangles;
     obstacles.polygons = polygons;
     obstacles.circles = circles;
+    map.mapName = sessionStorage.getItem("mapName");
 
     //deleteNullInArray(startPointDatas);
     //startPointDatas = noneNullArray;
@@ -208,9 +209,9 @@ function sendImageInfo() {
 
 var name,url,description;
 
-function drawNewImage(){
-    var data = localStorage['obstacle'];
-    var obj = JSON.parse(data);
+function drawNewImage(obstacle) {
+    //var data = localStorage['obstacle'];
+    //var obj = JSON.parse(data);
 
     name = obj.mapName;
     url = obj.url;
@@ -325,9 +326,60 @@ function drawNewImage(){
     }
 }
 
+function getDataFromGallery() {
+    var obstacle = JSON.parse(localStorage["obstacle"]);
+    console.log(obstacle);
+    for (var i = 0; i < obstacle.length; i++) {
+        if (obstacle[i] != "") {
+            if (obstacle[i].mapName === sessionStorage["mapName"]) {
+                console.log(obstacle[i].obstacles.rectangles.length);
+                console.log(obstacle[i].obstacles.circles.length);
+                for (var j = 0; j < obstacle[i].obstacles.lines.length; j++) {
+                    lines.push(obstacle[i].obstacles.lines[j]);
+                }
+
+                for (var j = 0; j < obstacle[i].obstacles.rectangles.length; j++) {
+                    rectangles.push(obstacle[i].obstacles.rectangles[j]);
+                }
+
+                for (var j = 0; j < obstacle[i].obstacles.circles.length; j++) {
+                    circles.push(obstacle[i].obstacles.circles[j]);
+                }
+
+                for (var j = 0; j < obstacle[i].obstacles.polygons.length; j++) {
+                    polygons.push(obstacle[i].obstacles.polygons[j]);
+                }
+            }
+        }
+    }
+
+    var initPoints = JSON.parse(sessionStorage.getItem("initPoints"));
+    console.log("initPoints length" + sessionStorage.getItem("initPoints"));
+    var positionPoints = JSON.parse(sessionStorage.getItem("positionPoints"));
+
+    for (var i = 0; i < initPoints.length; i++) {
+        var temp = initPoints[i];
+        for (var j = 0; j < temp.length; j++) {
+            if (temp[j].mapName === sessionStorage["mapName"]) {
+                startPoints.push(temp[j]);
+            }
+        }
+    }
+
+    for (var i = 0; i < positionPoints.length; i++) {
+        var temp = positionPoints[i];
+        for (var j = 0; j < temp.length; j++) {
+            if (temp[j].mapName === sessionStorage["mapName"]) {
+                locationPoints.push(temp[j]);
+            }
+        }
+    }
+}
+
 /**
  * you can use drawNewImage, but it adds many loops, so please use this
  */
+var defaultColor = "#000000";
 function drawLayer() {
     drawLineObstacle(lines,context);
     drawRectangleObstacle(rectangles,context);
@@ -343,7 +395,8 @@ function drawLineObstacle(lines,contextT) {
             contextT.beginPath();
             contextT.lineCap = "round";
             //contextT.lineCap = chosenWidth;
-            contextT.strokeStyle = $colorItem.css("background-color");
+            //contextT.strokeStyle = $colorItem.css("background-color");
+            contextT.strokeStyle = defaultColor;
             contextT.moveTo(lines[i].start.x, lines[i].start.y);
             contextT.lineTo(lines[i].end.x, lines[i].end.y);
             contextT.stroke();
@@ -355,8 +408,10 @@ function drawRectangleObstacle(rectangles,contextT) {
     for(var i = 0;i<rectangles.length;i++) {
         if(rectangles[i]) {
             contextT.beginPath();
-            context.lineCap = "round";
-            contextT.strokeStyle = $colorItem.css("background-color");
+            contextT.lineCap = "round";
+            //contextT.strokeStyle = $colorItem.css("background-color");
+            contextT.strokeStyle = defaultColor;
+
             //is fill color rect
             //contextT.fillRect(startX,startY,toX-startX,toY-startY);
             contextT.strokeRect(rectangles[i].start.x, rectangles[i].start.y,
@@ -371,7 +426,9 @@ function drawPolygonObstacle(polygons,contextT) {
         if (polygons[i]) {
             var polygon = polygons[i];
             contextT.beginPath();
-            contextT.strokeStyle = $colorItem.css("background-color");
+            //contextT.strokeStyle = $colorItem.css("background-color");
+            contextT.strokeStyle = defaultColor;
+
             for (var j = 0; j < polygon.length; j++) {
                 if (j + 1 === polygon.length) {
                     contextT.moveTo(polygon[j].x, polygon[j].y);
@@ -393,7 +450,8 @@ function drawCircleObstacle(circles,contextT) {
     for(var i = 0;i<circles.length;i++) {
         if(circles[i]) {
             contextT.beginPath();
-            contextT.strokeStyle = $colorItem.css("background-color");
+            //contextT.strokeStyle = $colorItem.css("background-color");
+            contextT.strokeStyle = defaultColor;
             contextT.arc(circles[i].center.x, circles[i].center.y, circles[i].radius, 0, 2 * Math.PI);
             contextT.stroke();
         }
