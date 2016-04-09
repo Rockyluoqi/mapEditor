@@ -19,7 +19,6 @@
     <script type="text/javascript" src="js/lib/materialize.min.js"></script>
     <script type="text/javascript" src="js/netConn.js"></script>
     <script type="text/javascript" src="js/locationPosition.js"></script>
-    <script src="js/mapHandle.js" charset="utf-8"></script>
     <!--default theme-->
     <!--<script src="plugin/galleryPlugin/themes/default/ug-theme-default.js"></script>-->
     <!--<link rel="stylesheet" href="plugin/galleryPlugin/themes/default/ug-theme-default.css" type="text/css"/>-->
@@ -35,102 +34,6 @@
 <body style="overflow: hidden">
 <div class = "gallery-container">
     <div id="gallery" style="display:none" >
-
-
-
-        <!--<img alt="Railway Station"-->
-             <!--src="plugin/images/thumbs/thumb1.jpg"-->
-             <!--data-image="plugin/images/big/image1.jpg"-->
-             <!--data-description="Preview Image 2 Description">-->
-
-        <!--&lt;!&ndash;查看视频和音频效果请打开注释&ndash;&gt;-->
-        <!--&lt;!&ndash;Youtube 视频&ndash;&gt;-->
-        <!--&lt;!&ndash; <img alt="Youtube Video"-->
-             <!--data-type="youtube"-->
-             <!--data-videoid="A3PDXmYoF5U"-->
-             <!--data-description="You can include youtube videos easily!"> &ndash;&gt;-->
-
-        <!--<img alt="Airport3"-->
-             <!--src="plugin/images/thumbs/thumb1.jpg"-->
-             <!--data-image="plugin/images/big/image1.jpg"-->
-             <!--data-description="Preview Image 3 Description">-->
-
-        <!--&lt;!&ndash; <img alt="Vimeo Video"-->
-             <!--data-type="vimeo"-->
-             <!--src="http://i.vimeocdn.com/video/447294219_200x150.jpg"-->
-             <!--data-image="http://i.vimeocdn.com/video/447294219_640.jpg"-->
-             <!--data-videoid="73234449"-->
-             <!--data-description="This gallery can also play vimeo videos!"> &ndash;&gt;-->
-
-        <!--<img alt="Airport4"-->
-             <!--src="plugin/images/thumbs/thumb1.jpg"-->
-             <!--data-image="plugin/images/big/image1.jpg"-->
-             <!--data-description="Preview Image 4 Description">-->
-
-        <!--&lt;!&ndash; <img alt="Html5 Video"-->
-             <!--src="images/thumbs/html5_video.png"-->
-             <!--data-type="html5video"-->
-             <!--data-image="http://video-js.zencoder.com/oceans-clip.png"-->
-             <!--data-videoogv="http://video-js.zencoder.com/oceans-clip.ogv"-->
-             <!--data-videowebm="http://video-js.zencoder.com/oceans-clip.webm"-->
-             <!--data-videomp4="http://video-js.zencoder.com/oceans-clip.mp4"-->
-             <!--data-description="This is html5 video demo played by mediaelement2 player"> &ndash;&gt;-->
-
-        <!--<img alt="Railway station 5"-->
-             <!--src="plugin/images/thumbs/thumb1.jpg"-->
-             <!--data-image="plugin/images/big/image1.jpg"-->
-             <!--data-description="Preview Image 5 Description">-->
-
-        <!--&lt;!&ndash; <img alt="Wistia Video"-->
-             <!--src="images/thumbs/wistia_video.jpg"-->
-             <!--data-type="wistia"-->
-             <!--data-image="images/big/wistia_video.jpg"-->
-             <!--data-videoid="9oedgxuciv"-->
-             <!--data-description="Hey, the gallery plays Wistia videos too!"> &ndash;&gt;-->
-
-        <!--<img alt="Preview Image 6"-->
-             <!--src="plugin/images/thumbs/thumb6.jpg"-->
-             <!--data-image="plugin/images/big/image6.jpg"-->
-             <!--data-description="Preview Image 6 Description">-->
-
-        <!--&lt;!&ndash;音频&ndash;&gt;-->
-        <!--&lt;!&ndash; <img alt="Sound Cloud Track"-->
-             <!--src="images/thumbs/sound_cloud.jpg"-->
-             <!--data-type="soundcloud"-->
-             <!--data-image="images/thumbs/sound_cloud.jpg"-->
-             <!--data-trackid="8390970"-->
-             <!--data-description="This gallery can play a soundcloud track"> &ndash;&gt;-->
-
-
-        <!--<img alt="Preview Image 7"-->
-             <!--src="plugin/images/thumbs/thumb7.jpg"-->
-             <!--data-image="plugin/images/big/image7.jpg"-->
-             <!--data-description="Preview Image 7 Description">-->
-
-        <!--<img alt="Preview Image 8"-->
-             <!--src="plugin/images/thumbs/thumb8.jpg"-->
-             <!--data-image="plugin/images/big/image8.jpg"-->
-             <!--data-description="Preview Image 8 Description">-->
-
-        <!--<img alt="Preview Image 9"-->
-             <!--src="plugin/images/thumbs/thumb9.jpg"-->
-             <!--data-image="plugin/images/big/image9.jpg"-->
-             <!--data-description="Preview Image 9 Description">-->
-
-        <!--<img alt="Preview Image 10"-->
-             <!--src="plugin/images/thumbs/thumb10.jpg"-->
-             <!--data-image="plugin/images/big/image10.jpg"-->
-             <!--data-description="Preview Image 10 Description">-->
-
-        <!--<img alt="Preview Image 11"-->
-             <!--src="plugin/images/thumbs/thumb11.jpg"-->
-             <!--data-image="plugin/images/big/image11.jpg"-->
-             <!--data-description="Preview Image 11 Description">-->
-
-        <!--<img alt="Preview Image 12"-->
-             <!--src="plugin/images/thumbs/thumb12.jpg"-->
-             <!--data-image="plugin/images/big/image12.jpg"-->
-             <!--data-description="Preview Image 12 Description">-->
     </div>
 </div>
 <div class ="fixed-action-btn" onclick="setImage()" style = "bottom:160px;right:100px;">
@@ -143,17 +46,9 @@
 </div>
 
 <canvas id="transCanvas" style="top:9000px"></canvas>
+<script type="text/javascript" src="js/mapHandle.js"></script>
 <script type="text/javascript">
     //    localStorage.clear();
-    getImageList();
-    parseMapList();
-    getInitPoints();
-    getPositionPoints();
-    getObstacle();
-    getImageFromServer();
-    saveImgLocal();
-    transPointArray();
-    setImageArray();
     jQuery(document).ready(function(){
         jQuery("#gallery").unitegallery({
             theme_panel_position:"left"
