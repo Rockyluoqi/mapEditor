@@ -31,6 +31,7 @@ var $endCancelBtn = $("#endCancelBtn");
 var $endPointName = $("#endPointName");
 
 var deleteButton = document.getElementById('deleteButton');
+var backButton = document.getElementById('backBtn');
 
 //flags and some
 var imgObjArr = [];
@@ -70,6 +71,8 @@ document.getElementById('successBtn').addEventListener('click', sendImageInfo);
 //deleteButton.addEventListener('click', deleteLocationPoint);
 //deleteButton.addEventListener('click', drawLayer);
 deleteButton.addEventListener('click', deleteBtnHandler);
+backButton.addEventListener('click', backBtnHandler);
+
 
 $startOkBtn.click(setStartPointName);
 $startCancelBtn.click(startInputCancel);
@@ -77,6 +80,10 @@ $startCancelBtn.click(startInputCancel);
 $endOkBtn.click(setEndPointName);
 $endCancelBtn.click(endInputCancel);
 
+
+function backBtnHandler() {
+    window.open('mapGallery.html', '_self', false);
+}
 /**
  * cancel and delete the point
  */
@@ -107,7 +114,7 @@ function setStartPointName() {
         "angle": startPoints[startPoints.length - 1].angle,
         "gridX": startPoints[startPoints.length - 1].startPot.x,
         "gridY": startPoints[startPoints.length - 1].startPot.y,
-        "mapName": "",
+        "mapName": sessionStorage.getItem("mapName"),
         "name": startPointName,
         "type": 0
     };
@@ -149,7 +156,7 @@ function setEndPointName() {
         "angle": locationPoints[locationPoints.length - 1].angle,
         "gridX": locationPoints[locationPoints.length - 1].startPot.x,
         "gridY": locationPoints[locationPoints.length - 1].startPot.y,
-        "mapName": "",
+        "mapName": sessionStorage.getItem("mapName"),
         "name": endPointName,
         "type": 0
     };
@@ -222,6 +229,8 @@ bg_image.onload = function () {
     getDataFromGallery();
     //console.log(startPointDatas.length);
     console.log(startPoints);
+    //startPoints = [];
+    //locationPoints = [];
     drawLayerFirst();
     //drawLayer();
     //console.log(startPointDatas.length);
@@ -375,7 +384,6 @@ if (canvas.getContext) {
              * the locaitonPoint logic is different with the shapePattern, it has historical reason, I'll fix it.(timeless...
              */
             if (locationPattern === 0) {
-                console.log("location 0");
                 currentPointArray = startPointArray;
                 currentRealPointArray = startPoints;
                 for (var i = startPointArray.length - 1; i >= 0; i--) {
@@ -752,6 +760,8 @@ if (canvas.getContext) {
         if (pointing === true) {
             mouseX = leftScrollDistance + event.clientX - offsetX;
             mouseY = topScrollDistance + event.clientY - offsetY;
+            //console.log("startPointArray.length "+startPointArray.length);
+            //console.log("locationPointArray.length "+locationPointArray.length);
             for (var i = startPointArray.length - 1; i >= 0; i--) {
                 var circle = startPointArray[i];
                 if (circle != null) {
@@ -852,7 +862,6 @@ if (canvas.getContext) {
                     context.beginPath();
                     context.strokeStyle = "red";
                     context.moveTo(polygon[0].x, polygon[0].y);
-                    console.log(polygon.length);
                     for (var j = 1; j < polygon.length; j++) {
                         context.lineTo(polygon[j].x, polygon[j].y);
                         //console.log(polygon[j].x + " "+polygon[j].y);
@@ -866,7 +875,6 @@ if (canvas.getContext) {
                         shapePattern = 3;
                         break;
                     } else {
-                        console.log("not in path");
                         canvas.style.cursor = 'default';
                         context.strokeStyle = "black";
                         context.closePath();

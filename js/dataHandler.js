@@ -17,6 +17,7 @@ var lineIndex = 0;
 var rectangleIndex = 0;
 var circleIndex = 0;
 var polygonIndex = 0;
+var urlStart = "http://192.168.1.96:8080";
 
 var map = {
     mapName: "",
@@ -115,10 +116,12 @@ function sendInitPosition() {
     //startPointDatas = noneNullArray;
 
     var pointData = startPointDatas[startPointDatas.length - 1];
+    console.log(startPointDatas);
     pointData = JSON.stringify(pointData);
+    console.log(pointData);
 
     $.ajax({
-        url: "http://192.168.1.103:8080/gs-robot/cmd/init_point/add_init_point",
+        url: urlStart + "/gs-robot/cmd/init_point/add_init_point",
         type: "POST",
         dataType: "json",
         data: pointData,
@@ -138,7 +141,7 @@ function sendPosition() {
     pointData = JSON.stringify(pointData);
     console.log(pointData);
     $.ajax({
-        url: "http://192.168.1.103:8080/gs-robot/cmd/position/add_position",
+        url: urlStart + "/gs-robot/cmd/position/add_position",
         type: "POST",
         dataType: "json",
         data: pointData,
@@ -151,13 +154,14 @@ function sendPosition() {
 }
 
 function deleteInitPosition(index) {
-    var pointData = startPointDatas[index];
+    var pointData = startPointDatas[index - sessionStorage.getItem("originStartLen")];
     //pointData = JSON.stringify(pointData);
     console.log(startPointDatas);
-
+    console.log(index);
+    console.log(pointData);
     console.log("delete init point:" + pointData);
     $.ajax({
-        url: "http://192.168.1.103:8080/gs-robot/cmd/delete_init_point?map_name=" + pointData.mapName + "&init_point_name=" + pointData.name,
+        url: urlStart + "/gs-robot/cmd/delete_init_point?map_name=" + pointData.mapName + "&init_point_name=" + pointData.name,
         type: "GET",
         success: function (data) {
             if (data.successed) {
@@ -168,12 +172,12 @@ function deleteInitPosition(index) {
 }
 
 function deletePosition(index) {
-    var pointData = endPointDatas[index];
+    var pointData = endPointDatas[index - sessionStorage.getItem("originLocationLen")];
     //pointData = JSON.stringify(pointData);
-
+    console.log(pointData);
     console.log("delete position point:" + pointData);
     $.ajax({
-        url: "http://192.168.1.103:8080/gs-robot/cmd/delete_position?map_name=" + pointData.mapName + "&init_point_name=" + pointData.name,
+        url: urlStart + "/gs-robot/cmd/delete_position?map_name=" + pointData.mapName + "&position_name=" + pointData.name,
         type: "GET",
         success: function (data) {
             if (data.successed) {
@@ -188,7 +192,7 @@ function sendImageInfo() {
     console.log(mapJson);
 
     $.ajax({
-        url: "http://192.168.1.103:8080/gs-robot/cmd/update_virtual_obstacles",
+        url: urlStart + "/gs-robot/cmd/update_virtual_obstacles",
         type: "POST",
         dataType: "json",
         data: mapJson,
@@ -388,12 +392,16 @@ function drawLayer() {
 }
 
 function drawLayerFirst() {
+    startIndex = startPoints.length;
+    sessionStorage.setItem("originStartLen", startIndex);
+    locationIndex = locationPoints.length;
+    sessionStorage.setItem("originLocationLen", locationIndex);
     drawLineObstacle(lines, context);
     drawRectangleObstacle(rectangles, context);
     drawPolygonObstacle(polygons, context);
     drawCircleObstacle(circles, context);
     redrawLocationArrayFirst(pointContext, 0, startPoints, 1);
-    //redrawLocationArrayFirst(pointContext, 1, locationPoints,1);
+    redrawLocationArrayFirst(pointContext, 1, locationPoints, 1);
 }
 
 function drawLineObstacle(lines,contextT) {

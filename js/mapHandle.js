@@ -9,18 +9,17 @@ $.support.cors = true;
 
 var imageList = [];
 var urls = [];
-
+var urlStart = "http://192.168.1.96:8080";
 
 function getImageFromServer() {
     for (var i = 0; i < mapDataArray.length; i++) {
-        var url = "http://192.168.1.103:8080/gs-robot/data/map_png?map_name=" + mapDataArray[i].title;
-        console.log(url);
+        var url = urlStart + "/gs-robot/data/map_png?map_name=" + mapDataArray[i].title;
         urls.push(url);
     }
 
     //I can't fix the bugs of the response data which is disordered. So, I use the URL finally.
     //$.ajax({
-    //    url: "http://192.168.1.103:8080/gs-robot/data/map_png?map_name="+"ssc6",
+    //    url: urlStart+"/gs-robot/data/map_png?map_name="+"ssc6",
     //    type: "GET",
     //    //headers: {
     //    //    'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'
@@ -38,7 +37,7 @@ var initPoints = [];
 function getInitPoints() {
     for (var i = 0; i < mapDataArray.length; i++) {
         $.ajax({
-            url: "http://192.168.1.103:8080/gs-robot/data/init_points?map_name=" + mapDataArray[i].title,
+            url: urlStart + "/gs-robot/data/init_points?map_name=" + mapDataArray[i].title,
             type: "GET",
             async: false,
             dataType: "json",
@@ -57,7 +56,7 @@ var positionPoints = [];
 function getPositionPoints() {
     for (var i = 0; i < mapDataArray.length; i++) {
         $.ajax({
-            url: "http://192.168.1.103:8080/gs-robot/data/positions?map_name=" + mapDataArray[i].title,
+            url: urlStart + "/gs-robot/data/positions?map_name=" + mapDataArray[i].title,
             type: "GET",
             dataType: "json",
             async: false,
@@ -76,7 +75,7 @@ var obstacle = [];
 function getObstacle() {
     for (var i = 0; i < mapDataArray.length; i++) {
         $.ajax({
-            url: "http://192.168.1.103:8080/gs-robot/data/virtual_obstacles?map_name=" + mapDataArray[i].title,
+            url: urlStart + "/gs-robot/data/virtual_obstacles?map_name=" + mapDataArray[i].title,
             type: "GET",
             dataType: "json",
             async: false,
@@ -93,7 +92,7 @@ function getObstacle() {
 
 function getImageList() {
     $.ajax({
-        url: "http://192.168.1.103:8080/gs-robot/data/maps",
+        url: urlStart + "/gs-robot/data/maps",
         type: "GET",
         dataType: "json",
         async: false,
@@ -261,7 +260,7 @@ function saveImgLocal() {
                     drawLineObstacle(te[value].obstacles.lines, ctx);
                     drawRectangleObstacle(te[value].obstacles.rectangles, ctx);
                     drawCircleObstacle(te[value].obstacles.circles, ctx);
-                    drawPolygonObstacle(te[value].obstacles.circles, ctx);
+                    drawPolygonObstacle(te[value].obstacles.polygons, ctx);
                 }
                 localStorage[mapDataArray[value].title] = canvas.toDataURL('image/png');
 
@@ -467,7 +466,8 @@ function transPointArray() {
                     x: toX,
                     y: toY
                 },
-                mapName: temp.mapName
+                mapName: temp.mapName,
+                name: temp.name
             };
             t.push(startPoint);
         }
@@ -501,7 +501,8 @@ function transPointArray() {
                     x: toX,
                     y: toY
                 },
-                mapName: temp.mapName
+                mapName: temp.mapName,
+                name: temp.name
             };
             t.push(endPoint);
         }
@@ -509,7 +510,7 @@ function transPointArray() {
     }
 
     sessionStorage.setItem("positionPoints", JSON.stringify(tempPositionPointArray));
-    console.log(tempPositionPointArray);
+    console.log(sessionStorage.getItem("positionPoints"));
 }
 
 //function readTextFile(file, callback) {
@@ -745,6 +746,7 @@ function drawCircleObstacle(circles, contextT) {
 }
 
 function preRun() {
+    sessionStorage.clear();
     getImageList();
     parseMapList();
     getInitPoints();

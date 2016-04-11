@@ -41,14 +41,18 @@ function drawLocationPoint(radius,contextT,color,index,locationPattern) {
     contextT.stroke();
     if(index === 1) {
         if(locationPattern === 0) {
-            var circle = new CirclePoint(startX, startY, radius, startPoints.length);
-            startIndex = startPoints.length + 1;
+            //var circle = new CirclePoint(startX, startY, radius, startPoints.length);
+            //startIndex = startPoints.length + 1;
+            var circle = new CirclePoint(startX, startY, radius, startIndex);
+            startIndex += 1;
             startPointArray.push(circle);
             console.log(startIndex);
         }
         if(locationPattern === 1) {
-            var circle = new CirclePoint(startX, startY, radius, locationPoints.length);
-            locationIndex = locationPoints.length + 1;
+            //var circle = new CirclePoint(startX, startY, radius, locationPoints.length);
+            //locationIndex = locationPoints.length + 1;
+            var circle = new CirclePoint(startX, startY, radius, locationIndex);
+            locationIndex += 1;
             locationPointArray.push(circle);
         }
     }
@@ -66,9 +70,9 @@ function drawPointCircle(x,y,radius,fillColor,contextT) {
 }
 
 function redrawArray(contextT) {
+    console.log(startPointArray.length);
     for(var i=0;i<startPointArray.length;i++) {
         if(startPointArray[i] != null) {
-
             if (!startPointArray[i].isSelected) {
                 drawPointCircle(startPointArray[i].x, startPointArray[i].y, startPointArray[i].radius, startPointColor, contextT);
             } else {
@@ -132,8 +136,9 @@ function redrawLocationArrayFirst(contextT, pattern, pointArray, realOrFake) {
                     startX = pointArray[i].startPot.x;
                     //console.log(startX);
                     startY = pointArray[i].startPot.y;
-                    drawLocationLine(pointArray[i].endPot.x, pointArray[i].endPot.y, contextT, "#00FF7F", 1, pattern);
-                    drawLocationPoint(10, contextT, "#00FF7F", 0, pattern);
+                    startPointName = pointArray[i].name;
+                    drawLocationLineFirst(pointArray[i].endPot.x, pointArray[i].endPot.y, contextT, "#00FF7F", 1, pattern);
+                    drawLocationPoint(10, contextT, "#00FF7F", 1, pattern);
                 }
                 if (realOrFake === 0) {
                     drawLocationPoint(pointArray[i].radius, contextT, "#00FF7F", 0, pattern);
@@ -143,8 +148,9 @@ function redrawLocationArrayFirst(contextT, pattern, pointArray, realOrFake) {
                 if (realOrFake === 1) {
                     startX = pointArray[i].startPot.x;
                     startY = pointArray[i].startPot.y;
-                    drawLocationLine(pointArray[i].endPot.x, pointArray[i].endPot.y, contextT, "#FFA500", 1, pattern);
-                    drawLocationPoint(10, contextT, "#FFA500", 0, pattern);
+                    endPointName = pointArray[i].name;
+                    drawLocationLineFirst(pointArray[i].endPot.x, pointArray[i].endPot.y, contextT, "#FFA500", 1, pattern);
+                    drawLocationPoint(10, contextT, "#FFA500", 1, pattern);
                 }
                 if (realOrFake === 0) {
                     drawLocationPoint(pointArray[i].radius, contextT, "#FFA500", 0, pattern);
@@ -162,7 +168,7 @@ var currentRealPointArray;
 function deleteLocationPoint() {
     //console.log("delete");
     var index = currentLocationPoint.index;
-    //console.log(index);
+    console.log("delete index : " + index);
 
     //prepare delete json data send to server
     if (currentPointArray === startPointArray) {
@@ -184,8 +190,6 @@ function deleteLocationPoint() {
     redrawLocationArray(pointContext,0,startPoints,1);
     redrawLocationArray(pointContext,1,locationPoints,1);
 
-    console.log("currentLocationPoint length: "+ currentPointArray.length);
-    console.log("currentRealPointArray length: "+ currentRealPointArray.length);
     //for(var i = 0;i<currentRealPointArray.length;i++) {
     //    console.log("currentRealPointArray: "+i+ " coord: "+currentRealPointArray[i].pot.x+" "+currentRealPointArray[i].pot.y);
     //}
@@ -242,18 +246,112 @@ function drawLocationLine(toX,toY,contextT,color,index,pointPattern) {
         startPoint.angle = -(angle/Math.PI * 180);
         startPoints.push(startPoint);
 
+        ////this is the request formation data
+        //var startPointData = {
+        //    "angle": startPoint.angle,
+        //    "gridX": startX,
+        //    "gridY": startY,
+        //    "mapName": sessionStorage.getItem("mapName"),
+        //    "name": startPointName,
+        //    "type": 0
+        //};
+        //
+        //startPointDatas.push(startPointData);
+        //console.log("add"+sessionStorage.getItem("mapName"));
+    }
+    //locationPoint
+    if (index === 1 && pointPattern === 1) {
+        var locationPoint = {
+            startPot: {x: 0, y: 0},
+            endPot: {x: 0, y: 0},
+            direction: 0 //PI/2 = 90 degree anticlockwise
+        };
+
+        locationPoint.startPot.x = startX;
+        locationPoint.startPot.y = startY;
+        locationPoint.endPot.x = toX;
+        locationPoint.endPot.y = toY;
+        locationPoint.angle = -(angle / Math.PI * 180);
+        locationPoints.push(locationPoint);
+
+        ////this is the request formation data
+        //var endPointData = {
+        //    "angle": locationPoint.angle,
+        //    "gridX": startX,
+        //    "gridY": startY,
+        //    "mapName": sessionStorage.getItem("mapName"),
+        //    "name": startPointName,
+        //    "type": 0
+        //};
+        //
+        //endPointDatas.push(endPointData);
+    }
+
+    contextT.beginPath();
+    contextT.lineCap = "round";
+    contextT.lineWidth = 2;
+    contextT.strokeStyle = color;
+
+    //vertical distance
+    a = toY - startY;
+    //horizontal distance
+    b = toX - startX;
+
+    //triangle
+    c = a * a + b * b;
+    c = Math.sqrt(c);
+    sin = a / c;
+    cos = b / c;
+
+    //new distance using orientationLength as a base
+    a = orientationLength * sin;
+    b = orientationLength * cos;
+
+    //new destination
+    toX = startX + b;
+    toY = startY + a;
+
+    contextT.moveTo(startX, startY);
+    contextT.lineTo(toX, toY);
+    //right arrow
+    contextT.lineTo(toX - headlen * Math.cos(angle - Math.PI / 6), toY - headlen * Math.sin(angle - Math.PI / 6));
+    contextT.lineTo(toX, toY);
+    //left arrow
+    contextT.lineTo(toX - headlen * Math.cos(angle + Math.PI / 6), toY - headlen * Math.sin(angle + Math.PI / 6));
+    contextT.stroke();
+}
+
+function drawLocationLineFirst(toX, toY, contextT, color, index, pointPattern) {
+    //use for arrow creation
+    angle = Math.atan2(toY - startY, toX - startX);
+
+    //startPoint
+    if (index === 1 && pointPattern === 0) {
+        var startPoint = {
+            angle: 0, //PI/2 = 90 degree anticlockwise
+            startPot: {x: 0, y: 0},
+            endPot: {x: 0, y: 0}
+        };
+
+        startPoint.startPot.x = startX;
+        startPoint.startPot.y = startY;
+        startPoint.endPot.x = toX;
+        startPoint.endPot.y = toY;
+        startPoint.angle = -(angle / Math.PI * 180);
+        //startPoints.push(startPoint);
+
         //this is the request formation data
         var startPointData = {
-            "angle": startPoint.angle,
-            "gridX": startX,
-            "gridY": startY,
-            "mapName": sessionStorage.getItem("mapName"),
-            "name": startPointName,
-            "type": 0
+            angle: startPoint.angle,
+            gridX: startX,
+            gridY: startY,
+            mapName: sessionStorage.getItem("mapName"),
+            name: startPointName,
+            type: 0
         };
 
         startPointDatas.push(startPointData);
-        console.log(startPointDatas.length);
+        console.log(startPointData.mapName);
     }
     //locationPoint
     if(index === 1 && pointPattern === 1) {
@@ -268,7 +366,7 @@ function drawLocationLine(toX,toY,contextT,color,index,pointPattern) {
         locationPoint.endPot.x = toX;
         locationPoint.endPot.y = toY;
         locationPoint.angle = -(angle/Math.PI * 180);
-        locationPoints.push(locationPoint);
+        //locationPoints.push(locationPoint);
 
         //this is the request formation data
         var endPointData = {
@@ -276,7 +374,7 @@ function drawLocationLine(toX,toY,contextT,color,index,pointPattern) {
             "gridX": startX,
             "gridY": startY,
             "mapName": sessionStorage.getItem("mapName"),
-            "name": startPointName,
+            "name": endPointName,
             "type": 0
         };
 
