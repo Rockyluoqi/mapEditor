@@ -169,6 +169,10 @@ function setThumbImg(img) {
     //直接设置缩略图元素的image-url
 }
 
+function refresh() {
+    location.reload();
+}
+
 function setImage() {
     var imgUrl = $(".ug-thumb-selected img").get(0).src;
     var mapName = $(".ug-thumb-selected img").get(0).alt;
