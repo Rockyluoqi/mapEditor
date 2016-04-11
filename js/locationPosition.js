@@ -173,14 +173,15 @@ function deleteLocationPoint() {
     //prepare delete json data send to server
     if (currentPointArray === startPointArray) {
         deleteInitPosition(index);
+        currentPointArray[index - sessionStorage.getItem("originStartLen")] = null;
+        currentRealPointArray[index - sessionStorage.getItem("originStartLen")] = null;
     }
 
     if (currentPointArray === locationPointArray) {
         deletePosition(index);
+        currentPointArray[index - sessionStorage.getItem("originLocationLen")] = null;
+        currentRealPointArray[index - sessionStorage.getItem("originLocationLen")] = null;
     }
-
-    currentPointArray[index] = null;
-    currentRealPointArray[index] = null;
 
     //occur some index problems, so give up tentatively
     //currentPointArray.splice(index,index);
@@ -190,9 +191,9 @@ function deleteLocationPoint() {
     redrawLocationArray(pointContext,0,startPoints,1);
     redrawLocationArray(pointContext,1,locationPoints,1);
 
-    //for(var i = 0;i<currentRealPointArray.length;i++) {
-    //    console.log("currentRealPointArray: "+i+ " coord: "+currentRealPointArray[i].pot.x+" "+currentRealPointArray[i].pot.y);
-    //}
+    console.log(currentPointArray);
+    console.log(currentRealPointArray);
+
     $pointItem.css("top","-2000px");
     $pointItem.css("left", "-2000px");
 

@@ -128,6 +128,8 @@ function sendInitPosition() {
         success: function (data) {
             if (data.successed) {
                 alert("init_position post successfully!");
+            } else {
+                alert(data.msg);
             }
         }
     });
@@ -148,6 +150,8 @@ function sendPosition() {
         success: function (data) {
             if (data.successed) {
                 alert("position post successfully!");
+            } else {
+                alert(data.msg);
             }
         }
     });
@@ -163,6 +167,7 @@ function deleteInitPosition(index) {
     $.ajax({
         url: urlStart + "/gs-robot/cmd/delete_init_point?map_name=" + pointData.mapName + "&init_point_name=" + pointData.name,
         type: "GET",
+        dataType: "json",
         success: function (data) {
             if (data.successed) {
                 alert("delete init position successfully!");
@@ -179,6 +184,7 @@ function deletePosition(index) {
     $.ajax({
         url: urlStart + "/gs-robot/cmd/delete_position?map_name=" + pointData.mapName + "&position_name=" + pointData.name,
         type: "GET",
+        dataType: "json",
         success: function (data) {
             if (data.successed) {
                 alert("delete position successfully!");

@@ -236,6 +236,7 @@ bg_image.onload = function () {
     //console.log(startPointDatas.length);
     //console.log(startPoints.length);
     console.log(startPointDatas);
+    console.log(startPoints);
 };
 
 
@@ -1035,7 +1036,7 @@ if (canvas.getContext) {
                 drawLocationLine(mouseX, mouseY, pointContext, startPointColor, 1, locationPattern);
 
                 //$startPointInput.css("width", 200 + "px");
-                $startPointInput.css("top", (event.clientY + 200) + "px");
+                $startPointInput.css("top", (event.clientY) + "px");
                 $startPointInput.css("left", (event.clientX) + "px");
                 $startPointInput.css("width", (400) + "px");
                 $(".row").css("width", 400 + "px");
@@ -1044,7 +1045,7 @@ if (canvas.getContext) {
             }
             if (locationPattern === 1) {
                 drawLocationLine(mouseX, mouseY, pointContext, locationPointColor, 1, locationPattern);
-                $endPointInput.css("top", (event.clientY + 200) + "px");
+                $endPointInput.css("top", (event.clientY ) + "px");
                 $endPointInput.css("left", (event.clientX) + "px");
                 $endPointInput.css("width", (400) + "px");
                 $(".row").css("width", 400 + "px");
