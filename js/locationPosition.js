@@ -15,6 +15,7 @@ function CirclePoint(x, y, radius, index) {
     //this.clickTimes = 0;
     //this.selecting = false;
 }
+var defaultRadius = 6;
 
 //store movePoints
 var startPointArray = [];
@@ -106,7 +107,7 @@ function redrawLocationArray(contextT, pattern, pointArray,realOrFake) {
                     //console.log(startX);
                     startY = pointArray[i].startPot.y;
                     drawLocationLine(pointArray[i].endPot.x, pointArray[i].endPot.y, contextT, "#00FF7F", 0, pattern);
-                    drawLocationPoint(10, contextT, "#00FF7F", 0, pattern);
+                    drawLocationPoint(defaultRadius, contextT, "#00FF7F", 0, pattern);
                 }
                 if(realOrFake === 0) {
                     drawLocationPoint(pointArray[i].radius, contextT, "#00FF7F", 0, pattern);
@@ -117,7 +118,7 @@ function redrawLocationArray(contextT, pattern, pointArray,realOrFake) {
                     startX = pointArray[i].startPot.x;
                     startY = pointArray[i].startPot.y;
                     drawLocationLine(pointArray[i].endPot.x, pointArray[i].endPot.y, contextT, "#FFA500", 0, pattern);
-                    drawLocationPoint(10, contextT, "#FFA500", 0, pattern);
+                    drawLocationPoint(defaultRadius, contextT, "#FFA500", 0, pattern);
                 }
                 if(realOrFake === 0) {
                     drawLocationPoint(pointArray[i].radius, contextT, "#FFA500", 0, pattern);
@@ -138,7 +139,7 @@ function redrawLocationArrayFirst(contextT, pattern, pointArray, realOrFake) {
                     startY = pointArray[i].startPot.y;
                     startPointName = pointArray[i].name;
                     drawLocationLineFirst(pointArray[i].endPot.x, pointArray[i].endPot.y, contextT, "#00FF7F", 1, pattern);
-                    drawLocationPoint(10, contextT, "#00FF7F", 1, pattern);
+                    drawLocationPoint(defaultRadius, contextT, "#00FF7F", 1, pattern);
                 }
                 if (realOrFake === 0) {
                     drawLocationPoint(pointArray[i].radius, contextT, "#00FF7F", 0, pattern);
@@ -150,7 +151,7 @@ function redrawLocationArrayFirst(contextT, pattern, pointArray, realOrFake) {
                     startY = pointArray[i].startPot.y;
                     endPointName = pointArray[i].name;
                     drawLocationLineFirst(pointArray[i].endPot.x, pointArray[i].endPot.y, contextT, "#FFA500", 1, pattern);
-                    drawLocationPoint(10, contextT, "#FFA500", 1, pattern);
+                    drawLocationPoint(defaultRadius, contextT, "#FFA500", 1, pattern);
                 }
                 if (realOrFake === 0) {
                     drawLocationPoint(pointArray[i].radius, contextT, "#FFA500", 0, pattern);
@@ -210,12 +211,12 @@ function deleteLocationPoint() {
  *              1:drawing on the context, save it
  * @param pointPattern 0 startPoint and 1 locationPoint
  */
-var headlen = 15;// length of head in pixels
+var headlen = 10;// length of head in pixels
 //
 var angle;
 //use for limited length straight line
 var sin, cos, a, b, c;
-var orientationLength = 40;
+var orientationLength = 25;
 /**
  *
  request:

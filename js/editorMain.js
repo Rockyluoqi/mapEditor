@@ -82,7 +82,10 @@ $endCancelBtn.click(endInputCancel);
 
 
 function backBtnHandler() {
-    window.open('mapGallery.html', '_self', false);
+    //window.location.reload();
+    //window.history.back();
+    window.close();
+    window.open('mapGallery.html');
 }
 /**
  * cancel and delete the point
@@ -220,12 +223,12 @@ bg_image.onload = function () {
     setDefaultSize(bg_image);
     setCanvasSize(curHeight, curWidth);
     context2.drawImage(bg_image, 0, 0, bg_image.width, bg_image.height);
-    //startPointDatas = [];
-    //startPointArray = [];
-    //startPoints = [];
-    //locationPointArray = [];
-    //endPointDatas = [];
-    //locationPoints = [];
+    startPointDatas = [];
+    startPointArray = [];
+    startPoints = [];
+    locationPointArray = [];
+    endPointDatas = [];
+    locationPoints = [];
     getDataFromGallery();
     //console.log(startPointDatas.length);
     console.log(startPoints);
@@ -624,7 +627,7 @@ if (canvas.getContext) {
                 pointContext.lineWidth = chosenWidth;
                 startX = mouseX;
                 startY = mouseY;
-                drawLocationPoint(10, pointContext, startPointColor, 1, locationPattern);
+                drawLocationPoint(defaultRadius, pointContext, startPointColor, 1, locationPattern);
                 $tempCanvas.css({left: 0, top: 0});
             }
             if (locationPattern === 1) {
@@ -637,7 +640,7 @@ if (canvas.getContext) {
                 pointContext.lineWidth = chosenWidth;
                 startX = mouseX;
                 startY = mouseY;
-                drawLocationPoint(10, pointContext, locationPointColor, 1, locationPattern);
+                drawLocationPoint(defaultRadius, pointContext, locationPointColor, 1, locationPattern);
                 $tempCanvas.css({left: 0, top: 0});
             }
         }
@@ -970,7 +973,7 @@ if (canvas.getContext) {
                 }
 
                 //console.log(num_of_click);s
-                if (distance(point, mouse) < 15 && num_of_click > 2) {
+                if (distance(point, mouse) < 5 && num_of_click > 2) {
                     //console.log("closed is true");
                     point.closed2 = true;
                 } else {
@@ -1433,14 +1436,12 @@ $subMenuItem.fastClick(function () {
                 redo();
                 break;
             case 4:
-                //photo
-                console.log("click photo");
-                $fileInput.click();
-                break;
-            case 5:
                 //删除
                 console.log("Delete");
                 clearCanvas();
+                ////photo
+                //console.log("click photo");
+                //$fileInput.click();
                 break;
             default:
                 break;

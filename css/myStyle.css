@@ -264,6 +264,44 @@
     transform:rotate(135deg);
 }
 
+/*#successBtn span {*/
+/*background: none repeat scroll 0 0 #F8F8F8;*/
+/*border: 5px solid #000000;*/
+/*color: 	#000000;*/
+/*font-size: 20px;*/
+/*font-weight: 600;*/
+/*width: 200px;*/
+/*height: 80px;*/
+/*letter-spacing: 1px;*/
+/*line-height: 20px;*/
+/*margin-top: 20px;*/
+/*margin-left: 95px;*/
+/*!*margin: 0 auto;*!*/
+/*position: relative;*/
+/*text-align: center;*/
+/*text-transform: uppercase;*/
+/*top: -80px;*/
+/*left:-30px;*/
+/*display:none;*/
+/*padding:16px 20px;*/
+/*}*/
+
+/*#successBtn span:after {*/
+/*content:'';*/
+/*position:absolute;*/
+/*bottom:30px;*/
+/*width:15px;*/
+/*height:15px;*/
+/*border-bottom:5px solid #000000;*/
+/*border-right:5px solid #000000;*/
+/*background:#f8f8f8;*/
+/*left:0%;*/
+/*margin-left:-10.9px;*/
+/*-moz-transform:rotate(135deg);*/
+/*-webkit-transform:rotate(135deg);*/
+/*transform:rotate(135deg);*/
+/*}*/
+
 #positionsFirst:hover span {
     display: block;
 }
@@ -292,6 +330,45 @@
     display: block;
 }
 
+#straight:hover span {
+    display: block;
+}
+
+#rectangle:hover span {
+    display: block;
+}
+
+#polygon:hover span {
+    display: block;
+}
+
+#circle:hover span {
+    display: block;
+}
+
+#brokenLine:hover span {
+    display: block;
+}
+
+#dashedLine:hover span {
+    display: block;
+}
+
+#handTool:hover span {
+    display: block;
+}
+
+#cursorTool:hover span {
+    display: block;
+}
+
+#clearAll:hover span {
+    display: block;
+}
+
+/*#successBtn:hover span {*/
+/*display:block;*/
+/*}*/
 
 /*#canvas {*/
     /*z-index:5*/

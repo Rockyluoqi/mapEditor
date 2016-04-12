@@ -11,6 +11,32 @@ var imageList = [];
 var urls = [];
 var urlStart = "http://192.168.1.96:8080";
 
+var initPoints = [];
+var positionPoints = [];
+var obstacle = [];
+var mapDataArray = [];
+
+var tempInitPointArray = [];
+var tempPositionPointArray = [];
+
+var base64Images = [];
+var base64SmallImages = [];
+var imgs = [];
+
+function initArray() {
+    imageList = [];
+    urls = [];
+    initPoints = [];
+    positionPoints = [];
+    obstacle = [];
+    mapDataArray = [];
+    tempInitPointArray = [];
+    tempPositionPointArray = [];
+    base64Images = [];
+    base64SmallImages = [];
+    imgs = [];
+}
+
 function getImageFromServer() {
     for (var i = 0; i < mapDataArray.length; i++) {
         var url = urlStart + "/gs-robot/data/map_png?map_name=" + mapDataArray[i].title;
@@ -32,7 +58,6 @@ function getImageFromServer() {
     //});
 }
 
-var initPoints = [];
 
 function getInitPoints() {
     for (var i = 0; i < mapDataArray.length; i++) {
@@ -49,9 +74,9 @@ function getInitPoints() {
         });
     }
     localStorage.setItem("initPoints", JSON.stringify(initPoints));
+    console.log(initPoints);
 }
 
-var positionPoints = [];
 
 function getPositionPoints() {
     for (var i = 0; i < mapDataArray.length; i++) {
@@ -70,7 +95,6 @@ function getPositionPoints() {
     localStorage.setItem("positionPoints", JSON.stringify(positionPoints));
 }
 
-var obstacle = [];
 
 function getObstacle() {
     for (var i = 0; i < mapDataArray.length; i++) {
@@ -102,8 +126,6 @@ function getImageList() {
     });
 }
 
-var mapDataArray = [];
-
 function parseMapList() {
     //readTextFile("./asset/json/mapList.json", function(text){
     //    localStorage["mapList"] = text;
@@ -117,7 +139,7 @@ function parseMapList() {
         var map = new _map(data.name,
             "",
             "",
-            data.name + " " + "height:" + data.mapInfo.gridHeight + " widthL " + data.mapInfo.gridWidth +
+            data.name + " " + "height: " + data.mapInfo.gridHeight + " width: " + data.mapInfo.gridWidth +
             " create time: " + data.createdAt,
             data.mapInfo.gridHeight,
             data.mapInfo.gridWidth,
@@ -157,16 +179,6 @@ function setImageArray() {
         imgHtml.setAttribute("data-description", mapDataArray[i].dataDescription);
         $("#gallery").append(imgHtml);
     }
-}
-
-var imageData = {
-    width: 0,
-    height: 0
-};
-
-//设置缩略图路径
-function setThumbImg(img) {
-    //直接设置缩略图元素的image-url
 }
 
 function refresh() {
@@ -214,10 +226,6 @@ function setImage() {
     window.open('editorTest3.html', '_self', false);
     //console.log("setImage  "+imgUrl+ wordArray[7] + "  "+num);
 }
-
-var base64Images = [];
-var base64SmallImages = [];
-var imgs = [];
 
 function saveImgLocal() {
     //console.log("saveImgLocal "+mapDataArray.length);
@@ -440,10 +448,6 @@ function getBase64Image(img) {
     return dataURL;
 }
 
-
-var tempInitPointArray = [];
-var tempPositionPointArray = [];
-
 function transPointArray() {
     var tempArray = localStorage.getItem("initPoints");
     tempArray = JSON.parse(tempArray);
@@ -456,10 +460,11 @@ function transPointArray() {
             var temp = tt[j];
             var len = 15;
             /**
-             * may be some bugs
+             * angle bug fixed
+             * radians = -(angle*PI/180)
              */
-            var toX = temp.gridX + len * Math.cos(temp.angle);
-            var toY = temp.gridY + len * Math.sin(temp.angle);
+            var toX = temp.gridX + len * Math.cos(-temp.angle * (Math.PI / 180));
+            var toY = temp.gridY + len * Math.sin(-temp.angle * (Math.PI / 180));
             var startPoint = {
                 angle: temp.angle,
                 startPot: {
@@ -480,12 +485,12 @@ function transPointArray() {
 
     sessionStorage.setItem("initPoints", JSON.stringify(tempInitPointArray));
 
-    console.log("session " + sessionStorage["initPoints"]);
+    //console.log("session " + sessionStorage["initPoints"]);
 
     tempArray = localStorage.getItem("positionPoints");
     tempArray = JSON.parse(tempArray);
 
-    console.log(tempArray);
+    //console.log(tempArray);
 
     for (i = 0; i < tempArray.length; i++) {
         var tt = tempArray[i];
@@ -493,8 +498,8 @@ function transPointArray() {
         for (j = 0; j < tt.length; j++) {
             var temp = tt[j];
             var len = 15;
-            var toX = temp.gridX + len * Math.cos(temp.angle);
-            var toY = temp.gridY + len * Math.sin(temp.angle);
+            var toX = temp.gridX + len * Math.cos(-temp.angle * (Math.PI / 180));
+            var toY = temp.gridY + len * Math.sin(-temp.angle * (Math.PI / 180));
             var endPoint = {
                 angle: temp.angle,
                 startPot: {
@@ -514,7 +519,7 @@ function transPointArray() {
     }
 
     sessionStorage.setItem("positionPoints", JSON.stringify(tempPositionPointArray));
-    console.log(sessionStorage.getItem("positionPoints"));
+    //console.log(sessionStorage.getItem("positionPoints"));
 }
 
 //function readTextFile(file, callback) {
@@ -672,21 +677,21 @@ function drawNewImage() {
 /**
  * you can use drawNewImage, but it adds many loops, so please use this
  */
-function drawLayer() {
-    drawLineObstacle(lines, context);
-    drawRectangleObstacle(rectangles, context);
-    drawPolygonObstacle(polygons, context);
-    drawCircleObstacle(circles, context);
-    redrawLocationArray(pointContext, 0, startPoints, 1);
-    redrawLocationArray(pointContext, 1, locationPoints, 1);
-}
+//function drawLayer() {
+//    drawLineObstacle(lines, context);
+//    drawRectangleObstacle(rectangles, context);
+//    drawPolygonObstacle(polygons, context);
+//    drawCircleObstacle(circles, context);
+//    redrawLocationArray(pointContext, 0, startPoints, 1);
+//    redrawLocationArray(pointContext, 1, locationPoints, 1);
+//}
 
 function drawLineObstacle(lines, contextT) {
     for (var i = 0; i < lines.length; i++) {
         if (lines[i]) {
             contextT.beginPath();
             contextT.lineCap = "round";
-            contextT.lineWidth = 4;
+            contextT.lineWidth = 1;
             //contextT.lineCap = chosenWidth;
             contextT.strokeStyle = "#000000";
             contextT.moveTo(lines[i].start.x, lines[i].start.y);
@@ -702,7 +707,7 @@ function drawRectangleObstacle(rectangles, contextT) {
             contextT.beginPath();
             contextT.lineCap = "round";
             contextT.strokeStyle = "#000000";
-            contextT.lineWidth = 4;
+            contextT.lineWidth = 1;
             //is fill color rect
             //contextT.fillRect(startX,startY,toX-startX,toY-startY);
             contextT.strokeRect(rectangles[i].start.x, rectangles[i].start.y,
@@ -717,7 +722,7 @@ function drawPolygonObstacle(polygons, contextT) {
         if (polygons[i]) {
             var polygon = polygons[i];
             contextT.beginPath();
-            contextT.lineWidth = 4;
+            contextT.lineWidth = 1;
             contextT.strokeStyle = "#000000";
             for (var j = 0; j < polygon.length; j++) {
                 if (j + 1 === polygon.length) {
@@ -741,7 +746,7 @@ function drawCircleObstacle(circles, contextT) {
         if (circles[i]) {
             contextT.beginPath();
             contextT.strokeStyle = "#000000";
-            contextT.lineWidth = 4;
+            contextT.lineWidth = 1;
             contextT.arc(circles[i].center.x, circles[i].center.y, circles[i].radius, 0, 2 * Math.PI);
             contextT.stroke();
             console.log(circles[i].center.x + " " + circles[i].center.y);
@@ -750,18 +755,19 @@ function drawCircleObstacle(circles, contextT) {
 }
 
 function preRun() {
+    //localStorage.removeItem("ssc6");
     sessionStorage.clear();
+    initArray();
     getImageList();
     parseMapList();
+    getImageFromServer();
     getInitPoints();
     getPositionPoints();
     getObstacle();
-    getImageFromServer();
     saveImgLocal();
     transPointArray();
     setImageArray();
 }
-
 
 preRun();
 
