@@ -82,11 +82,12 @@ $endCancelBtn.click(endInputCancel);
 
 
 function backBtnHandler() {
-    //window.location.reload();
-    //window.history.back();
-    window.close();
-    window.open('mapGallery.html');
+    window.history.go(-2);
+    //window.open('mapGallery.html', '_self', false);
+    //window.close();
+    //window.open('mapGallery.html');
 }
+
 /**
  * cancel and delete the point
  */

@@ -756,6 +756,7 @@ function drawCircleObstacle(circles, contextT) {
 
 function preRun() {
     //localStorage.removeItem("ssc6");
+    initArray();
     sessionStorage.clear();
     initArray();
     getImageList();
