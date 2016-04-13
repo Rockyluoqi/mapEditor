@@ -16,7 +16,7 @@ var obstacles = {
     polygons:polygons,
     circles:circles
 }
-
+ 
 var startPointName = '';
 var endPointName = '';
 
