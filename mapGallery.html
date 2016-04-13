@@ -36,7 +36,7 @@
     <div id="gallery" style="display:none" >
     </div>
 </div>
-<div class ="fixed-action-btn" onclick="setImage()" style = "bottom:160px;right:100px;">
+<div class="fixed-action-btn" id="editBtn" style="bottom:160px;right:100px;">
     <a class="btn-floating btn-large waves-effect waves-light blue" style="padding: 4px;">
         <svg fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
             <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
@@ -44,7 +44,7 @@
         </svg>
     </a>
 </div>
-<div class="fixed-action-btn" onclick="refresh()" style="bottom:90px;right:100px;">
+<div class="fixed-action-btn" id="refreshBtn" style="bottom:90px;right:100px;">
     <a class="btn-floating btn-large waves-effect waves-light blue" style="padding-top: 9px">
         <svg fill="#FFFFFF" height="36" viewBox="0 0 24 24" width="36" xmlns="http://www.w3.org/2000/svg">
             <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
@@ -54,13 +54,11 @@
 </div>
 <canvas id="transCanvas" style="top:9000px"></canvas>
 <script type="text/javascript" src="js/mapHandle.js"></script>
-<script type="text/javascript">
-    jQuery(document).ready(function(){
-        jQuery("#gallery").unitegallery({
-            theme_panel_position:"left"
-        });
-    });
-</script>
+<!--<script type="text/javascript">-->
+<!--jQuery(document).ready(function(){-->
+
+<!--});-->
+<!--</script>-->
 <!--<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>-->
 <!--using Gallery plugin -->
 </body>

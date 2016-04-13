@@ -82,8 +82,7 @@ $endCancelBtn.click(endInputCancel);
 
 
 function backBtnHandler() {
-    window.history.go(-2);
-    //window.open('mapGallery.html', '_self', false);
+    window.open('mapGallery.html', '_self', false);
     //window.close();
     //window.open('mapGallery.html');
 }
@@ -239,8 +238,8 @@ bg_image.onload = function () {
     //drawLayer();
     //console.log(startPointDatas.length);
     //console.log(startPoints.length);
-    console.log(startPointDatas);
-    console.log(startPoints);
+    //console.log(startPointDatas);
+    //console.log(startPoints);
 };
 
 
@@ -1137,15 +1136,6 @@ function setCanvasSize(h, w) {
     pointCanvas.height = h;
 }
 
-function setContextSize(h, w) {
-    context.width = w;
-    context.height = h;
-    context2.width = w;
-    context2.height = h;
-    context3.width = w;
-    context3.height = h;
-}
-
 /**
  * 解决地图太大太小的问题，也方便在小屏幕机器上进行的绘制，由于后面求坐标的精确需要不能够改变图片的比例
  * 方案：按照比例缩小图片
@@ -1316,6 +1306,11 @@ function clearCanvas() {
     context.clearRect(0, 0, canvas.width, canvas.height);
     context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
     pointContext.clearRect(0, 0, pointCanvas.width, pointCanvas.height);
+    lines = [];
+    rectangles = [];
+    polygons = [];
+    polygon = [];
+    circles = [];
 }
 
 fileInput.addEventListener('change', onFileInputChange, false);

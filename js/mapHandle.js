@@ -4,6 +4,8 @@
 /**
  * unitegallery 12193 playbutton mode setting
  */
+jQuery(document).ready(function () {
+
 $.support.cors = true;
 //document.getElementsByClassName("fixed-action-btn").addEventListener("onclick",setImage());
 
@@ -22,6 +24,9 @@ var tempPositionPointArray = [];
 var base64Images = [];
 var base64SmallImages = [];
 var imgs = [];
+
+    document.getElementById("refreshBtn").addEventListener('click', refresh);
+    document.getElementById("editBtn").addEventListener('click', setImage);
 
 function initArray() {
     imageList = [];
@@ -139,8 +144,8 @@ function parseMapList() {
         var map = new _map(data.name,
             "",
             "",
-            data.name + " " + "height: " + data.mapInfo.gridHeight + " width: " + data.mapInfo.gridWidth +
-            " create time: " + data.createdAt,
+            "height: " + data.mapInfo.gridHeight + "px width: " + data.mapInfo.gridWidth +
+            "px create-time: " + data.createdAt,
             data.mapInfo.gridHeight,
             data.mapInfo.gridWidth,
             data.createdAt,
@@ -231,6 +236,8 @@ function saveImgLocal() {
     //console.log("saveImgLocal "+mapDataArray.length);
     var canvas = document.getElementById("transCanvas");
     var ctx = canvas.getContext('2d');
+    console.log(base64Images.length);
+    console.log(base64SmallImages.length);
 
 
     for (var j = 0; j < urls.length; j++) {
@@ -275,6 +282,8 @@ function saveImgLocal() {
                     drawPolygonObstacle(te[value].obstacles.polygons, ctx);
                 }
                 localStorage[mapDataArray[value].title] = canvas.toDataURL('image/png');
+                base64Images.push(localStorage[mapDataArray[value].title]);
+                console.log("big image:" + mapDataArray[value].title);
 
                 // 100*56 scalable
                 canvas.width = 400;
@@ -285,13 +294,36 @@ function saveImgLocal() {
 
                 ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
                 localStorage["small" + mapDataArray[value].title] = canvas.toDataURL('image/png');
+                base64SmallImages.push(localStorage["small" + mapDataArray[value].title]);
+                console.log("small image:" + mapDataArray[value].title);
                 //console.log(mapDataArray[value].title + " " + sessionStorage[mapDataArray[value].title]);
+
+                /**
+                 * Because javascript is single threaded, so put the last functions on this place.
+                 * It's ugly, but it works.
+                 */
+                if (value === urls.length - 1) {
+                    setImageArray();
+                    jQuery("#gallery").unitegallery({
+                        theme_panel_position: "left"
+                    });
+                }
             };
+
         })(i);
-        base64Images.push(localStorage[mapDataArray[i].title]);
-        base64SmallImages.push(localStorage["small" + mapDataArray[i].title]);
+        console.log(base64Images.length);
+        console.log(base64SmallImages.length);
+
         //ctx.clearRect(0,0,img.width,img.height);
     }
+
+    //for (var i = 0; i < urls.length; i++) {
+    //    base64Images.push(localStorage[mapDataArray[i].title]);
+    //    base64SmallImages.push(localStorage["small" + mapDataArray[i].title]);
+    //}
+    //
+    //console.log(base64Images.length);
+    //console.log(base64SmallImages.length);
 
     //console.log(base64Images.length);
 
@@ -749,26 +781,34 @@ function drawCircleObstacle(circles, contextT) {
             contextT.lineWidth = 1;
             contextT.arc(circles[i].center.x, circles[i].center.y, circles[i].radius, 0, 2 * Math.PI);
             contextT.stroke();
-            console.log(circles[i].center.x + " " + circles[i].center.y);
+            //console.log(circles[i].center.x + " " + circles[i].center.y);
         }
     }
 }
 
 function preRun() {
-    //localStorage.removeItem("ssc6");
-    initArray();
+    //init
     sessionStorage.clear();
     initArray();
+
+    //function chain
     getImageList();
     parseMapList();
     getImageFromServer();
     getInitPoints();
     getPositionPoints();
     getObstacle();
-    saveImgLocal();
     transPointArray();
-    setImageArray();
+    //go to image.onload
+    saveImgLocal();
 }
 
 preRun();
+});
+
+
+
+
+
+
 

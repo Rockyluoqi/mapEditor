@@ -4,6 +4,7 @@
 var lines = [];
 var rectangles = [];
 var polygons = [];
+var polygon = [];
 var circles = [];
 var startPoints = [];
 var startPointDatas = [];
@@ -14,10 +15,6 @@ var obstacles = {
     rectangles:rectangles,
     polygons:polygons,
     circles:circles
-}
-var movePoints = {
-    startPoints : startPoints,
-    locationPoints : locationPoints
 }
 
 var startPointName = '';
@@ -126,7 +123,6 @@ var num_of_click = 0;
 //var points = [];
 var needFirstPoint = true;
 
-var polygon = [];
 
 function drawNextLine(toX, toY, contextT) {
     var pot = {"x": 0, "y": 0};
