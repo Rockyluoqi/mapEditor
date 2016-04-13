@@ -82,7 +82,9 @@ $endCancelBtn.click(endInputCancel);
 
 
 function backBtnHandler() {
-    window.open('mapGallery.html', '_self', false);
+    //window.open('mapGallery.html', '_self', false);
+    location.href = "mapGallery.html";
+
     //window.close();
     //window.open('mapGallery.html');
 }

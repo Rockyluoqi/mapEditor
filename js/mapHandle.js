@@ -178,7 +178,7 @@ function setImageArray() {
     for (var i = 0; i < mapDataArray.length; i++) {
         var imgHtml = document.createElement("img");
         imgHtml.setAttribute("alt", mapDataArray[i].title);
-        
+
         for (var j = 0; j < base64SmallImages.length; j++) {
             if (mapDataArray[i].title === base64SmallImages[j].mapName) {
                 imgHtml.setAttribute("src", base64SmallImages[j].data);
@@ -246,7 +246,8 @@ function setImage() {
     //    //console.log(text);
     //});
 
-    window.open('editorTest3.html', '_self', false);
+    //window.open('editorTest3.html', '_self', false);
+    location.href = "editorTest3.html";
     //console.log("setImage  "+imgUrl+ wordArray[7] + "  "+num);
 }
 
