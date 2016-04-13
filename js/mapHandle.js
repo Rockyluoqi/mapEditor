@@ -79,7 +79,6 @@ function getInitPoints() {
         });
     }
     localStorage.setItem("initPoints", JSON.stringify(initPoints));
-    console.log(initPoints);
 }
 
 
@@ -178,12 +177,23 @@ function setImageArray() {
     for (var i = 0; i < mapDataArray.length; i++) {
         var imgHtml = document.createElement("img");
         imgHtml.setAttribute("alt", mapDataArray[i].title);
-        imgHtml.setAttribute("src", base64SmallImages[i]);
-        //imgHtml.setAttribute("src", base64Images[i]);
-        imgHtml.setAttribute("data-image", base64Images[i]);
+        for (var j = 0; j < base64Images.length; j++) {
+            if (mapDataArray[i].title === base64SmallImages[j].mapName) {
+                imgHtml.setAttribute("src", base64SmallImages[j].data);
+                //imgHtml.setAttribute("src", base64Images[i]);
+                imgHtml.setAttribute("data-image", base64Images[i].data);
+            }
+        }
         imgHtml.setAttribute("data-description", mapDataArray[i].dataDescription);
         $("#gallery").append(imgHtml);
+        if (i === mapDataArray.length - 1) {
+            jQuery("#gallery").unitegallery({
+                theme_panel_position: "left"
+            });
+        }
     }
+
+
 }
 
 function refresh() {
@@ -236,9 +246,6 @@ function saveImgLocal() {
     //console.log("saveImgLocal "+mapDataArray.length);
     var canvas = document.getElementById("transCanvas");
     var ctx = canvas.getContext('2d');
-    console.log(base64Images.length);
-    console.log(base64SmallImages.length);
-
 
     for (var j = 0; j < urls.length; j++) {
         var image = new Image();
@@ -282,8 +289,17 @@ function saveImgLocal() {
                     drawPolygonObstacle(te[value].obstacles.polygons, ctx);
                 }
                 localStorage[mapDataArray[value].title] = canvas.toDataURL('image/png');
-                base64Images.push(localStorage[mapDataArray[value].title]);
-                console.log("big image:" + mapDataArray[value].title);
+                /**
+                 * 这里主要用到name,因为push进入base64中的顺序每次随机变化，暂时还不知道这种变化的原因，所以加入mapName作为唯一标识符
+                 * mapName as atom ID
+                 * @type {{mapName: *, data: *}}
+                 */
+                var t1 = {
+                    mapName: mapDataArray[value].title,
+                    data: localStorage[mapDataArray[value].title]
+                };
+                base64Images.push(t1);
+                //console.log("big image:" + mapDataArray[value].title);
 
                 // 100*56 scalable
                 canvas.width = 400;
@@ -294,25 +310,31 @@ function saveImgLocal() {
 
                 ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
                 localStorage["small" + mapDataArray[value].title] = canvas.toDataURL('image/png');
-                base64SmallImages.push(localStorage["small" + mapDataArray[value].title]);
-                console.log("small image:" + mapDataArray[value].title);
+
+                /**
+                 * 这里主要用到name,因为push进入base64中的顺序每次随机变化，暂时还不知道这种变化的原因，所以加入mapName作为唯一标识符
+                 * mapName as atom ID
+                 * @type {{mapName: *, data: *}}
+                 */
+                var t2 = {
+                    mapName: mapDataArray[value].title,
+                    data: localStorage["small" + mapDataArray[value].title]
+                };
+                base64SmallImages.push(t2);
+                //console.log("small image:" + mapDataArray[value].title);
                 //console.log(mapDataArray[value].title + " " + sessionStorage[mapDataArray[value].title]);
 
                 /**
                  * Because javascript is single threaded, so put the last functions on this place.
                  * It's ugly, but it works.
                  */
-                if (value === urls.length - 1) {
-                    setImageArray();
-                    jQuery("#gallery").unitegallery({
-                        theme_panel_position: "left"
-                    });
+                if (img.complete) {
+                    if (base64Images.length === 4) {
+                        setImageArray();
+                    }
                 }
             };
-
         })(i);
-        console.log(base64Images.length);
-        console.log(base64SmallImages.length);
 
         //ctx.clearRect(0,0,img.width,img.height);
     }

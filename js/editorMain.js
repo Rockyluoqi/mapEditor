@@ -231,7 +231,6 @@ bg_image.onload = function () {
     locationPoints = [];
     getDataFromGallery();
     //console.log(startPointDatas.length);
-    console.log(startPoints);
     //startPoints = [];
     //locationPoints = [];
     drawLayerFirst();
@@ -242,17 +241,13 @@ bg_image.onload = function () {
     //console.log(startPoints);
 };
 
-
-
 //console.log(bg_image.src);
 //console.log(bg_image.src);
 //bg_image.src = 'js/map.jpg';
 
-
 var position = {x: tempWidth / 2, y: tempHeight / 2};
 var mouse = {x: 0, y: 0, down: false};
 document.body.classList.add('pointer');
-
 
 /**
  * 拿到滚动条的距离就可以实时更新画线的坐标，就可以做到在大屏上进行绘制了，方法很简洁，大屏问题完美解决
@@ -365,7 +360,7 @@ if (canvas.getContext) {
      * I know the code in if statement is redundant.What my think is reduce coupling.Is it better? Sense of trap.
      * OK...I will optimize it later.
      */
-    var backBtnHtml = $(".zoomInAndOut").html();
+    //var backBtnHtml = $(".zoomInAndOut").html();
 
     function mousedown(event) {
         mouse.down = true;
@@ -1306,6 +1301,12 @@ function clearCanvas() {
     context.clearRect(0, 0, canvas.width, canvas.height);
     context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
     pointContext.clearRect(0, 0, pointCanvas.width, pointCanvas.height);
+}
+
+function clearAll() {
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
+    pointContext.clearRect(0, 0, pointCanvas.width, pointCanvas.height);
     lines = [];
     rectangles = [];
     polygons = [];
@@ -1434,7 +1435,7 @@ $subMenuItem.fastClick(function () {
             case 4:
                 //删除
                 console.log("Delete");
-                clearCanvas();
+                clearAll();
                 ////photo
                 //console.log("click photo");
                 //$fileInput.click();

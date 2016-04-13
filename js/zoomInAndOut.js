@@ -34,7 +34,6 @@ function zoomIn() {
 
         clearCanvas();
 
-
         drawLayer();
     }
 }
@@ -63,7 +62,6 @@ function zoomOut() {
         context2.drawImage(bg_image, 0, 0, canvas.width, canvas.height);
 
         clearCanvas();
-
         //context2.drawImage(bg_image, 0, 0, canvas.width, canvas.height);
 
         drawLayer();

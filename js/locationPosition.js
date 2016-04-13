@@ -197,8 +197,6 @@ function deleteLocationPoint() {
 
     $pointItem.css("top","-2000px");
     $pointItem.css("left", "-2000px");
-
-
 }
 
 /**
