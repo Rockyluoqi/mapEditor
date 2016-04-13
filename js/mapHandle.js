@@ -12,6 +12,7 @@ $.support.cors = true;
 var imageList = [];
 var urls = [];
 var urlStart = "http://192.168.1.96:8080";
+//var urlStart = "http://192.168.1.88:8080";
 
 var initPoints = [];
 var positionPoints = [];
@@ -177,13 +178,20 @@ function setImageArray() {
     for (var i = 0; i < mapDataArray.length; i++) {
         var imgHtml = document.createElement("img");
         imgHtml.setAttribute("alt", mapDataArray[i].title);
-        for (var j = 0; j < base64Images.length; j++) {
+        
+        for (var j = 0; j < base64SmallImages.length; j++) {
             if (mapDataArray[i].title === base64SmallImages[j].mapName) {
                 imgHtml.setAttribute("src", base64SmallImages[j].data);
-                //imgHtml.setAttribute("src", base64Images[i]);
-                imgHtml.setAttribute("data-image", base64Images[i].data);
             }
         }
+
+        for (var j = 0; j < base64Images.length; j++) {
+            if (mapDataArray[i].title === base64Images[j].mapName) {
+                imgHtml.setAttribute("data-image", base64Images[j].data);
+
+            }
+        }
+
         imgHtml.setAttribute("data-description", mapDataArray[i].dataDescription);
         $("#gallery").append(imgHtml);
         if (i === mapDataArray.length - 1) {
@@ -205,23 +213,23 @@ function setImage() {
     var mapName = $(".ug-thumb-selected img").get(0).alt;
     sessionStorage.setItem("mapName", mapName);
 
-    console.log(imgUrl);
+    //console.log(imgUrl);
 
     //切字符,个位数和非个位数
-    var wordArray = imgUrl.split("/");
-    var num = wordArray[wordArray.length - 1].charAt(5);
-    var num2 = wordArray[wordArray.length - 1].charAt(6);
-    num = parseInt(num);
-    num2 = parseInt(num2);
-    if (typeof num2 === 'number' && !isNaN(num2)) {
-        num = num * 10 + num2;
-        //console.log(num);
-    }
+    //var wordArray = imgUrl.split("/");
+    //var num = wordArray[wordArray.length - 1].charAt(5);
+    //var num2 = wordArray[wordArray.length - 1].charAt(6);
+    //num = parseInt(num);
+    //num2 = parseInt(num2);
+    //if (typeof num2 === 'number' && !isNaN(num2)) {
+    //    num = num * 10 + num2;
+    //    //console.log(num);
+    //}
 
     for (var i = 0; i < mapDataArray.length; i++) {
         if (mapName === mapDataArray[i].title) {
             localStorage["bgUrl"] = urls[i];
-            console.log(localStorage["bgUrl"]);
+            //console.log(localStorage["bgUrl"]);
         }
     }
 
