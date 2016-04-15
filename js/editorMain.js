@@ -1318,7 +1318,7 @@ function clearAll() {
     circles = [];
 }
 
-fileInput.addEventListener('change', onFileInputChange, false);
+//$fileInput.addEventListener('change', onFileInputChange, false);
 
 $modalIndicator.fastClick(function () {
     var that = $(this);

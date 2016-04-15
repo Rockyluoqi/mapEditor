@@ -43,31 +43,26 @@ jQuery(document).ready(function () {
         imgs = [];
     }
 
-    var index;
+    var hasDataImagesNum;
 
     function getImageFromServer() {
         for (var i = 0; i < mapDataArray.length; i++) {
             var url = urlStart + "/gs-robot/data/map_png?map_name=" + mapDataArray[i].title;
             urls.push(url);
-            //$.ajax({
-            //    url: url,
-            //    type: "GET",
-            //    async: false,
-            //    //headers: {
-            //    //    'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'
-            //    //},
-            //    success: function(data){
-            //        //console.log(data);
-            //        console.log(data);
-            //        if(data.successed)
-            //        {
-            //            index = mapDataArray.length -1;
-            //        }
-            //    }
-            //});
+            $.ajax({
+                url: url,
+                type: "GET",
+                async: false,
+                //headers: {
+                //    'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'
+                //},
+                success: function (data) {
+                    if (data.length < 100) {
+                        hasDataImagesNum = mapDataArray.length - 1;
+                    }
+                }
+            });
         }
-
-        console.log(index);
     }
 
 
@@ -261,38 +256,57 @@ jQuery(document).ready(function () {
     }
 
     function transObstaclesCoord() {
-        var obs = JSON.parse(localStorage.getItem("obstacle"));
-        var ob = obs.obstacles;
+        var ob = JSON.parse(localStorage.getItem("obstacle"));
 
-        for (var i = 0; i < ob.lines.length; i++) {
-            ob.lines[i].start.y = canvas.height - ob.lines[i].start.y;
-            ob.lines[i].end.y = canvas.height - ob.lines[i].end.y;
-        }
+        var obs = [];
+        console.log(ob);
+        //console.log("length："+ob[1].length);
+        for (var k = 0; k < mapDataArray.length; k++) {
+            if (ob[k].length != 0) {
+                console.log(ob[k]);
+                var oba = JSON.parse(ob[k]);
+                console.log(oba);
+                //console.log(k);
+                //if(ob[k].lines)
+                console.log(oba.mapName);
+                for (var j = 0; j < mapDataArray.length; j++) {
+                    if (oba.mapName === mapDataArray[j].title) {
+                        for (var i = 0; i < oba.obstacles.lines.length; i++) {
+                            oba.obstacles.lines[i].start.y = mapDataArray[j].gridHeight - oba.obstacles.lines[i].start.y;
+                            oba.obstacles.lines[i].end.y = mapDataArray[j].gridHeight - oba.obstacles.lines[i].end.y;
+                        }
 
-        for (var i = 0; i < ob.rectangles.length; i++) {
-            ob.rectangles[i].start.y = canvas.height - ob.rectangles[i].start.y;
-            ob.rectangles[i].end.y = canvas.height - ob.rectangles[i].end.y;
-        }
+                        for (var i = 0; i < oba.obstacles.rectangles.length; i++) {
+                            oba.obstacles.rectangles[i].start.y = mapDataArray[j].gridHeight - oba.obstacles.rectangles[i].start.y;
+                            oba.obstacles.rectangles[i].end.y = mapDataArray[j].gridHeight - oba.obstacles.rectangles[i].end.y;
+                        }
 
-        for (var i = 0; i < ob.circles.length; i++) {
-            ob.circles[i].center.y = canvas.height - ob.circles[i].center.y;
-        }
+                        for (var i = 0; i < oba.obstacles.circles.length; i++) {
+                            oba.obstacles.circles[i].center.y = mapDataArray[j].gridHeight - oba.obstacles.circles[i].center.y;
+                        }
 
-        for (var i = 0; i < ob.polygons.length; i++) {
-            var temp = ob.polygons[i];
-            for (var j = 0; j < temp.length; j++) {
-                temp[j].y = canvas.height - temp[j].y;
+                        for (var i = 0; i < oba.obstacles.polygons.length; i++) {
+                            var temp = oba.obstacles.polygons[i];
+                            for (var j = 0; j < temp.length; j++) {
+                                temp[j].y = mapDataArray[j].gridHeight - temp[j].y;
+                            }
+                        }
+                    }
+                }
+                obs.push(oba);
+            } else {
+                obs.push("");
             }
         }
 
         localStorage.setItem("obstacle", JSON.stringify(obs));
+        console.log(obs);
     }
 
     var index = 0;
     var values = [];
 
     function saveImgLocal() {
-        transObstaclesCoord();
         //console.log("saveImgLocal "+mapDataArray.length);
         var canvas = document.getElementById("transCanvas");
         var ctx = canvas.getContext('2d');
@@ -304,9 +318,9 @@ jQuery(document).ready(function () {
             values.push(0);
         }
 
-
         var t = JSON.parse(localStorage.getItem("obstacle"));
 
+        //console.log(t);
         var te = [];
         //Handle a problem of some data in the array has no obstacle.
         for (var i = 0; i < t.length; i++) {
@@ -314,7 +328,7 @@ jQuery(document).ready(function () {
             if (temp === "") {
                 te.push("");
             } else {
-                temp = JSON.parse(temp);
+                //temp = JSON.parse(temp);
                 te.push(temp);
             }
         }
@@ -385,7 +399,7 @@ jQuery(document).ready(function () {
                     }
                     console.log(index);
                     if (img.complete) {
-                        if (base64Images.length === mapDataArray.length - 1) {
+                        if (base64Images.length === hasDataImagesNum) {
                             setImageArray();
                         }
                     }
@@ -573,7 +587,7 @@ jQuery(document).ready(function () {
                  * angle bug fixed
                  * radians = -(angle*PI/180)
                  */
-                temp.gridY = canvas.height - temp.gridY;
+                temp.gridY = mapDataArray[i].gridHeight - temp.gridY;
                 var toX = temp.gridX + len * Math.cos(-temp.angle * (Math.PI / 180));
                 var toY = temp.gridY + len * Math.sin(-temp.angle * (Math.PI / 180));
                 var startPoint = {
@@ -609,7 +623,7 @@ jQuery(document).ready(function () {
             for (j = 0; j < tt.length; j++) {
                 var temp = tt[j];
                 var len = 15;
-                temp.gridY = canvas.height - temp.gridY;
+                temp.gridY = mapDataArray[i].gridHeight - temp.gridY;
                 var toX = temp.gridX + len * Math.cos(-temp.angle * (Math.PI / 180));
                 var toY = temp.gridY + len * Math.sin(-temp.angle * (Math.PI / 180));
                 var endPoint = {
@@ -878,6 +892,7 @@ jQuery(document).ready(function () {
         getPositionPoints();
         getObstacle();
         transPointArray();
+        transObstaclesCoord();
         //go to image.onload
         saveImgLocal();
     }

@@ -244,6 +244,7 @@ function sendImageInfo() {
         dataType: "json",
         data: mapJson,
         success: function (data) {
+            console.log(data);
             if (data.successed) {
                 alert("obstacle post successfully!");
             }
@@ -384,18 +385,25 @@ function getDataFromGallery() {
         if (obstacle[i] != "") {
             if (obstacle[i].mapName === sessionStorage["mapName"]) {
                 for (var j = 0; j < obstacle[i].obstacles.lines.length; j++) {
+                    obstacle[i].obstacles.lines[j].isTrans = false;
                     lines.push(obstacle[i].obstacles.lines[j]);
                 }
 
                 for (var j = 0; j < obstacle[i].obstacles.rectangles.length; j++) {
+                    obstacle[i].obstacles.rectangles[j].isTrans = false;
                     rectangles.push(obstacle[i].obstacles.rectangles[j]);
                 }
 
                 for (var j = 0; j < obstacle[i].obstacles.circles.length; j++) {
+                    obstacle[i].obstacles.circles[j].isTrans = false;
                     circles.push(obstacle[i].obstacles.circles[j]);
                 }
 
                 for (var j = 0; j < obstacle[i].obstacles.polygons.length; j++) {
+                    for (var k = 0; k < obstacle[i].obstacles.polygons[j].length; k++) {
+                        var temp = obstacle[i].obstacles.polygons[j];
+                        temp[k].isTrans = false;
+                    }
                     polygons.push(obstacle[i].obstacles.polygons[j]);
                 }
             }
