@@ -370,7 +370,7 @@ function drawNewImage(obstacle) {
                 "y": 0
             },
             "radius": 0
-        }
+        };
 
         circle.center.x = tempArray[i].center.x;
         circle.center.y = tempArray[i].center.y;

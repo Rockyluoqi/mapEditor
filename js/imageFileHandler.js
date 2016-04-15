@@ -2,8 +2,6 @@
  * Created by Luoqi on 4/5/2016.
  */
 //product new Image
-
-
 function createImgObj(file) {
     var obj = {};
     obj.image = null;
