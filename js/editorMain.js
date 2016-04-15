@@ -216,14 +216,15 @@ pointContext = pointCanvas.getContext("2d");
  * source
  * @type {string}
  */
-//bg_image.src = "./image1.jpg";
+//bg_image.src = "./js/map.jpg";
 //console.log(bg_image.src);
 //console.log(bg_image.length);
 bg_image.src = localStorage["bgUrl"];
 bg_image.onload = function () {
+
     //console.log(bg_image.width + " " + bg_image.height);
     setDefaultSize(bg_image);
-    setCanvasSize(curHeight, curWidth);
+    setCanvasSize(bg_image.height, bg_image.width);
     context2.drawImage(bg_image, 0, 0, bg_image.width, bg_image.height);
     startPointDatas = [];
     startPointArray = [];
@@ -242,6 +243,7 @@ bg_image.onload = function () {
     //console.log(startPointDatas);
     //console.log(startPoints);
 };
+
 
 //console.log(bg_image.src);
 //console.log(bg_image.src);

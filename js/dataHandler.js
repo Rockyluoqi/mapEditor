@@ -17,7 +17,7 @@ var lineIndex = 0;
 var rectangleIndex = 0;
 var circleIndex = 0;
 var polygonIndex = 0;
-var urlStart = "http://192.168.1.96:8080";
+var urlStart = "http://192.168.1.88:8080";
 
 var map = {
     mapName: "",
@@ -95,6 +95,45 @@ function deleteNullInArray(array) {
 }
 
 function transToJson() {
+    console.log(circles);
+    //console.log(canvas.length);
+    /**
+     * coordination transform
+     */
+
+    for (var i = 0; i < lines.length; i++) {
+        if (!lines[i].isTrans) {
+            lines[i].start.y = canvas.height - lines[i].start.y;
+            lines[i].end.y = canvas.height - lines[i].end.y;
+            lines[i].isTrans = true;
+        }
+    }
+
+    for (var i = 0; i < rectangles.length; i++) {
+        if (!rectangles[i].isTrans) {
+            rectangles[i].start.y = canvas.height - rectangles[i].start.y;
+            rectangles[i].end.y = canvas.height - rectangles[i].end.y;
+            rectangles[i].isTrans = true;
+        }
+    }
+
+    for (var i = 0; i < circles.length; i++) {
+        if (!circles[i].isTrans) {
+            circles[i].center.y = canvas.height - circles[i].center.y;
+            circles[i].isTrans = true;
+        }
+    }
+
+    for (var i = 0; i < polygons.length; i++) {
+        var temp = polygons[i];
+        for (var j = 0; j < temp.length; j++) {
+            if (!temp[j].isTrans) {
+                temp[j].y = canvas.height - temp[j].y;
+                temp[j].isTrans = true;
+            }
+        }
+    }
+
     obstacles.lines = lines;
     obstacles.rectangles = rectangles;
     obstacles.polygons = polygons;
@@ -116,9 +155,9 @@ function sendInitPosition() {
     //startPointDatas = noneNullArray;
 
     var pointData = startPointDatas[startPointDatas.length - 1];
-    console.log(startPointDatas);
+    pointData.gridY = canvas.height - pointData.gridY;
     pointData = JSON.stringify(pointData);
-    console.log(pointData);
+    //console.log(pointData);
 
     $.ajax({
         url: urlStart + "/gs-robot/cmd/init_point/add_init_point",
@@ -140,8 +179,10 @@ function sendPosition() {
     //endPointDatas = noneNullArray;
 
     var pointData = endPointDatas[endPointDatas.length - 1];
+    pointData.gridY = canvas.height - pointData.gridY;
+    //console.log(pointData);
     pointData = JSON.stringify(pointData);
-    console.log(pointData);
+    //console.log(pointData);
     $.ajax({
         url: urlStart + "/gs-robot/cmd/position/add_position",
         type: "POST",

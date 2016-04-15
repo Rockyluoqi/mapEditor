@@ -34,7 +34,8 @@ function drawStraightLine(toX, toY, contextT,index) {
         var endPot = {"x": 0, "y": 0};
         var line = {
             "start": startPot,
-            "end": endPot
+            "end": endPot,
+            isTrans: false
         };
 
         startPot.x = startX;
@@ -86,7 +87,8 @@ function drawRectangle(toX, toY, contextT,index) {
         var endPot = {"x": 0, "y": 0};
         var rectangle = {
             "start": startPot,
-            "end": endPot
+            "end": endPot,
+            isTrans: false
         };
 
         startPot.x = startX;
@@ -125,7 +127,7 @@ var needFirstPoint = true;
 
 
 function drawNextLine(toX, toY, contextT) {
-    var pot = {"x": 0, "y": 0};
+    var pot = {"x": 0, "y": 0, isTrans: false};
     pot.x = startX;
     pot.y = startY;
     polygon.push(pot);
@@ -212,7 +214,8 @@ function drawCircle(radius,contextT,index) {
                 "x": 0,
                 "y": 0
             },
-            "radius": 0
+            "radius": 0,
+            isTrans: false
         }
         circle.radius = radius;
         circle.center.x = startX;
