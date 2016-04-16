@@ -45,7 +45,8 @@
         </div>
     </div>
     <div id="toolbar">
-        <a class="btn-floating btn-large waves-effect waves-light green" id="backBtn"
+        <a class="btn-floating btn-large waves-effect waves-light green tooltipped" id="backBtn" data-position="right"
+           data-delay="50" data-tooltip="返回"
            style="width: 60px;height:60px;left:9px;padding: 7px;">
             <svg fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
                 <path d="M0 0h24v24H0z" fill="none"/>
@@ -295,14 +296,18 @@
 
                 </div>
             </div>
-            <a class="waves-effect waves-light btn orange"  id ="successBtn" style="width:60px;left:9px;top: 14px;padding:5px;">
+            <a class="waves-effect waves-light btn orange tooltipped" id="successBtn" data-position="right"
+               data-delay="50" data-tooltip="提交障碍物修改" style="width:60px;left:9px;top: 14px;padding:5px;">
                 <svg fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
                     <path d="M0 0h24v24H0z" fill="none"/>
                     <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
                 </svg>
+                <!--<a class="btn tooltipped" data-position="bottom" data-delay="50" data-tooltip="I am tooltip">Hover me!</a>-->
             </a>
-            <a class="waves-effect waves-light btn orange"  id ="layer1"  style="left: 9px;top:30px;padding: 3px;">Layer1</a>
-            <a class="waves-effect waves-light btn orange"  id ="layer2"  style="left: 9px;top: 40px;padding: 3px;">Layer2</a>
+            <a class="waves-effect waves-light btn orange tooltipped" id="layer1" data-position="right" data-delay="50"
+               data-tooltip="障碍物图层" style="left: 9px;top:30px;padding: 3px;">Layer1</a>
+            <a class="waves-effect waves-light btn orange tooltipped" id="layer2" data-position="right" data-delay="50"
+               data-tooltip="原图图层" style="left: 9px;top: 40px;padding: 3px;">Layer2</a>
             <div id="xycoordinates"></div>
         </div>
     </div>
@@ -324,7 +329,8 @@
     <!--</a>-->
     <!--</div>-->
     <div id="pointItem">
-        <a class="btn-large waves-effect waves-light blue" id="deleteButton" style="width: 53px;padding: 4px;margin-bottom: 10px;">
+        <a class="btn-large waves-effect waves-light blue tooltipped" data-position="bottom" data-delay="50"
+           data-tooltip="删除" id="deleteButton" style="width: 53px;padding: 4px;margin-bottom: 10px;">
             <svg fill="#FFFFFF" height="36" viewBox="0 0 24 24" width="36" xmlns="http://www.w3.org/2000/svg">
                 <path d="M0 0h24v24H0V0z" fill="none"/>
                 <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zm2.46-7.12l1.41-1.41L12 12.59l2.12-2.12 1.41 1.41L13.41 14l2.12 2.12-1.41 1.41L12 15.41l-2.12 2.12-1.41-1.41L10.59 14l-2.13-2.12zM15.5 4l-1-1h-5l-1 1H5v2h14V4z"/>
