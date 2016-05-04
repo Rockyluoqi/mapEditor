@@ -9,7 +9,7 @@
     <!--<link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">-->
     <link type="text/css" rel="stylesheet" href="css/materialize.min.css"  media="screen,projection"/>
     <script type="text/javascript" src="js/lib/jquery-1.11.0.min.js"></script>
-    <!--<script>window.$ = window.jQuery = require('js/lib/jquery-1.11.0.min.js');</script>-->
+    <!--<script>window.$ = window.jQuery = require('./js/lib/jquery-1.11.0.min.js');</script>-->
     <script type="text/javascript" src="js/lib/google.fastbutton.min.js"></script>
     <script type="text/javascript" src="js/lib/google.jquery.fastbutton.min.js"></script>
     <script type="text/javascript" src="js/lib/jcanvas.js"></script>
@@ -19,7 +19,7 @@
     <script type="text/javascript" src="js/dataHandler.js"></script>
     <script type="text/javascript" src="js/lib/materialize.min.js"></script>
 </head>
-<body>
+<body id="body">
 <div class="container">
     <!--<script type="text/javascript">-->
         <!--function cnvs_getCoordinates(e)-->
@@ -311,23 +311,23 @@
             <div id="xycoordinates"></div>
         </div>
     </div>
-    <!--<div class ="zoomInAndOut" style = "width:50px;top:30px;right:40px;">-->
-    <!--<a class="btn-large waves-effect waves-light blue" id="zoomIn" onclick="zoomIn()"-->
-    <!--style="width: 53px;padding: 4px;margin-bottom: 10px;">-->
-    <!--<svg fill="#FFFFFF" height="48" viewBox="0 0 24 24" width="48" xmlns="http://www.w3.org/2000/svg">-->
-    <!--<path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>-->
-    <!--<path d="M0 0h24v24H0V0z" fill="none"/>-->
-    <!--<path d="M12 10h-2v2H9v-2H7V9h2V7h1v2h2v1z"/>-->
-    <!--</svg>-->
-    <!--</a>-->
-    <!--<a class="btn-large waves-effect waves-light blue" id="zoomOut" onclick="zoomOut()"-->
-    <!--style="width: 53px;padding: 4px;">-->
-    <!--<svg fill="#FFFFFF" height="48" viewBox="0 0 24 24" width="48" xmlns="http://www.w3.org/2000/svg">-->
-    <!--<path d="M0 0h24v24H0V0z" fill="none"/>-->
-    <!--<path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14zM7 9h5v1H7z"/>-->
-    <!--</svg>-->
-    <!--</a>-->
-    <!--</div>-->
+    <div class="zoomInAndOut" style="width:50px;top:30px;right:40px;">
+        <a class="btn-large waves-effect waves-light blue" id="zoomIn" onclick="zoomIn()"
+           style="width: 53px;padding: 4px;margin-bottom: 10px;">
+            <svg fill="#FFFFFF" height="48" viewBox="0 0 24 24" width="48" xmlns="http://www.w3.org/2000/svg">
+                <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                <path d="M0 0h24v24H0V0z" fill="none"/>
+                <path d="M12 10h-2v2H9v-2H7V9h2V7h1v2h2v1z"/>
+            </svg>
+        </a>
+        <a class="btn-large waves-effect waves-light blue" id="zoomOut" onclick="zoomOut()"
+           style="width: 53px;padding: 4px;">
+            <svg fill="#FFFFFF" height="48" viewBox="0 0 24 24" width="48" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0 0h24v24H0V0z" fill="none"/>
+                <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14zM7 9h5v1H7z"/>
+            </svg>
+        </a>
+    </div>
     <div id="pointItem">
         <a class="btn-large waves-effect waves-light blue tooltipped" data-position="bottom" data-delay="50"
            data-tooltip="删除" id="deleteButton" style="width: 53px;padding: 4px;margin-bottom: 10px;">
