@@ -99,6 +99,7 @@ function redrawArray(contextT) {
  * @param realOrFake use real Array or a copy array
  */
 function redrawLocationArray(contextT, pattern, pointArray,realOrFake) {
+    console.log("redraw " + pointArray);
     for(var i=0;i<pointArray.length;i++) {
         if(pointArray[i] != null) {
             if (pattern === 0) {
@@ -129,9 +130,13 @@ function redrawLocationArray(contextT, pattern, pointArray,realOrFake) {
 }
 
 function redrawLocationArrayFirst(contextT, pattern, pointArray, realOrFake) {
+    console.log("redraw first ");
+    console.log(pointArray);
     for (var i = 0; i < pointArray.length; i++) {
         // != null is false !!!!!!!!
-        if (pointArray[i].angle != "") {
+        //if (pointArray[i].angle != "") {
+        if (pointArray[i].angle != null) {
+            console.log("heheheh " + i);
             if (pattern === 0) {
                 if (realOrFake === 1) {
                     startX = pointArray[i].startPot.x;
@@ -157,6 +162,8 @@ function redrawLocationArrayFirst(contextT, pattern, pointArray, realOrFake) {
                     drawLocationPoint(pointArray[i].radius, contextT, "#FFA500", 0, pattern);
                 }
             }
+        } else {
+            console.log("0 angle");
         }
     }
 }

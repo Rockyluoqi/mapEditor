@@ -413,6 +413,7 @@ function getDataFromGallery() {
     var initPoints = JSON.parse(sessionStorage.getItem("initPoints"));
     ////console.log("initPoints length" + sessionStorage.getItem("initPoints"));
     var positionPoints = JSON.parse(sessionStorage.getItem("positionPoints"));
+    console.log(initPoints);
 
     for (var i = 0; i < initPoints.length; i++) {
         var temp = initPoints[i];
