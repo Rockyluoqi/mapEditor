@@ -4,6 +4,9 @@
 /**
  * unitegallery 12193 playbutton mode setting
  */
+
+$("#mapLoadProgress").css("visibility", "visible");
+
 jQuery(document).ready(function () {
 
     $.support.cors = true;
@@ -11,8 +14,9 @@ jQuery(document).ready(function () {
 
     var imageList = [];
     var urls = [];
-    //var urlStart = "http://192.168.1.96:8080";
-    var urlStart = "http://192.168.1.88:8080";
+    //var urlStart = "http://192.168.1.105:8080";
+    var ip = localStorage.getItem('ip');
+    var urlStart = "http://" + ip + ":8080";
 
     var initPoints = [];
     var positionPoints = [];
@@ -43,11 +47,13 @@ jQuery(document).ready(function () {
         imgs = [];
     }
 
-    var hasDataImagesNum;
+    var hasDataImagesNum = 0;
 
     function getImageFromServer() {
+        hasDataImagesNum = mapDataArray.length;
         for (var i = 0; i < mapDataArray.length; i++) {
             var url = urlStart + "/gs-robot/data/map_png?map_name=" + mapDataArray[i].title;
+            console.log(url);
             urls.push(url);
             $.ajax({
                 url: url,
@@ -127,6 +133,7 @@ jQuery(document).ready(function () {
             dataType: "json",
             async: false,
             success: function (data) {
+                console.log(data);
                 localStorage["mapList"] = JSON.stringify(data);
             }
         });
@@ -175,6 +182,8 @@ jQuery(document).ready(function () {
         //var src = 'res/images/big/image1.jpg';
         var dataImage = 'res/images/big/image1.jpg';
         //var dataDescription = 'XXXAirport is..., area: XXX  obstacles: XXX';
+        console.log(base64Images);
+        console.log(base64SmallImages);
 
         for (var i = 0; i < mapDataArray.length; i++) {
             var imgHtml = document.createElement("img");
@@ -199,6 +208,7 @@ jQuery(document).ready(function () {
             imgHtml.setAttribute("data-description", mapDataArray[i].dataDescription);
             $("#gallery").append(imgHtml);
             if (i === mapDataArray.length - 1) {
+                $("#mapLoadProgress").css("visibility", "hidden");
                 jQuery("#gallery").unitegallery({
                     theme_panel_position: "left"
                 });
@@ -362,6 +372,7 @@ jQuery(document).ready(function () {
                         mapName: mapDataArray[value].title,
                         data: localStorage[mapDataArray[value].title]
                     };
+                    console.log(t1);
                     base64Images.push(t1);
                     //values[index] = 1;
                     //index += 1;
@@ -397,8 +408,9 @@ jQuery(document).ready(function () {
                     if (img.hasContent) {
                         console.log("empty");
                     }
-                    console.log(index);
+                    console.log(base64Images.length);
                     if (img.complete) {
+                        console.log(hasDataImagesNum);
                         if (base64Images.length === hasDataImagesNum) {
                             setImageArray();
                         }
