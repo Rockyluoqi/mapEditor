@@ -20,7 +20,7 @@ function zoomOut() {
 
 var zoomLevel = 1;
 
-var updateZoom = function (zoom) {
+var updateZoom = function(zoom) {
     zoomLevel += zoom;
     var webFrame = require('electron').webFrame;
     webFrame.setZoomFactor(zoomLevel);

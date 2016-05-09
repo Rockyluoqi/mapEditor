@@ -16,7 +16,7 @@ jQuery(document).ready(function () {
     var urls = [];
     //var urlStart = "http://192.168.1.105:8080";
     var ip = localStorage.getItem('ip');
-    var urlStart = "http://" + ip + ":8080";
+    var urlStart = "http://"+ip+":8080";
 
     var initPoints = [];
     var positionPoints = [];
@@ -47,7 +47,7 @@ jQuery(document).ready(function () {
         imgs = [];
     }
 
-    var hasDataImagesNum = 0;
+    var hasDataImagesNum =0;
 
     function getImageFromServer() {
         hasDataImagesNum = mapDataArray.length;

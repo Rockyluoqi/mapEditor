@@ -497,7 +497,7 @@ if (canvas.getContext) {
                         context.moveTo(lines[i].start.x, lines[i].start.y);
                         context.lineTo(lines[i].end.x, lines[i].end.y);
                         if (context.isPointInStroke(mouseX, mouseY)) {
-                            canvas.style.cursor = 'pointer';
+                            //canvas.style.cursor = 'pointer';
                             context.strokeStyle = "red";
                             context.stroke();
                             $pointItem.css("width", "50px");
@@ -507,7 +507,7 @@ if (canvas.getContext) {
                             deleteFlag = 1;
                             break;
                         } else {
-                            canvas.style.cursor = 'default';
+                            //canvas.style.cursor = 'default';
                             context.strokeStyle = "black";
                             context.stroke();
                             $pointItem.css("top", -(event.clientY + 15) + "px");
@@ -525,7 +525,7 @@ if (canvas.getContext) {
                         context.lineCap = "round";
                         context.rect(rectangles[i].start.x, rectangles[i].start.y, rectangles[i].end.x - rectangles[i].start.x, rectangles[i].end.y - rectangles[i].start.y);
                         if (context.isPointInPath(mouseX, mouseY)) {
-                            canvas.style.cursor = 'pointer';
+                            //canvas.style.cursor = 'pointer';
                             context.strokeStyle = "red";
                             context.stroke();
                             $pointItem.css("width", "50px");
@@ -537,7 +537,7 @@ if (canvas.getContext) {
 
                             break;
                         } else {
-                            canvas.style.cursor = 'default';
+                            //canvas.style.cursor = 'default';
                             context.strokeStyle = "black";
                             context.stroke();
                             $pointItem.css("top", -(event.clientY + 15) + "px");
@@ -561,7 +561,7 @@ if (canvas.getContext) {
                             //console.log(polygon[j].x + " "+polygon[j].y);
                         }
                         if (context.isPointInPath(mouseX, mouseY)) {
-                            canvas.style.cursor = 'pointer';
+                            //canvas.style.cursor = 'pointer';
                             context.strokeStyle = "red";
                             context.closePath();
                             context.stroke();
@@ -573,7 +573,7 @@ if (canvas.getContext) {
                             deleteFlag = 3;
                             break;
                         } else {
-                            canvas.style.cursor = 'default';
+                            //canvas.style.cursor = 'default';
                             context.strokeStyle = "black";
                             context.closePath();
                             context.stroke();
@@ -592,7 +592,7 @@ if (canvas.getContext) {
                         context.lineCap = "round";
                         context.arc(circles[i].center.x, circles[i].center.y, circles[i].radius, 0, 2 * Math.PI);
                         if (context.isPointInPath(mouseX, mouseY)) {
-                            canvas.style.cursor = 'pointer';
+                            //canvas.style.cursor = 'pointer';
                             context.strokeStyle = "red";
                             context.stroke();
                             $pointItem.css("width", "50px");
@@ -604,7 +604,7 @@ if (canvas.getContext) {
 
                             break;
                         } else {
-                            canvas.style.cursor = 'default';
+                            //canvas.style.cursor = 'default';
                             context.strokeStyle = "black";
                             context.stroke();
                             $pointItem.css("top", -(event.clientY + 15) + "px");
@@ -823,13 +823,13 @@ if (canvas.getContext) {
                     context.moveTo(lines[i].start.x, lines[i].start.y);
                     context.lineTo(lines[i].end.x, lines[i].end.y);
                     if (context.isPointInStroke(mouseX, mouseY)) {
-                        canvas.style.cursor = 'pointer';
+                        //canvas.style.cursor = 'pointer';
                         context.strokeStyle = "red";
                         context.stroke();
                         shapePattern = 1;
                         break;
                     } else {
-                        canvas.style.cursor = 'default';
+                        //canvas.style.cursor = 'default';
                         context.strokeStyle = "black";
                         context.stroke();
                     }
@@ -846,13 +846,13 @@ if (canvas.getContext) {
                     context.rect(rectangles[i].start.x, rectangles[i].start.y, rectangles[i].end.x - rectangles[i].start.x, rectangles[i].end.y - rectangles[i].start.y);
                     if (context.isPointInPath(mouseX, mouseY)) {
                         console.log("In path");
-                        canvas.style.cursor = 'pointer';
+                        //canvas.style.cursor = 'pointer';
                         context.strokeStyle = "red";
                         context.stroke();
                         shapePattern = 2;
                         break;
                     } else {
-                        canvas.style.cursor = 'default';
+                        //canvas.style.cursor = 'default';
                         context.strokeStyle = "black";
                         context.stroke();
                     }
@@ -871,14 +871,14 @@ if (canvas.getContext) {
                     }
                     if (context.isPointInPath(mouseX, mouseY)) {
                         console.log("in path");
-                        canvas.style.cursor = 'pointer';
+                        //canvas.style.cursor = 'pointer';
                         context.strokeStyle = "red";
                         context.closePath();
                         context.stroke();
                         shapePattern = 3;
                         break;
                     } else {
-                        canvas.style.cursor = 'default';
+                        //canvas.style.cursor = 'default';
                         context.strokeStyle = "black";
                         context.closePath();
                         context.stroke();
@@ -892,13 +892,13 @@ if (canvas.getContext) {
                     context.strokeStyle = $colorItem.css("background-color");
                     context.arc(circles[i].center.x, circles[i].center.y, circles[i].radius, 0, 2 * Math.PI);
                     if (context.isPointInPath(mouseX, mouseY)) {
-                        canvas.style.cursor = 'pointer';
+                        //canvas.style.cursor = 'pointer';
                         context.strokeStyle = "red";
                         context.stroke();
                         shapePattern = 4;
                         break;
                     } else {
-                        canvas.style.cursor = 'default';
+                        //canvas.style.cursor = 'default';
                         context.strokeStyle = "black";
                         context.stroke();
                     }

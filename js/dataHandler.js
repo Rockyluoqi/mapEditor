@@ -18,7 +18,7 @@ var rectangleIndex = 0;
 var circleIndex = 0;
 var polygonIndex = 0;
 var ip = localStorage.getItem('ip');
-var urlStart = "http://" + ip + ":8080";
+var urlStart = "http://"+ip+":8080";
 
 var map = {
     mapName: "",
@@ -204,9 +204,42 @@ function sendInitPosition() {
                 //alert("init_position post successfully!");
             } else {
                 alert(data.msg);
+                initCancel();
             }
         }
     });
+}
+
+function positionCancel() {
+    var length = locationPointArray.length;
+    locationPointArray[length - 1] = null;
+    locationPoints[length - 1] = null;
+
+    deleteNullInArray(locationPointArray);
+    locationPointArray = noneNullArray;
+
+    deleteNullInArray(locationPoints);
+    locationPoints = noneNullArray;
+
+    pointContext.clearRect(0, 0, canvas.width, canvas.height);
+    redrawLocationArray(pointContext, 0, startPoints, 1);
+    redrawLocationArray(pointContext, 1, locationPoints, 1);
+}
+
+function initCancel() {
+    var length = startPointArray.length;
+    startPointArray[length - 1] = null;
+    startPoints[length - 1] = null;
+
+    deleteNullInArray(startPointArray);
+    startPointArray = noneNullArray;
+
+    deleteNullInArray(startPoints);
+    startPoints = noneNullArray;
+
+    pointContext.clearRect(0, 0, canvas.width, canvas.height);
+    redrawLocationArray(pointContext, 0, startPoints, 1);
+    redrawLocationArray(pointContext, 1, locationPoints, 1);
 }
 
 function sendPosition() {
@@ -229,6 +262,7 @@ function sendPosition() {
                 //alert("position point post successfully!");
             } else {
                 alert(data.msg);
+                positionCancel();
             }
         }
     });
@@ -286,10 +320,10 @@ function sendImageInfo() {
         success: function (data) {
             console.log(data);
             if (data.successed) {
-                Materialize.toast('obstacle post successfully!', 5000);
+                Materialize.toast('obstacle post successfully!',5000);
                 restoreObstacleData();
             } else {
-                Materialize.toast(data.msg, 10000);
+                Materialize.toast(data.msg,10000);
             }
 
         }
