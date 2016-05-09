@@ -15,7 +15,7 @@ var obstacles = {
     rectangles:rectangles,
     polygons:polygons,
     circles:circles
-}
+};
  
 var startPointName = '';
 var endPointName = '';

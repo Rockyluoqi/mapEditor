@@ -3,7 +3,7 @@
 <head>
     <!--http://www.htmleaf.com/jQuery/Slideshow-Scroller/201509042521.html-->
     <meta charset="UTF-8">
-    <title>MapGallery</title>
+    <title>Gaussian Map Gallery</title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!--Materialize-->
@@ -13,8 +13,10 @@
     <link rel="stylesheet" href="plugin/galleryPlugin/css/normalize.css" type="text/css"/>
     <link rel="stylesheet" href="plugin/galleryPlugin/css/default.css" type="text/css"/>
     <link rel="stylesheet" href="plugin/galleryPlugin/css/unite-gallery.css" type = 'text/css'/>
-    <script src="js/lib/jquery-1.11.0.min.js"></script>
+    <!--<script src="js/lib/jquery-1.11.0.min.js"></script>-->
     <!--<script>window.$ = window.jQuery = require('./js/lib/jquery-1.11.0.min.js');</script>-->
+    <script>window.$ = window.jQuery = require('./js/lib/jquery-1.11.0.min.js');</script>
+    <script>window.Hammer = require('./js/lib/hammerjs');</script>
     <script src="plugin/galleryPlugin/js/unitegallery.js"></script>
     <script src="plugin/galleryPlugin/themes/compact/ug-theme-compact.js"></script>
     <script type="text/javascript" src="js/lib/materialize.min.js"></script>
@@ -36,6 +38,29 @@
 <div class = "gallery-container">
     <div id="gallery" style="display:none" >
     </div>
+</div>
+<div id="mapLoadProgress" class="preloader-wrapper big active" style="margin-left: 80px">
+    <div class="spinner-layer spinner-blue-only">
+        <div class="circle-clipper left">
+            <div class="circle"></div>
+        </div>
+        <div class="gap-patch">
+            <div class="circle"></div>
+        </div>
+        <div class="circle-clipper right">
+            <div class="circle"></div>
+        </div>
+    </div>
+</div>
+<div class="fixed-action-btn" id="backDiv" style="width:24px;height: 24px;top:5px;left:20px;">
+    <a class="btn-floating btn-large waves-effect waves-light green tooltipped" id="backBtn" href="../selectModule.html"
+       data-position="right"
+       data-delay="50" data-tooltip="返回" style="padding: 4px">
+        <svg fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 0h24v24H0z" fill="none"/>
+            <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+        </svg>
+    </a>
 </div>
 <div class="fixed-action-btn" id="editBtn" style="bottom:160px;right:100px;">
     <a class="btn-floating btn-large waves-effect waves-light blue" style="padding: 4px;">

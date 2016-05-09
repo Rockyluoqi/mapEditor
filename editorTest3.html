@@ -3,13 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
-    <title>绘画板</title>
+    <title>Gaussian Map Editor</title>
     <link rel="stylesheet" href="css/global.css" type = 'text/css'/>
     <link rel="stylesheet" href="css/myStyle.css" type = 'text/css'/>
     <!--<link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">-->
     <link type="text/css" rel="stylesheet" href="css/materialize.min.css"  media="screen,projection"/>
-    <script type="text/javascript" src="js/lib/jquery-1.11.0.min.js"></script>
+    <!--<script type="text/javascript" src="js/lib/jquery-1.11.0.min.js"></script>-->
     <!--<script>window.$ = window.jQuery = require('./js/lib/jquery-1.11.0.min.js');</script>-->
+    <script>window.$ = window.jQuery = require('./js/lib/jquery-1.11.0.min.js');</script>
+    <script>window.Hammer = require('./js/lib/hammerjs');</script>
     <script type="text/javascript" src="js/lib/google.fastbutton.min.js"></script>
     <script type="text/javascript" src="js/lib/google.jquery.fastbutton.min.js"></script>
     <script type="text/javascript" src="js/lib/jcanvas.js"></script>
@@ -19,7 +21,7 @@
     <script type="text/javascript" src="js/dataHandler.js"></script>
     <script type="text/javascript" src="js/lib/materialize.min.js"></script>
 </head>
-<body id="body">
+<body>
 <div class="container">
     <!--<script type="text/javascript">-->
         <!--function cnvs_getCoordinates(e)-->
@@ -54,62 +56,62 @@
             </svg>
         </a>
         <div class="menu">
-            <div class="colors menu-item modal-indicator" style="background-color: rgb(0, 0, 0);">
-                <div class="sub-menu col-5">
-                    <div class="menu-item"><div class="color-icon" style="background-color: rgb(0, 0, 0)"></div></div>
-                    <div class="menu-item"><div class="color-icon" style="background-color: rgb(244, 67, 54)"></div></div>
-                    <div class="menu-item"><div class="color-icon" style="background-color: rgb(76, 175, 80)"></div></div>
-                    <div class="menu-item"><div class="color-icon" style="background-color: rgb(33, 150, 243)"></div></div>
-                    <div class="menu-item"><div class="color-icon" style="background-color: rgb(255, 193, 7)"></div></div>
-                    <div class="menu-item"><div class="color-icon" style="background-color: rgb(156, 39, 176)"></div></div>
-                    <div class="menu-item"><div class="color-icon" style="background-color: rgb(233, 30, 99)"></div></div>
-                    <div class="menu-item"><div class="color-icon" style="background-color: rgb(121, 85, 72)"></div></div>
-                </div>
-            </div>
-            <div class="sizes menu-item modal-indicator">
-                <div class="tool-size-0">
-                    <svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M1664 896q0 209-103 385.5t-279.5 279.5-385.5 103-385.5-103-279.5-279.5-103-385.5 103-385.5 279.5-279.5 385.5-103 385.5 103 279.5 279.5 103 385.5z"></path>
-                    </svg>
-                </div>
-                <div class="sub-menu col-5">
-                    <div class="menu-item">
-                        <div class="tool-size-0">
-                            <svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M1664 896q0 209-103 385.5t-279.5 279.5-385.5 103-385.5-103-279.5-279.5-103-385.5 103-385.5 279.5-279.5 385.5-103 385.5 103 279.5 279.5 103 385.5z"></path>
-                            </svg>
-                        </div>
-                    </div>
-                    <div class="menu-item">
-                        <div class="tool-size-1">
-                            <svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M1664 896q0 209-103 385.5t-279.5 279.5-385.5 103-385.5-103-279.5-279.5-103-385.5 103-385.5 279.5-279.5 385.5-103 385.5 103 279.5 279.5 103 385.5z"></path>
-                            </svg>
-                        </div>
-                    </div>
-                    <div class="menu-item">
-                        <div class="tool-size-2">
-                            <svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M1664 896q0 209-103 385.5t-279.5 279.5-385.5 103-385.5-103-279.5-279.5-103-385.5 103-385.5 279.5-279.5 385.5-103 385.5 103 279.5 279.5 103 385.5z"></path>
-                            </svg>
-                        </div>
-                    </div>
-                    <div class="menu-item">
-                        <div class="tool-size-3">
-                            <svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M1664 896q0 209-103 385.5t-279.5 279.5-385.5 103-385.5-103-279.5-279.5-103-385.5 103-385.5 279.5-279.5 385.5-103 385.5 103 279.5 279.5 103 385.5z"></path>
-                            </svg>
-                        </div>
-                    </div>
-                    <div class="menu-item">
-                        <div class="tool-size-4">
-                            <svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M1664 896q0 209-103 385.5t-279.5 279.5-385.5 103-385.5-103-279.5-279.5-103-385.5 103-385.5 279.5-279.5 385.5-103 385.5 103 279.5 279.5 103 385.5z"></path>
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <!--<div class="colors menu-item modal-indicator" style="background-color: rgb(0, 0, 0);">-->
+            <!--<div class="sub-menu col-5">-->
+            <!--<div class="menu-item"><div class="color-icon" style="background-color: rgb(0, 0, 0)"></div></div>-->
+            <!--<div class="menu-item"><div class="color-icon" style="background-color: rgb(244, 67, 54)"></div></div>-->
+            <!--<div class="menu-item"><div class="color-icon" style="background-color: rgb(76, 175, 80)"></div></div>-->
+            <!--<div class="menu-item"><div class="color-icon" style="background-color: rgb(33, 150, 243)"></div></div>-->
+            <!--<div class="menu-item"><div class="color-icon" style="background-color: rgb(255, 193, 7)"></div></div>-->
+            <!--<div class="menu-item"><div class="color-icon" style="background-color: rgb(156, 39, 176)"></div></div>-->
+            <!--<div class="menu-item"><div class="color-icon" style="background-color: rgb(233, 30, 99)"></div></div>-->
+            <!--<div class="menu-item"><div class="color-icon" style="background-color: rgb(121, 85, 72)"></div></div>-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--<div class="sizes menu-item modal-indicator">-->
+            <!--<div class="tool-size-0">-->
+            <!--<svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg">-->
+            <!--<path d="M1664 896q0 209-103 385.5t-279.5 279.5-385.5 103-385.5-103-279.5-279.5-103-385.5 103-385.5 279.5-279.5 385.5-103 385.5 103 279.5 279.5 103 385.5z"></path>-->
+            <!--</svg>-->
+            <!--</div>-->
+            <!--<div class="sub-menu col-5">-->
+            <!--<div class="menu-item">-->
+            <!--<div class="tool-size-0">-->
+            <!--<svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg">-->
+            <!--<path d="M1664 896q0 209-103 385.5t-279.5 279.5-385.5 103-385.5-103-279.5-279.5-103-385.5 103-385.5 279.5-279.5 385.5-103 385.5 103 279.5 279.5 103 385.5z"></path>-->
+            <!--</svg>-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--<div class="menu-item">-->
+            <!--<div class="tool-size-1">-->
+            <!--<svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg">-->
+            <!--<path d="M1664 896q0 209-103 385.5t-279.5 279.5-385.5 103-385.5-103-279.5-279.5-103-385.5 103-385.5 279.5-279.5 385.5-103 385.5 103 279.5 279.5 103 385.5z"></path>-->
+            <!--</svg>-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--<div class="menu-item">-->
+            <!--<div class="tool-size-2">-->
+            <!--<svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg">-->
+            <!--<path d="M1664 896q0 209-103 385.5t-279.5 279.5-385.5 103-385.5-103-279.5-279.5-103-385.5 103-385.5 279.5-279.5 385.5-103 385.5 103 279.5 279.5 103 385.5z"></path>-->
+            <!--</svg>-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--<div class="menu-item">-->
+            <!--<div class="tool-size-3">-->
+            <!--<svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg">-->
+            <!--<path d="M1664 896q0 209-103 385.5t-279.5 279.5-385.5 103-385.5-103-279.5-279.5-103-385.5 103-385.5 279.5-279.5 385.5-103 385.5 103 279.5 279.5 103 385.5z"></path>-->
+            <!--</svg>-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--<div class="menu-item">-->
+            <!--<div class="tool-size-4">-->
+            <!--<svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg">-->
+            <!--<path d="M1664 896q0 209-103 385.5t-279.5 279.5-385.5 103-385.5-103-279.5-279.5-103-385.5 103-385.5 279.5-279.5 385.5-103 385.5 103 279.5 279.5 103 385.5z"></path>-->
+            <!--</svg>-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--</div>-->
             <div class="tools menu-item modal-indicator">
                 <div id="toolsFirst">
                     <svg xmlns="http://www.w3.org/2000/svg" version="1.1" x="0px" y="0px" viewBox="0 0 454.876 454.876" style="enable-background:new 0 0 454.876 454.876;" xml:space="preserve" width="512px" height="512px">
@@ -124,7 +126,7 @@
                 <div class="sub-menu col-5">
                     <!--drag-->
                     <div class="menu-item" id="handTool">
-                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1" x="0px" y="0px" viewBox="0 0 454.876 454.876" style="enable-background:new 0 0 454.876 454.876;" xml:space="preserve" width="512px" height="512px">
+                        <svg xmlns="http://www.w3.org/2000/svg"  version="1.1" id="Capa_1" x="0px" y="0px" viewBox="0 0 454.876 454.876" style="enable-background:new 0 0 454.876 454.876;" xml:space="preserve" width="512px" height="512px">
                             <path d="M451.947,78.589l-16.971-16.971c-3.905-3.904-10.237-3.904-14.143,0c-3.873,3.873-3.899,10.129-0.091,14.042h-22.365   c-5.523,0-10,4.477-10,10c0,5.523,4.477,10,10,10h22.365c-3.809,3.913-3.782,10.169,0.091,14.042   c1.953,1.952,4.512,2.929,7.071,2.929c2.559,0,5.119-0.977,7.071-2.929l16.971-16.971   C455.852,88.827,455.852,82.495,451.947,78.589z" fill="#FFFFFF"/>
 	                        <path d="M312.611,109.703c1.953,1.952,4.512,2.929,7.071,2.929c2.559,0,5.119-0.977,7.071-2.929   c3.873-3.873,3.9-10.129,0.091-14.042h22.365c5.523,0,10-4.477,10-10c0-5.523-4.477-10-10-10h-22.365   c3.809-3.913,3.782-10.169-0.091-14.042c-3.905-3.904-10.237-3.904-14.142,0L295.64,78.589c-3.905,3.905-3.905,10.237,0,14.143   L312.611,109.703z" fill="#FFFFFF"/>
 	                        <path d="M383.794,132.61v-22.365c0-5.523-4.477-10-10-10c-5.523,0-10,4.477-10,10v22.365c-3.913-3.809-10.169-3.782-14.042,0.091   c-3.905,3.905-3.905,10.237,0,14.143l16.971,16.971c1.953,1.953,4.512,2.929,7.071,2.929c2.559,0,5.119-0.976,7.071-2.929   l16.971-16.971c3.905-3.905,3.905-10.237,0-14.143C393.963,128.828,387.706,128.801,383.794,132.61z" fill="#FFFFFF"/>
@@ -198,7 +200,7 @@
                     </svg>
                     <span>障碍物类型选择</span>
                 </div>
-                <div class="sub-menu col-5">
+                <div class="sub-menu col-4">
                     <!--free line-->
                     <!--<div class="menu-item">-->
                         <!--<svg version="1.1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"-->
@@ -252,20 +254,20 @@
                         <span>圆形障碍</span>
                     </div>
                     <!--broken line-->
-                    <div class="menu-item" id="brokenLine">
-                        <svg xmlns="http://www.w3.org/2000/svg" version="1.1" x="0px" y="0px" width="512px" height="512px" viewBox="0 0 95.549 95.549" style="enable-background:new 0 0 95.549 95.549;" xml:space="preserve">
-	                        <path d="M88.543,17.948c-3.02,0-5.591,1.924-6.573,4.607l-13.799,1.777c-1.286-1.54-3.218-2.522-5.376-2.522   c-3.861,0-7.006,3.144-7.006,7.006c0,1.562,0.521,3.001,1.389,4.168L46.985,55.913c-0.655,0.072-1.283,0.237-1.872,0.479   l-8.328-8.042c0.117-0.507,0.185-1.031,0.185-1.573c0-3.862-3.144-7.005-7.006-7.005s-7.005,3.143-7.005,7.005   c0,0.712,0.108,1.399,0.307,2.048L8.958,63.872c-0.621-0.182-1.274-0.283-1.952-0.283C3.144,63.588,0,66.733,0,70.594   c0,3.863,3.144,7.007,7.006,7.007c3.862,0,7.005-3.144,7.005-7.007c0-0.801-0.142-1.567-0.391-2.284l14.152-14.884   c0.69,0.229,1.426,0.356,2.191,0.356c0.934,0,1.824-0.188,2.64-0.521l8.344,8.057c-0.113,0.5-0.179,1.018-0.179,1.551   c0,3.862,3.144,7.006,7.006,7.006s7.005-3.144,7.005-7.006c0-1.783-0.676-3.408-1.777-4.646l9.962-22.41   c3.154-0.076,5.792-2.243,6.585-5.167l13.241-1.705c1.267,1.821,3.371,3.019,5.753,3.019c3.861,0,7.006-3.143,7.006-7.005   C95.549,21.093,92.404,17.948,88.543,17.948z" fill="#FFFFFF"/>
-                        </svg>
-                        <span>折线障碍(BETA)</span>
-                    </div>
+                    <!--<div class="menu-item" id="brokenLine">-->
+                    <!--<svg xmlns="http://www.w3.org/2000/svg" version="1.1" x="0px" y="0px" width="512px" height="512px" viewBox="0 0 95.549 95.549" style="enable-background:new 0 0 95.549 95.549;" xml:space="preserve">-->
+                    <!--<path d="M88.543,17.948c-3.02,0-5.591,1.924-6.573,4.607l-13.799,1.777c-1.286-1.54-3.218-2.522-5.376-2.522   c-3.861,0-7.006,3.144-7.006,7.006c0,1.562,0.521,3.001,1.389,4.168L46.985,55.913c-0.655,0.072-1.283,0.237-1.872,0.479   l-8.328-8.042c0.117-0.507,0.185-1.031,0.185-1.573c0-3.862-3.144-7.005-7.006-7.005s-7.005,3.143-7.005,7.005   c0,0.712,0.108,1.399,0.307,2.048L8.958,63.872c-0.621-0.182-1.274-0.283-1.952-0.283C3.144,63.588,0,66.733,0,70.594   c0,3.863,3.144,7.007,7.006,7.007c3.862,0,7.005-3.144,7.005-7.007c0-0.801-0.142-1.567-0.391-2.284l14.152-14.884   c0.69,0.229,1.426,0.356,2.191,0.356c0.934,0,1.824-0.188,2.64-0.521l8.344,8.057c-0.113,0.5-0.179,1.018-0.179,1.551   c0,3.862,3.144,7.006,7.006,7.006s7.005-3.144,7.005-7.006c0-1.783-0.676-3.408-1.777-4.646l9.962-22.41   c3.154-0.076,5.792-2.243,6.585-5.167l13.241-1.705c1.267,1.821,3.371,3.019,5.753,3.019c3.861,0,7.006-3.143,7.006-7.005   C95.549,21.093,92.404,17.948,88.543,17.948z" fill="#FFFFFF"/>-->
+                    <!--</svg>-->
+                    <!--<span>折线障碍(BETA)</span>-->
+                    <!--</div>-->
 
                     <!--dashed line 虚线-->
-                    <div class="menu-item" id="dashedLine">
-                        <svg xmlns="http://www.w3.org/2000/svg" version="1.1" id="Capa_1" x="0px" y="0px" viewBox="0 0 181.213 181.213" style="enable-background:new 0 0 181.213 181.213;" xml:space="preserve" width="512px" height="512px">
-                                <path d="M144.744,57.682l-21.213-21.213L160,0l21.213,21.213L144.744,57.682z M35.673,124.326L0,160l21.213,21.213l35.673-35.674  L35.673,124.326z M119.05,83.376L97.836,62.163l-36.469,36.47l21.213,21.213L119.05,83.376z" fill="#FFFFFF"/>
-                        </svg>
-                        <span>虚线障碍(BETA)</span>
-                    </div>
+                    <!--<div class="menu-item" id="dashedLine">-->
+                    <!--<svg xmlns="http://www.w3.org/2000/svg" version="1.1" id="Capa_1" x="0px" y="0px" viewBox="0 0 181.213 181.213" style="enable-background:new 0 0 181.213 181.213;" xml:space="preserve" width="512px" height="512px">-->
+                    <!--<path d="M144.744,57.682l-21.213-21.213L160,0l21.213,21.213L144.744,57.682z M35.673,124.326L0,160l21.213,21.213l35.673-35.674  L35.673,124.326z M119.05,83.376L97.836,62.163l-36.469,36.47l21.213,21.213L119.05,83.376z" fill="#FFFFFF"/>-->
+                    <!--</svg>-->
+                    <!--<span>虚线障碍(BETA)</span>-->
+                    <!--</div>-->
                 </div>
             </div>
             <div class="positions menu-item modal-indicator">
@@ -345,7 +347,7 @@
             <div class="card white darken-1">
                 <div class="input-field col s7" style="margin-left: 18px;margin-top: 20px;">
                     <input id="startPointName" type="text" class="validate">
-                    <label for="startPointName">起始点名称</label>
+                    <label for="startPointName">初始点名称</label>
                 </div>
                 <div class="card-action" style="padding-left:50px">
                     <a class="waves-effect waves-teal btn" id="startOkBtn">确定</a>
@@ -361,7 +363,7 @@
             <div class="card white darken-1">
                 <div class="input-field col s7" style="margin-left: 18px;margin-top: 20px;">
                     <input id="endPointName" type="text" class="validate">
-                    <label for="endPointName">终点名称</label>
+                    <label for="endPointName">坐标点名称</label>
                 </div>
                 <div class="card-action" style="padding-left:50px">
                     <a class="waves-effect waves-teal btn" id="endOkBtn">确定</a>

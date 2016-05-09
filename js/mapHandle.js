@@ -276,6 +276,7 @@ jQuery(document).ready(function () {
                 console.log(ob[k]);
                 var oba = JSON.parse(ob[k]);
                 console.log(oba);
+                console.log(mapDataArray);
                 //console.log(k);
                 //if(ob[k].lines)
                 console.log(oba.mapName);
@@ -295,10 +296,12 @@ jQuery(document).ready(function () {
                             oba.obstacles.circles[i].center.y = mapDataArray[j].gridHeight - oba.obstacles.circles[i].center.y;
                         }
 
+                        console.log(oba.obstacles.polygons.length);
+
                         for (var i = 0; i < oba.obstacles.polygons.length; i++) {
                             var temp = oba.obstacles.polygons[i];
-                            for (var j = 0; j < temp.length; j++) {
-                                temp[j].y = mapDataArray[j].gridHeight - temp[j].y;
+                            for (var a = 0; a < temp.length; a++) {
+                                temp[a].y = mapDataArray[j].gridHeight - temp[a].y;
                             }
                         }
                     }
@@ -330,6 +333,8 @@ jQuery(document).ready(function () {
 
         var t = JSON.parse(localStorage.getItem("obstacle"));
 
+        console.log("t");
+        console.log(t);
         //console.log(t);
         var te = [];
         //Handle a problem of some data in the array has no obstacle.
@@ -356,6 +361,8 @@ jQuery(document).ready(function () {
                     ctx.drawImage(imgs[value], 0, 0);
                     redrawLocationArray(ctx, 0, tempInitPointArray[value], 1);
                     redrawLocationArray(ctx, 1, tempPositionPointArray[value], 1);
+                    console.log(te);
+                    console.log(value);
                     if (te[value] != "") {
                         drawLineObstacle(te[value].obstacles.lines, ctx);
                         drawRectangleObstacle(te[value].obstacles.rectangles, ctx);

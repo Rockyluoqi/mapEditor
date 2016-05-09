@@ -111,7 +111,7 @@ function startInputCancel() {
 }
 
 function setStartPointName() {
-    alert($startPointName.val());
+    //alert($startPointName.val());
     startPointName = $startPointName.val();
 
     //this is the request formation data
@@ -153,7 +153,7 @@ function endInputCancel() {
 }
 
 function setEndPointName() {
-    alert($endPointName.val());
+    //alert($endPointName.val());
     endPointName = $endPointName.val();
 
     //this is the request formation data
@@ -293,7 +293,7 @@ if (canvas.getContext) {
 
     // 可能不需要 scroll 的偏移，元素的位置区别！！！
     var $colorItem = $(".modal-indicator.colors");
-    var $chosenSvg = $(".sizes").find("svg").get(0);              // 选中的画笔
+    //var $chosenSvg = $(".sizes").find("svg").get(0);              // 选中的画笔
     var chosenWidth = 0;                                          // 选中的画笔大小                                          // 选中的画笔大小
     var $offset = $(canvas).offset();                             // canvas 偏移值
     var docScrollLeft = document.documentElement.scrollLeft;
@@ -620,7 +620,7 @@ if (canvas.getContext) {
                 event.preventDefault();
                 mouseX = leftScrollDistance + event.clientX - offsetX;
                 mouseY = topScrollDistance + event.clientY - offsetY;
-                chosenWidth = $chosenSvg.getBoundingClientRect().width;
+                //chosenWidth = $chosenSvg.getBoundingClientRect().width;
                 context3.lineWidth = chosenWidth;
                 context.lineWidth = chosenWidth;
                 pointContext.lineWidth = chosenWidth;
@@ -633,7 +633,7 @@ if (canvas.getContext) {
                 event.preventDefault();
                 mouseX = leftScrollDistance + event.clientX - offsetX;
                 mouseY = topScrollDistance + event.clientY - offsetY;
-                chosenWidth = $chosenSvg.getBoundingClientRect().width;
+                //chosenWidth = $chosenSvg.getBoundingClientRect().width;
                 context3.lineWidth = chosenWidth;
                 context.lineWidth = chosenWidth;
                 pointContext.lineWidth = chosenWidth;
@@ -647,7 +647,7 @@ if (canvas.getContext) {
             if (shapePattern === 0) {
                 position.x = event.clientX;
                 position.y = event.clientY;
-                chosenWidth = $chosenSvg.getBoundingClientRect().width;
+                //chosenWidth = $chosenSvg.getBoundingClientRect().width;
                 context.beginPath();
                 context.fillStyle = $colorItem.css("background-color"); //合并
                 context.arc(position.x + moveLeft, position.y + moveTop, chosenWidth / 2, 0, 2 * Math.PI);
@@ -659,7 +659,7 @@ if (canvas.getContext) {
                 mouseX = leftScrollDistance + event.clientX - offsetX;
                 mouseY = topScrollDistance + event.clientY - offsetY;
                 //update to tempCanvas at the same time, the function is OK
-                chosenWidth = $chosenSvg.getBoundingClientRect().width;
+                //chosenWidth = $chosenSvg.getBoundingClientRect().width;
                 context3.lineWidth = chosenWidth;
                 context.lineWidth = chosenWidth;
                 startX = mouseX;
@@ -672,7 +672,7 @@ if (canvas.getContext) {
                 event.preventDefault();
                 mouseX = leftScrollDistance + event.clientX - offsetX;
                 mouseY = topScrollDistance + event.clientY - offsetY;
-                chosenWidth = $chosenSvg.getBoundingClientRect().width;
+                //chosenWidth = $chosenSvg.getBoundingClientRect().width;
                 context3.lineWidth = chosenWidth;
                 context.lineWidth = chosenWidth;
                 startX = mouseX;
@@ -700,7 +700,7 @@ if (canvas.getContext) {
                 event.preventDefault();
                 mouseX = leftScrollDistance + event.clientX - offsetX;
                 mouseY = topScrollDistance + event.clientY - offsetY;
-                chosenWidth = $chosenSvg.getBoundingClientRect().width;
+                //chosenWidth = $chosenSvg.getBoundingClientRect().width;
                 context3.lineWidth = chosenWidth;
                 context.lineWidth = chosenWidth;
                 startX = mouseX;
@@ -712,7 +712,7 @@ if (canvas.getContext) {
                 event.preventDefault();
                 mouseX = leftScrollDistance + event.clientX - offsetX;
                 mouseY = topScrollDistance + event.clientY - offsetY;
-                chosenWidth = $chosenSvg.getBoundingClientRect().width;
+                //chosenWidth = $chosenSvg.getBoundingClientRect().width;
                 context3.lineWidth = chosenWidth;
                 context.lineWidth = chosenWidth;
                 startX = mouseX;
@@ -727,7 +727,7 @@ if (canvas.getContext) {
                 mouseX = leftScrollDistance + event.clientX - offsetX;
                 mouseY = topScrollDistance + event.clientY - offsetY;
                 //update to tempCanvas at the same time, the function is OK
-                chosenWidth = $chosenSvg.getBoundingClientRect().width;
+                //chosenWidth = $chosenSvg.getBoundingClientRect().width;
                 context3.lineWidth = chosenWidth;
                 context.lineWidth = chosenWidth;
                 startX = mouseX;
@@ -959,7 +959,7 @@ if (canvas.getContext) {
                 event.preventDefault();
                 mouseX = leftScrollDistance + event.clientX - offsetX;
                 mouseY = topScrollDistance + event.clientY - offsetY;
-                chosenWidth = $chosenSvg.getBoundingClientRect().width;
+                //chosenWidth = $chosenSvg.getBoundingClientRect().width;
                 context3.lineWidth = chosenWidth;
                 context.lineWidth = chosenWidth;
                 context3.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
@@ -1449,8 +1449,9 @@ $subMenuItem.fastClick(function () {
         }
     } else if ($MenuItem.hasClass("shapes")) {
         var toolsIndex = that.index();
+        pointing = false;
         //just update valuable icon
-        if (toolsIndex < 6) {
+        if (toolsIndex < 4) {
             $MenuItem.children("div:first-child").html(that.html());
         }
         dragging = false;

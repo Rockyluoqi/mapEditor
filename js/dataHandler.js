@@ -17,7 +17,8 @@ var lineIndex = 0;
 var rectangleIndex = 0;
 var circleIndex = 0;
 var polygonIndex = 0;
-var urlStart = "http://192.168.1.88:8080";
+var ip = localStorage.getItem('ip');
+var urlStart = "http://" + ip + ":8080";
 
 var map = {
     mapName: "",
@@ -150,6 +151,39 @@ function transToJson() {
     //console.log(map);
 }
 
+function restoreObstacleData() {
+    /**
+     * coordination transform
+     */
+
+    for (var i = 0; i < lines.length; i++) {
+        lines[i].start.y = canvas.height - lines[i].start.y;
+        lines[i].end.y = canvas.height - lines[i].end.y;
+        lines[i].isTrans = false;
+    }
+
+    for (var i = 0; i < rectangles.length; i++) {
+        rectangles[i].start.y = canvas.height - rectangles[i].start.y;
+        rectangles[i].end.y = canvas.height - rectangles[i].end.y;
+        rectangles[i].isTrans = false;
+    }
+
+    for (var i = 0; i < circles.length; i++) {
+        circles[i].center.y = canvas.height - circles[i].center.y;
+        circles[i].isTrans = false;
+    }
+
+    for (var i = 0; i < polygons.length; i++) {
+        var temp = polygons[i];
+        for (var j = 0; j < temp.length; j++) {
+            temp[j].y = canvas.height - temp[j].y;
+            temp[j].isTrans = false;
+        }
+    }
+
+    console.log(rectangles);
+}
+
 function sendInitPosition() {
     //deleteNullInArray(startPointDatas);
     //startPointDatas = noneNullArray;
@@ -166,7 +200,8 @@ function sendInitPosition() {
         data: pointData,
         success: function (data) {
             if (data.successed) {
-                alert("init_position post successfully!");
+                Materialize.toast('init_position post successfully!', 5000);
+                //alert("init_position post successfully!");
             } else {
                 alert(data.msg);
             }
@@ -190,7 +225,8 @@ function sendPosition() {
         data: pointData,
         success: function (data) {
             if (data.successed) {
-                alert("position post successfully!");
+                Materialize.toast('position point post successfully!', 5000);
+                //alert("position point post successfully!");
             } else {
                 alert(data.msg);
             }
@@ -211,7 +247,9 @@ function deleteInitPosition(index) {
         dataType: "json",
         success: function (data) {
             if (data.successed) {
-                alert("delete init position successfully!");
+                Materialize.toast('delete init position successfully!', 5000);
+            } else {
+                Materialize.toast(data.msg, 10000);
             }
         }
     });
@@ -228,7 +266,9 @@ function deletePosition(index) {
         dataType: "json",
         success: function (data) {
             if (data.successed) {
-                alert("delete position successfully!");
+                Materialize.toast('delete position point successfully!', 5000);
+            } else {
+                Materialize.toast(data.msg, 10000);
             }
         }
     });
@@ -246,8 +286,12 @@ function sendImageInfo() {
         success: function (data) {
             console.log(data);
             if (data.successed) {
-                alert("obstacle post successfully!");
+                Materialize.toast('obstacle post successfully!', 5000);
+                restoreObstacleData();
+            } else {
+                Materialize.toast(data.msg, 10000);
             }
+
         }
     });
 }
