@@ -17,8 +17,8 @@ var lineIndex = 0;
 var rectangleIndex = 0;
 var circleIndex = 0;
 var polygonIndex = 0;
-var ip = localStorage.getItem('ip');
-var urlStart = "http://"+ip+":8080";
+// var ip = localStorage.getItem('ip');
+var urlStart = sessionStorage.getItem('host')+":8080";
 
 var map = {
     mapName: "",
